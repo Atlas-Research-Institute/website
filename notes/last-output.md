@@ -1,50 +1,52 @@
-# Redesign: homepage, About page, Source Serif 4
+# Fellowship reopened, site copy updated
 
-Branch: `redesign` (checked with `git branch --show-current`). Six commits, pushed to `origin redesign`. `npm run build` passes.
+Branch: `redesign` (checked with `git branch --show-current`). Pushed to `origin redesign`. `npm run build` passes.
 
-## Read this first: where Apply points
+## Where submissions go
 
-**Every Apply button goes to `/fellowship`.** The old site had no button labelled "Apply". The header button said "Start a group" and opened the Principal Researcher Google Form (`https://forms.gle/s2qpP3XX3ydLc58k6`). That form is for leading a research group, not for applying to the fellowship. The site's own apply routes point somewhere else: the legacy `/apply` route redirects to `/fellowship`, and `public/apply.html` links to `/fellowship`. `/fellowship` holds the application form (the waitlist form). I used that target and did not change the form. The target is one constant, `APPLY_PATH` in `src/lib/dates.ts`.
+**Service:** a Google Apps Script web app. The form POSTs JSON to:
 
-**The problem:** `/fellowship` still says applications for this cohort are closed and offers only the waitlist. The new homepage says "Apply by November 1". Someone who clicks Apply will land on a page that says applications are closed. You need to decide what that page should say. I was told not to change the form, so I didn't.
+`https://script.google.com/macros/s/AKfycbzoGRSNMoJhYjcbHbqG2NEdIqCZ9DJ5vGVaMBvnXHwnRnoQInQ6RsuwWirb5nb0iwTqlA/exec`
+
+In the code this is `WAITLIST_ENDPOINT` in `src/lib/dates.ts`. I did not change the pipeline.
+
+**Spreadsheet:** the summer form's source carried a copy of the script. That copy writes with `SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().appendRow(...)`. That means the script is *bound* to one Google Sheet and appends to its first tab. It writes 16 columns: Timestamp | Name | Email | School | City | Country | Grade | Timezone | Prompt | Data_Source | Completion | Research | Research_Desc | Consent | Referral | Referral_Other.
+
+**It is the summer spreadsheet.** Every version of the summer form in git, from July 8 to July 24, 2026, used this exact endpoint. The waitlist used it from August, and the restored form uses it now. Summer applications, waitlist sign-ups and new November applications all land in the same sheet, one under the other.
+
+**Account: I could not determine it.** Nothing in the repo or the endpoint's responses names the owner. Accounts that appear in git history, none of them verified as the owner:
+- `atlas.research.org@gmail.com`: the site's contact address while the summer form was built (July 2026). This is the most likely.
+- `atlas.research.institute@gmail.com`
+- `hamaadm574@gmail.com`: the git committer.
+
+**How to find the sheet:** sign in to each account and search Google Drive for `TEST SUBMISSION - Claude Code`. My test row should contain that text, and Drive searches inside Sheets. Or open script.google.com > My projects: a bound script is listed with its spreadsheet's name. Once found, delete the test row.
+
+**Test submission:** I sent one, through the real form in headless Chrome. It used name "TEST SUBMISSION - Claude Code - please delete", email admin@atlas-research.org, and TEST in the other fields.
+- The POST got a 302 redirect, then a 200 from Google's echo URL. Apps Script only sends that redirect after `doPost` finishes without an error.
+- The confirmation then rendered and took focus.
+- **I could not see the sheet, so I have not confirmed the row is actually there.** Please check it when you find the sheet.
 
 ## What changed
 
-- **Type:** Source Serif 4 (400 to 700, roman and italic) is now the only typeface. It replaces Instrument Serif and Archivo in `index.html`, `tailwind.config.ts` (display, serif and sans all map to it), `src/index.css`, `public/apply.html` and `public/privacy.html`. The privacy page now loads the font as well as declaring it. The Archivo `fontFamily` in `BriefPreview.tsx` is also replaced.
-- **Tokens:** navy, crimson (plus crimson-hover #6A1523, taken from the reference's hover colour), ink #1B2433, body-muted, muted #4A5568, mist, rule, navy-border, on-navy-muted. All corners are 4px. Removed sitewide: the paper-grain texture, the card shadow and lift, and the all-caps `.meta-label`. Meta labels are now italic. Links (`.link`) are crimson. The focus outline is 3px crimson, white on navy sections.
-- **Header and footer:** 8px navy bar, the wordmark, Fellowship (`/#fellowship`), Lessons (`/#lessons`), Journal (`/journal`), About (`/about`) and a crimson Apply button. The footer has About, Journal, Privacy, the mailto link, and Instagram and LinkedIn icons from `react-icons/fa6`, each with an aria-label.
-- **Homepage:** rebuilt in React and Tailwind to match `home.html`, with the 10 sections in the reference order and the copy word for word. The hero image points at `/images/hero.jpg` and shows a plain mist block until that file exists, with no placeholder text. The Fuller slide is `public/images/fuller-lesson.png` (now committed). The researcher names and the non-affiliation line come from one component (`ResearcherList`), so neither can appear without the other.
-- **About:** new page at `/about`, matching `about.html`. It is linked from the nav and the footer, and has an SEO entry and a sitemap entry.
-- **Lumiere:** the README rule and `public/llms.txt` now say scholarships.
-- **404 page:** the button is restyled, and its text no longer points readers to the research group directory in the nav, since that link is gone.
+1. **/fellowship:** restored the full summer application from `public/apply.html` as it was before commit `eaf5337`, rebuilt in React.
+   - The questions are the same, as are the word limits (prompt 40 to 350 words, data source at least 5, completion 20 to 300), the email check and the saved draft.
+   - The sheet contract is the same: 15 keys in the same order, with `consent` as the optional "keep me in the loop" Yes/No.
+   - After submitting, the page shows "Application received." and a "Join the Atlas Discord" button (https://discord.gg/MzCHHTqzKs).
+   - Restyled to match the homepage. Everything about closed applications, the waitlist and the old research group model is gone.
+   - `public/apply.html` now redirects to `/fellowship`.
+   - In `src/lib/dates.ts`, `DATES` says the fellowship is open: applications close November 1, 2026; it runs November 2 to December 13, 2026. The homepage fact strip now reads those dates too. `FELLOWSHIP_WEEKS` is now 6.
+2. **Site description:** set to your text in `index.html` (description, og, twitter and JSON-LD) and in `SITE_DESCRIPTION` in `seo.ts`. I also updated the /fellowship SEO entry, which still said applications were closed.
+3. **`public/llms.txt`:** rewritten from current site copy. It covers the November 2026 dates, free and online, who can apply, the weeks, the summer results, the three researchers with the non-affiliation line, the partners in the site's own wording, and the application link.
+4. **README:** design system, current state, copy rules and routes rewritten to match the site now; obsolete rules deleted.
+5. **Sitemap:** removed `/events`, `/get-involved` and `/partners`. The pages themselves still exist.
+6. **Fuller slide:** now `fuller-lesson.webp` at 91 KB and 1600×900. The 1.5 MB PNG is removed (it is still in git history).
 
-## Files touched
+Checks on /fellowship at 1280px and 375px: nothing scrolls sideways, every control is at least 44px, and no text mentions closed applications, the waitlist or research groups. Submitting an empty form flags all 12 required answers and moves focus to the first. No console errors.
 
-`index.html`, `tailwind.config.ts`, `src/index.css`, `public/apply.html`, `public/privacy.html`, `public/llms.txt`, `public/sitemap.xml`, `public/images/fuller-lesson.png` (added), `README.md`, `package.json`, `package-lock.json`, `src/App.tsx`, `src/lib/dates.ts`, `src/lib/seo.ts`, `src/components/Nav.tsx`, `src/components/Footer.tsx`, `src/components/visuals/BriefPreview.tsx`, `src/pages/Landing.tsx`, `src/pages/About.tsx` (new), `src/components/site/{Container,Researchers,Quote,HeroImage}.tsx` (new).
+## Decisions to check
 
-No page or component was deleted. The old homepage sections (FeaturedGroups, ResearchGroupsPitch, EventsStrip, ProcessTrack, StatementPanel, FieldIndex, OutputSection, ProofBand, GetInvolvedLine, FellowshipStrip, Faq, Closing, Hero, HatchDivider) are still in the repo but no longer used. I did not touch the Google Sheets loaders in `src/lib/*Source.ts`.
-
-## Pages no longer linked from anywhere
-
-- `/events`, which also cuts off `/events/:slug`, since those pages were only linked from `/events` and the old homepage strip
-- `/get-involved`
-- `/partners`
-
-Still linked: `/research-groups` (from a link on `/fellowship` and from `public/apply.html`, though no longer from the nav), `/research-groups/:slug` (from `/research-groups`), and `/journal/:slug` (from `/journal`).
-
-## Checks
-
-- Ran headless Chrome against the dev server at 1280px and 375px on both pages. Neither page scrolls sideways. At 375px the nav wraps to the four links on one row with Apply below it.
-- Every link and button is at least 44px tall. The legal line's inline email was the one exception, so it is now plain text; the mailto link in the row above is 50px.
-- Tabbing through the page, every focusable element shows a visible outline. Every internal link loads a real route, the `#fellowship`, `#lessons` and `#fellows` anchors exist, and there were no console errors.
-
-## Could not match, or decisions to check
-
-- **`.claude/skills/frontend-design/SKILL.md` does not exist.** The `.claude/skills/` folder is empty.
-- **README copy rules conflict with the reference text.** As instructed, I used the reference word for word, which breaks three README rules: it says "education access" (the README bans that framing), it names individuals (professors, fellows), and it presents the fellowship as open (the README and `dates.ts` say it is closed). The README design-system section also still describes the old monochrome, Instrument Serif system. I left both sections alone because you only asked me to change the Lumiere rule. Both need rewriting before someone "fixes" the site back.
-- **Footer legal line kept.** The reference footer doesn't have the "operates as a project of a California nonprofit…" line, but the code marks it as exact required wording. I kept it as a small line under the footer row.
-- **Nav targets:** Journal goes to the real `/journal` page, not the reference's `#journal` anchor. That keeps the Journal page linked. The "Where your paper goes" section still has `id="journal"`.
-- **Site meta description** in `index.html` and `seo.ts` still talks about research groups and says fellowship applications are closed. I did not change it.
-- **Hero image alt text** is "An Atlas fellow at work". This is screen-reader text, not visible copy. Replace it once the real photo, with the fellow's name, arrives.
-- `fuller-lesson.png` is 1.5 MB. It is lazy-loaded, but a compressed JPG or WebP would be lighter.
-- I did not touch `notes/redesign/` or `public/atlas-linkedin-cover-4200x700.png`; neither is committed.
+- **The grade list gained "University"**, because university students can now apply. Otherwise the option lists are the summer ones. Country is a dropdown again (the summer list, with "Turkey" and "USA" spellings). The waitlist form had used a free-text country field.
+- **The Consent column changes meaning partway down the sheet.** In summer rows it means "keep me in the loop" (Yes/No). The waitlist rows from August onward wrote "yes" for the privacy agreement and put "Waitlist for next cohort" in Referral. New rows use the summer meaning.
+- **Crimson on things that aren't clickable:** the italic eyebrow lines and week labels, from the homepage reference and repeated on /fellowship, are crimson but not clickable. That breaks the README rule you asked for. Form errors now use the `alert` token instead of crimson.
+- **Copy I wrote, since the reference had none for /fellowship:** the heading "Apply to the Atlas Fellowship", the confirmation text, and the line "Your answers are saved in this browser as you type". The keep-in-the-loop line also drops the summer version's mention of chapter applications. Everything else is homepage text or the summer form's own wording.
+- **No page links to `/research-groups` anymore.** Its only remaining link, on the old /fellowship page, is gone. It is still in the sitemap.
