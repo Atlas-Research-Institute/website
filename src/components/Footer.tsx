@@ -59,9 +59,8 @@ export function Footer() {
         <p className="text-[14px] leading-relaxed max-w-2xl text-muted">
           Atlas Research Institute operates as a project of a California
           nonprofit public benefit corporation. For more information contact{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="link">
-            {CONTACT_EMAIL}
-          </a>
+          {/* Plain text: the mailto link sits in the row above, at 44px. */}
+          {CONTACT_EMAIL}
         </p>
       </div>
     </footer>
