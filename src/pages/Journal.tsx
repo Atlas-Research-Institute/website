@@ -1,324 +1,51 @@
 import { Link } from "react-router-dom";
-import {
-  isFullTextPending,
-  peerReviewedArticles,
-  publicationDate,
-  REVIEW_STATUS,
-  workingPapers,
-  type Publication,
-} from "@/data/publications";
-import { SHOW_WORKING_PAPERS } from "@/lib/flags";
-import { usePublications } from "@/lib/usePublications";
+import { Container } from "@/components/site/Container";
+import { APPLY_PATH } from "@/lib/dates";
 
 /**
- * The Atlas Journal.
+ * The Atlas Journal: a next-issue notice until the journal system is rebuilt.
  *
- * TWO TRACKS, KEPT VISUALLY AND STRUCTURALLY SEPARATE.
- *
- * Working papers are founding contributions published without peer review.
- * Peer-reviewed articles have completed review. The page must never let
- * a reader mistake one for the other, and must never imply that submission
- * leads to publication.
- *
- * The working-papers track is currently hidden behind SHOW_WORKING_PAPERS. When
- * it is off the page has to read as a complete page about the reviewed track
- * rather than one with a hole in it, which is why the intro copy and the first
- * section's top border are both conditional. Flip the flag and both revert.
+ * Publications are deliberately NOT fetched here. src/data/publications.ts,
+ * the publications source, the /journal/:slug route and JournalArticle.tsx
+ * are kept for that rebuild.
  */
 export function Journal() {
-  const { publications, loading } = usePublications();
-  const working = workingPapers(publications);
-  const reviewed = peerReviewedArticles(publications);
-
   return (
-    <div className="bg-paper">
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-5xl px-6 pt-16 md:pt-24 pb-12">
-          <p className="meta-label">The Atlas Journal</p>
-          <h1 className="mt-4 font-display text-4xl md:text-6xl leading-[1.05] max-w-3xl">
-            Student research, published in the open.
-          </h1>
-          {SHOW_WORKING_PAPERS ? (
-            <p className="mt-6 max-w-2xl text-lg text-muted leading-relaxed">
-              The Journal runs two separate tracks. Working papers are founding
-              contributions from the Atlas team. Peer-reviewed articles have
-              completed peer review. They are not the same thing, and the
-              Journal does not present them as though they are.
-            </p>
-          ) : (
-            /*
-              With working papers hidden there is only one track, so describing
-              "two separate tracks" would point at a section that is not on the
-              page. This says what the reader can actually see.
-            */
-            <p className="mt-6 max-w-2xl text-lg text-muted leading-relaxed">
-              The Journal publishes student research that has completed peer
-              review. Below are the articles that have cleared it, and how review
-              works.
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------------- */}
-      {/* TRACK 1 — Working papers. Published WITHOUT peer review.           */}
-      {/* Hidden entirely behind SHOW_WORKING_PAPERS. Nothing here is dead   */}
-      {/* code — flipping the flag restores it exactly as written.           */}
-      {/* ---------------------------------------------------------------- */}
-      {SHOW_WORKING_PAPERS && (
-      <section className="mx-auto max-w-5xl px-6 py-12 md:py-16">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-          <h2 className="font-display text-2xl md:text-3xl">
-            Atlas Working Papers
-          </h2>
-          {/* From the shared constant, so it cannot drift from the article page. */}
-          <span className="meta-label">
-            {REVIEW_STATUS["working-paper"].short}
-          </span>
-        </div>
-
-        <p className="mt-6 max-w-2xl text-[15px] text-muted leading-relaxed">
-          These are founding contributions from the Atlas team, published while
-          the first open call for submissions is underway. They have not been
-          through peer review, and nothing in this track should be read as
-          reviewed work.
+    <div className="bg-paper text-ink text-[19px] leading-[1.65]">
+      <Container className="pt-16 pb-[104px]">
+        <h1 className="m-0 mb-6 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
+          The Atlas Journal
+        </h1>
+        <p className="m-0 mb-4 max-w-[36em] text-[21px] text-body-muted">
+          An open archive of the research papers Atlas fellows write. Each issue
+          collects the papers from one fellowship.
+        </p>
+        <p className="m-0 max-w-[36em] text-[17px] text-muted">
+          Atlas editors read every paper before it goes up. The journal is not
+          externally peer reviewed.
         </p>
 
-        {loading ? (
-          <PublicationListSkeleton />
-        ) : working.length > 0 ? (
-          <ul className="mt-8 space-y-4">
-            {working.map((paper) => (
-              <PublicationRow key={paper.slug} publication={paper} />
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-8 text-[15px] text-muted">
-            No working papers have been published yet.
-          </p>
-        )}
-      </section>
-      )}
-
-      {/* ---------------------------------------------------------------- */}
-      {/* TRACK 2 — Peer-reviewed articles. Empty until the first issue.    */}
-      {/* ---------------------------------------------------------------- */}
-      {/*
-        The top border only belongs here when a section precedes this one.
-        Without it, this rule would sit directly against the header's border-b
-        and render as a doubled hairline.
-      */}
-      <section className={SHOW_WORKING_PAPERS ? "border-t border-line" : ""}>
-        <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
-          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-            <h2 className="font-display text-2xl md:text-3xl">
-              Peer-Reviewed Articles
-            </h2>
-            {/*
-              Conditional, not decoration. Once the Sheet carries a reviewed
-              article this badge would be a false statement sitting directly
-              above the thing that disproves it. Hidden while loading too, so it
-              cannot flash on and off as the fetch resolves.
-            */}
-            {!loading && reviewed.length === 0 && (
-              <span className="meta-label">First issue not yet published</span>
-            )}
+        <div className="mt-12 flex flex-wrap items-end justify-between gap-x-12 gap-y-6 rounded bg-mist p-8 md:p-10">
+          <div>
+            <p className="m-0 mb-1 text-[16px] italic text-muted">Next issue</p>
+            <p className="m-0 mb-2 text-[length:clamp(26px,3vw,34px)] leading-[1.2] font-semibold text-navy">
+              Winter 2026. Coming soon.
+            </p>
+            <p className="m-0">Papers from the November 2026 Fellowship.</p>
           </div>
-
-          {loading ? (
-            <PublicationListSkeleton />
-          ) : reviewed.length > 0 ? (
-            <ul className="mt-8 space-y-4">
-              {reviewed.map((article) => (
-                <PublicationRow key={article.slug} publication={article} />
-              ))}
-            </ul>
-          ) : (
-            <div className="mt-8 rounded-card border border-line bg-surface p-7 md:p-9">
-              <p className="max-w-2xl text-[15px] text-muted leading-relaxed">
-                The first reviewed issue has not been published. Rather than
-                list placeholders, here is what the process actually involves.
-              </p>
-
-              <div className="mt-8 grid gap-8 md:grid-cols-3">
-                <ProcessStep
-                  step="01"
-                  title="Submission"
-                  body="Completed work from a research group or fellow is submitted to Atlas. Submission is not acceptance, and it carries no expectation of publication."
-                />
-                <ProcessStep
-                  step="02"
-                  title="Review"
-                  body="The Atlas research and editorial team evaluates the work against the criteria below. Reviewers may request revisions, and revision is the normal outcome rather than a bad one."
-                />
-                <ProcessStep
-                  step="03"
-                  title="Decision"
-                  body="Work meeting the Journal's standards may be published. Work that does not is declined, with the reasons given so the group can act on them."
-                />
-              </div>
-
-              <div className="mt-9 pt-7 border-t border-line">
-                <h3 className="meta-label">What review looks for</h3>
-                <ul className="mt-4 grid gap-2.5 md:grid-cols-2 text-[15px] text-muted">
-                  <Criterion>
-                    A question that is stated clearly and is actually answerable
-                    with the evidence gathered.
-                  </Criterion>
-                  <Criterion>
-                    Methods described in enough detail that someone else could
-                    follow them.
-                  </Criterion>
-                  <Criterion>
-                    Sources that are credible, accurately cited, and fairly
-                    represented.
-                  </Criterion>
-                  <Criterion>
-                    Conclusions that the evidence supports, without overstating
-                    what was found.
-                  </Criterion>
-                  <Criterion>
-                    Limitations discussed honestly rather than omitted.
-                  </Criterion>
-                  <Criterion>
-                    Original work, with any assistance and prior work properly
-                    attributed.
-                  </Criterion>
-                </ul>
-              </div>
-
-              <div className="mt-9 pt-7 border-t border-line grid gap-7 md:grid-cols-2">
-                <div>
-                  <h3 className="meta-label">
-                    What revision means
-                  </h3>
-                  <p className="mt-3 text-[15px] text-muted leading-relaxed">
-                    Most work that is eventually published is revised first. A
-                    revision request is a description of what the argument
-                    still needs — narrower claims, a clearer method, better
-                    sourcing — and a group may revise and resubmit.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="meta-label">
-                    What rejection means
-                  </h3>
-                  <p className="mt-3 text-[15px] text-muted leading-relaxed">
-                    Some work is declined. That is a judgment about a specific
-                    manuscript against the Journal's standards, not about the
-                    people who wrote it, and the reasons are given in writing.
-                    Declined work remains the group's own to develop or publish
-                    elsewhere.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          <Link
+            to={APPLY_PATH}
+            className="max-w-[22em] py-3 text-crimson underline underline-offset-4 hover:text-crimson-hover"
+          >
+            Want your paper in a future issue? Apply to the fellowship
+          </Link>
         </div>
-      </section>
+      </Container>
     </div>
   );
 }
 
-function ProcessStep({
-  step,
-  title,
-  body,
-}: {
-  step: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div>
-      <span className="meta-label">{step}</span>
-      <h3 className="mt-2 font-display text-lg">{title}</h3>
-      <p className="mt-2 text-[15px] text-muted leading-relaxed">{body}</p>
-    </div>
-  );
-}
-
-function Criterion({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex gap-2.5 leading-relaxed">
-      <span aria-hidden className="text-muted shrink-0">
-        —
-      </span>
-      <span>{children}</span>
-    </li>
-  );
-}
-
-/**
- * A single publication row.
- *
- * Every entry links to the FULL paper, never an abstract-only stub. When no
- * full text exists yet the control renders disabled rather than as a dead
- * link, and the row does not pretend to be readable.
- */
-function PublicationRow({ publication }: { publication: Publication }) {
-  const pending = isFullTextPending(publication);
-  /*
-   * "Reviewed <date>" on the peer-reviewed track, "Published <date>" on working
-   * papers. The word is carried with the date rather than assumed from which
-   * list this row is in, because this component renders in both.
-   */
-  const { label, iso } = publicationDate(publication);
-
-  return (
-    <li className="card-hover rounded-card border border-line bg-surface p-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="meta-label">{publication.field}</span>
-        <span className="meta-label">
-          {label} {formatPublishedDate(iso)}
-        </span>
-      </div>
-
-      <h3 className="mt-3 font-display text-xl leading-snug">
-        {publication.title}
-      </h3>
-
-      <p className="mt-1.5 text-sm text-muted">
-        {publication.authors.join(", ")}
-      </p>
-
-      <p className="mt-3 max-w-2xl text-[15px] text-muted leading-relaxed">
-        {publication.abstract.split(/\n\s*\n/)[0]}
-      </p>
-
-      <div className="mt-5 flex flex-wrap items-center gap-5">
-        <Link
-          to={`/journal/${publication.slug}`}
-          className="text-sm link inline-flex items-center gap-1.5"
-        >
-          Read the paper
-          <span aria-hidden>→</span>
-        </Link>
-        {pending && (
-          <span className="text-sm text-muted">Full text coming soon</span>
-        )}
-      </div>
-    </li>
-  );
-}
-
-/** Matches the row layout so nothing shifts when publications arrive. */
-function PublicationListSkeleton() {
-  return (
-    <ul aria-hidden className="mt-8 space-y-4">
-      {Array.from({ length: 2 }, (_, i) => (
-        <li key={i} className="rounded-card border border-line bg-surface p-6">
-          <div className="h-3 w-44 rounded bg-line" />
-          <div className="mt-4 h-5 w-3/5 rounded bg-line" />
-          <div className="mt-3 h-3 w-32 rounded bg-line" />
-          <div className="mt-4 h-3 w-full rounded bg-line" />
-          <div className="mt-2 h-3 w-4/5 rounded bg-line" />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
+/** Used by JournalArticle.tsx. Kept here so that route needs no changes. */
 export function formatPublishedDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return iso;
