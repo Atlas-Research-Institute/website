@@ -215,6 +215,9 @@ export function Fellowship() {
   const [errors, setErrors] = useState<ApplicationErrors>({});
   const [counts, setCounts] = useState({ prompt: 0, completion: 0 });
   const [referral, setReferral] = useState("");
+  // The address shown on the confirmation. Held here because the draft in
+  // localStorage is cleared on submit.
+  const [submittedEmail, setSubmittedEmail] = useState("");
 
   // Restore a saved draft once.
   useEffect(() => {
@@ -278,6 +281,7 @@ export function Fellowship() {
     }
 
     const payload = buildApplicationPayload(fd);
+    setSubmittedEmail(payload.email);
     // The POST is no-cors, so this is the only way to see what left the
     // browser. Silent on the live domain; see src/lib/payloadLog.ts.
     logPayload("application", payload);
@@ -364,6 +368,12 @@ export function Fellowship() {
               Thank you. Your application to the {DATES.cohortName} has been
               received. We read every application ourselves and will email you
               our decision by {DATES.decisionsByLabel}.
+            </p>
+            <p className="m-0 mb-4 [overflow-wrap:anywhere]">
+              You should get a confirmation email at{" "}
+              <strong className="font-semibold">{submittedEmail}</strong> from{" "}
+              {CONTACT_EMAIL} within a few minutes. If you do not see it, check
+              your spam folder.
             </p>
             <p className="m-0 mb-7">While you wait, say hello in the Atlas Discord.</p>
             <a
