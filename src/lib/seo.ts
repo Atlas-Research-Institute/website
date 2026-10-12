@@ -31,14 +31,11 @@ export const SITE_ORIGIN = "https://atlas-research.org";
 export const SITE_NAME = "Atlas Research Institute";
 
 /**
- * The site description, used on the home page and as the fallback.
- *
- * Under 155 characters, no em dashes, no adjective pairs, none of the banned
- * words. Research groups first; the fellowship is not mentioned, because it is
- * the secondary programme and its applications are closed.
+ * The site description, used on the home page and as the fallback. Keep it in
+ * step with the description tags in index.html.
  */
 export const SITE_DESCRIPTION =
-  "Atlas runs student research groups in eight fields. Three or more students, one research question. Free, and open worldwide.";
+  "A free, six-week online fellowship where students run their first research project on education access where they live. Applications close November 1.";
 
 export type RouteSeo = {
   /** Rendered as "<title> | Atlas Research Institute". Omit for the home page. */
@@ -73,9 +70,9 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       "Student research published in the open. How review works, what it looks for, and what revision and rejection mean.",
   },
   "/fellowship": {
-    title: "Fellowship",
+    title: "Apply to the Fellowship",
     description:
-      "A selective four-week summer cohort, free and remote. Applications for this cohort are closed and the waitlist is open.",
+      "Apply to the November 2026 Atlas Fellowship: six weeks of guided research, free and online. Applications close November 1.",
   },
   "/partners": {
     title: "Partners",
