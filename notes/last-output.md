@@ -1,178 +1,50 @@
-# Homepage groups grid: cap of 5, wide slot, "see all" link — and the deploy question
+# Redesign: homepage, About page, Source Serif 4
 
-Commit `6a32cf2` on `main`, pushed. Build passes.
+Branch: `redesign` (checked with `git branch --show-current`). Six commits, pushed to `origin redesign`. `npm run build` passes.
 
-**The headline finding: three of the four things you reported are already fixed
-in the deployed bundle. You are looking at a stale page.** Evidence below, then
-the changes I made anyway.
+## Read this first: where Apply points
 
----
+**Every Apply button goes to `/fellowship`.** The old site had no button labelled "Apply". The header button said "Start a group" and opened the Principal Researcher Google Form (`https://forms.gle/s2qpP3XX3ydLc58k6`). That form is for leading a research group, not for applying to the fellowship. The site's own apply routes point somewhere else: the legacy `/apply` route redirects to `/fellowship`, and `public/apply.html` links to `/fellowship`. `/fellowship` holds the application form (the waitlist form). I used that target and did not change the form. The target is one constant, `APPLY_PATH` in `src/lib/dates.ts`.
 
-## The hero "semester" line — fixed, in source, in main, and live
+**The problem:** `/fellowship` still says applications for this cohort are closed and offers only the waitlist. The new homepage says "Apply by November 1". Someone who clicks Apply will land on a page that says applications are closed. You need to decide what that page should say. I was told not to change the form, so I didn't.
 
-You asked me to verify and say which. It is fixed in all three:
+## What changed
 
-- **Source:** `src/components/Hero.tsx:38` reads "…recruit three or more members,
-  and finish a paper."
-- **`origin/main`:** `git show origin/main:src/components/Hero.tsx` — same.
-- **The deployed JavaScript bundle:** I pulled
-  `https://atlas-research.org/assets/index-yvEPyyZm.js` and grepped it.
-  **Zero occurrences of "semester".** The strings actually in the live bundle are
-  "recruit three or more members, and finish a paper." and "…and finish a paper.
-  At a school, in a community, or entirely online."
+- **Type:** Source Serif 4 (400 to 700, roman and italic) is now the only typeface. It replaces Instrument Serif and Archivo in `index.html`, `tailwind.config.ts` (display, serif and sans all map to it), `src/index.css`, `public/apply.html` and `public/privacy.html`. The privacy page now loads the font as well as declaring it. The Archivo `fontFamily` in `BriefPreview.tsx` is also replaced.
+- **Tokens:** navy, crimson (plus crimson-hover #6A1523, taken from the reference's hover colour), ink #1B2433, body-muted, muted #4A5568, mist, rule, navy-border, on-navy-muted. All corners are 4px. Removed sitewide: the paper-grain texture, the card shadow and lift, and the all-caps `.meta-label`. Meta labels are now italic. Links (`.link`) are crimson. The focus outline is 3px crimson, white on navy sections.
+- **Header and footer:** 8px navy bar, the wordmark, Fellowship (`/#fellowship`), Lessons (`/#lessons`), Journal (`/journal`), About (`/about`) and a crimson Apply button. The footer has About, Journal, Privacy, the mailto link, and Instagram and LinkedIn icons from `react-icons/fa6`, each with an aria-label.
+- **Homepage:** rebuilt in React and Tailwind to match `home.html`, with the 10 sections in the reference order and the copy word for word. The hero image points at `/images/hero.jpg` and shows a plain mist block until that file exists, with no placeholder text. The Fuller slide is `public/images/fuller-lesson.png` (now committed). The researcher names and the non-affiliation line come from one component (`ResearcherList`), so neither can appear without the other.
+- **About:** new page at `/about`, matching `about.html`. It is linked from the nav and the footer, and has an SEO entry and a sitemap entry.
+- **Lumiere:** the README rule and `public/llms.txt` now say scholarships.
+- **404 page:** the button is restyled, and its text no longer points readers to the research group directory in the nav, since that link is gone.
 
-The deployed `index.html` also already carries the corrected meta description
-("…one research question. Free, and open worldwide." — no "one semester").
+## Files touched
 
-So: **treat it as deploy lag on your end, not a deploy lag on the server.** The
-server is current. What is stale is the copy of the page in your browser. Vercel
-returned `x-vercel-cache: HIT` with `age: 349` on the HTML, and the bundle
-filename is content-hashed, so a browser holding the old HTML keeps requesting
-the old hashed bundle and never sees the new one. A hard reload clears it.
+`index.html`, `tailwind.config.ts`, `src/index.css`, `public/apply.html`, `public/privacy.html`, `public/llms.txt`, `public/sitemap.xml`, `public/images/fuller-lesson.png` (added), `README.md`, `package.json`, `package-lock.json`, `src/App.tsx`, `src/lib/dates.ts`, `src/lib/seo.ts`, `src/components/Nav.tsx`, `src/components/Footer.tsx`, `src/components/visuals/BriefPreview.tsx`, `src/pages/Landing.tsx`, `src/pages/About.tsx` (new), `src/components/site/{Container,Researchers,Quote,HeroImage}.tsx` (new).
 
----
+No page or component was deleted. The old homepage sections (FeaturedGroups, ResearchGroupsPitch, EventsStrip, ProcessTrack, StatementPanel, FieldIndex, OutputSection, ProofBand, GetInvolvedLine, FellowshipStrip, Faq, Closing, Hero, HatchDivider) are still in the repo but no longer used. I did not touch the Google Sheets loaders in `src/lib/*Source.ts`.
 
-## Why items 2 and 3 have the same cause
+## Pages no longer linked from anywhere
 
-I checked the deployed bundle rather than guessing. The live `FeaturedGroups`
-compiles to this (reformatted from the minified source):
+- `/events`, which also cuts off `/events/:slug`, since those pages were only linked from `/events` and the old homepage strip
+- `/get-involved`
+- `/partners`
 
-```js
-function sv() {
-  const { groups: r, loading: s } = qa(),
-        a = Py(r.filter(hp)).slice(0, 6);      // Py = sortForFeatured
-  if (!s && a.length === 0) return null;
-  const [u, ...d] = a;                          // u = first sorted group
-  return jsxs(Cr, { title: "Groups on Atlas", ..., children: [
-    ...jsx("div", { className: "md:col-span-2",
-                    children: jsx(ba, { group: u, featured: true }) }),
-    ...d.map(p => jsx(ba, { group: p }, p.slug)),
-    !s && jsx("p", { className: "mt-8 text-sm",
-                     children: jsx(ge, { to: "/research-groups",
-                                         className: "link",
-                                         children: "See all research groups" }) })
-  ]});
-}
-```
+Still linked: `/research-groups` (from a link on `/fellowship` and from `public/apply.html`, though no longer from the nav), `/research-groups/:slug` (from `/research-groups`), and `/journal/:slug` (from `/journal`).
 
-`Py` is `sortForFeatured`, member-count key and all — I found its comparator in
-the bundle:
+## Checks
 
-```js
-function Py(r){return r.slice().sort((s,a)=>{
-  const u=Number(jr(a))-Number(jr(s)); if(u!==0) return u;
-  const d=a.memberCount-s.memberCount;
-  return d!==0?d:a.startedAt.localeCompare(s.startedAt)})}
-```
+- Ran headless Chrome against the dev server at 1280px and 375px on both pages. Neither page scrolls sideways. At 375px the nav wraps to the four links on one row with Apply below it.
+- Every link and button is at least 44px tall. The legal line's inline email was the one exception, so it is now plain text; the mailto link in the row above is 50px.
+- Tabbing through the page, every focusable element shows a visible outline. Every internal link loads a real route, the `#fellowship`, `#lessons` and `#fellows` anchors exist, and there were no console errors.
 
-So on the **deployed** code the wide card is `featured[0]` and the link string is
-present. Both of the behaviours you describe belong to the **previous** bundle.
+## Could not match, or decisions to check
 
-### Proved against the live Sheet
-
-I pulled the actual CSV the site reads and ran both sort orders over it. Eleven
-rows are published. The relevant six:
-
-| Lead | Members | StartedAt | Recruiting |
-|---|---|---|---|
-| Thukten | 2 | 2026-11-01 | yes |
-| Katelyn | 1 | 2026-09-30 | yes |
-| Chloe | 1 | 2026-09-01 | yes |
-| Rishita | 3 | 2026-08-30 | yes |
-| Aurora | 1 | 2026-08-10 | yes |
-| Yakshita | 1 | 2026-08-01 | yes |
-
-**Old sort** (`sortForListing` — recruiting, then StartedAt desc; no member key):
-
-1. **Thukten → WIDE**, 2. Katelyn, 3. Chloe, 4. **Rishita → narrow, second row**,
-5. Aurora, 6. Yakshita
-
-**Current sort** (`sortForFeatured` — recruiting, members desc, StartedAt desc):
-
-1. **Rishita → WIDE**, 2. Thukten, 3. Katelyn, 4. Chloe, 5. Aurora, 6. Yakshita
-
-The old order reproduces your report exactly, down to Rishita landing in the
-second row — position 4 falls there because the lead card eats two of the three
-columns in row 1. The current order puts Rishita wide, which is what you expect.
-
-**There was no bug in the wide slot and none in the link.** I did not invent a
-fix for either. What I changed is described below and is real, but it is not what
-made those two symptoms go away — a hard reload is.
-
-I also ruled out a second stale deployment: `emplave.github.io/atlas-research.github.io/`
-returns 200, but it serves the raw unbuilt `index.html` (script src `/src/main.tsx`,
-no `assets/` bundle), so it renders nothing at all and is not what you are seeing.
-`atlas-research.github.io` itself 404s. `atlas-research.org` is Vercel and is current.
-
----
-
-## What I actually changed
-
-### 1. Cap at 5 — and it fixes a real layout bug
-
-Done, via a named `FEATURED_COUNT = 5`.
-
-**I have to correct something I told you last time.** I wrote that six cards
-"fill exactly two rows with no gap." That was wrong, and wrong by one. The lead
-card spans two of three columns, so N cards occupy **N + 1 column units**, not N.
-Six cards is seven units: two full rows and then a single orphan card alone on a
-third row. Your cap of 5 is six units and tiles exactly — row 1 wide + narrow,
-row 2 three narrow, which is the layout you specified.
-
-The rule is now written next to the constant: whole rows only when N ≡ 2 (mod 3),
-so 5, 8, 11 tile and 6, 7, 9, 10 do not.
-
-**A related inconsistency this closes:** the skeleton branch was rendering
-1 featured + 4 narrow = **5** cards while the loaded branch rendered **6**, so the
-grid changed size when data arrived. The skeleton count now derives from
-`FEATURED_COUNT`, so they cannot drift again.
-
-### 2. The wide slot — already unconditional, now stated
-
-`const [lead, ...rest] = featured` with a single `md:col-span-2` outside the map,
-fed the head of the sorted array. There is no condition on it and no second place
-that can produce a wide card. I did not change the logic — changing working code
-to look like it was fixed would have hidden the real cause. I added a comment
-saying the wide slot is `featured[0]` unconditionally, and pointing at
-`sortForFeatured` as the thing to inspect if the wrong group looks wide, since
-the two are the same question.
-
-The sort order itself is untouched, as you asked.
-
-### 3. The link — ungated from `loading`
-
-It was `{!loading && (…)}`. That was my own doing last time and it was the wrong
-instinct: it ties a static destination to the state of a network fetch.
-/research-groups exists whether or not the Sheet has answered, so there is no
-state in which the grid is on screen and the way out of it should not be. Now the
-only thing that removes the link is the whole section returning null.
-
-This was **not** the cause of what you saw — the gate only hides the link while
-skeletons are showing, and you were seeing real cards. But it is the one state in
-which the link could legitimately go missing, so it is gone.
-
-### 4. Two stale comments corrected
-
-- `FeaturedGroups.tsx` claimed "all six real rows have Published set to 'no', so
-  this section is currently absent from the homepage." The Sheet now publishes
-  **eleven** rows and the section renders. Corrected.
-- `sortForFeatured` inherited a caveat saying StartedAt is US `M/D/YYYY` and does
-  not string-sort. I checked the live CSV: **every published row is ISO**
-  (`2026-09-01`), so the comparison is correct as written. The caveat now says so
-  while keeping the warning for anyone who reverts the format. This also revises
-  what I told you last time, where I repeated the caveat as a live defect.
-
----
-
-## Untouched, as instructed
-
-- The sort order — `sortForFeatured`'s keys are unchanged.
-- `/research-groups` — still `sortForListing`, still unsliced.
-- The primary CTA — untouched.
-
-## One thing to check after this deploys
-
-With the cap at 5 and eleven rows published, the homepage now hides six groups
-rather than five. The link matters more than it did. Worth confirming on a hard
-reload that you get Rishita wide, Thukten narrow beside her, and Katelyn / Chloe /
-Aurora across row 2.
+- **`.claude/skills/frontend-design/SKILL.md` does not exist.** The `.claude/skills/` folder is empty.
+- **README copy rules conflict with the reference text.** As instructed, I used the reference word for word, which breaks three README rules: it says "education access" (the README bans that framing), it names individuals (professors, fellows), and it presents the fellowship as open (the README and `dates.ts` say it is closed). The README design-system section also still describes the old monochrome, Instrument Serif system. I left both sections alone because you only asked me to change the Lumiere rule. Both need rewriting before someone "fixes" the site back.
+- **Footer legal line kept.** The reference footer doesn't have the "operates as a project of a California nonprofit…" line, but the code marks it as exact required wording. I kept it as a small line under the footer row.
+- **Nav targets:** Journal goes to the real `/journal` page, not the reference's `#journal` anchor. That keeps the Journal page linked. The "Where your paper goes" section still has `id="journal"`.
+- **Site meta description** in `index.html` and `seo.ts` still talks about research groups and says fellowship applications are closed. I did not change it.
+- **Hero image alt text** is "An Atlas fellow at work". This is screen-reader text, not visible copy. Replace it once the real photo, with the fellow's name, arrives.
+- `fuller-lesson.png` is 1.5 MB. It is lazy-loaded, but a compressed JPG or WebP would be lighter.
+- I did not touch `notes/redesign/` or `public/atlas-linkedin-cover-4200x700.png`; neither is committed.
