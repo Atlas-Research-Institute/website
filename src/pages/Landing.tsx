@@ -168,10 +168,10 @@ export function Landing() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-12 items-center">
           <figure className="m-0">
             <img
-              src="/images/fuller-lesson.png"
+              src="/images/fuller-lesson.webp"
               alt="Slide from Prof. Bruce Fuller's lesson on research method, titled Method: Describing, Correlating, Explaining"
-              width={1672}
-              height={941}
+              width={1600}
+              height={900}
               loading="lazy"
               className="block h-auto w-full rounded border border-rule"
             />
