@@ -35,7 +35,7 @@ export const SITE_NAME = "Atlas Research Institute";
  * step with the description tags in index.html.
  */
 export const SITE_DESCRIPTION =
-  "A free, six-week online fellowship where students run their first research project on education access where they live. Applications close November 1.";
+  "A free, six-week online fellowship where students run their first research project on education access where they live. Applications close October 25.";
 
 export type RouteSeo = {
   /** Rendered as "<title> | Atlas Research Institute". Omit for the home page. */
@@ -72,7 +72,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   "/fellowship": {
     title: "Apply to the Fellowship",
     description:
-      "Apply to the November 2026 Atlas Fellowship: six weeks of guided research, free and online. Applications close November 1.",
+      "Apply to the November 2026 Atlas Fellowship: six weeks of guided research, free and online. Applications close October 25.",
   },
   "/partners": {
     title: "Partners",

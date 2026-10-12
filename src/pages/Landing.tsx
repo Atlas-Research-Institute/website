@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { APPLY_PATH } from "@/lib/dates";
+import { APPLY_PATH, DATES } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
 import { HeroImage } from "@/components/site/HeroImage";
 import { FactStrip } from "@/components/site/FactStrip";
@@ -112,7 +112,7 @@ export function Landing() {
               to={APPLY_PATH}
               className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
             >
-              Apply by November 1
+              Apply by {DATES.applicationsCloseLabel}
             </Link>
             <a
               href="#fellows"
@@ -248,7 +248,7 @@ export function Landing() {
       <section id="apply" className="on-navy bg-navy text-white">
         <Container className="py-20 flex flex-wrap items-center justify-between gap-x-12 gap-y-7">
           <h2 className="m-0 text-[length:clamp(30px,4vw,46px)] leading-[1.12]">
-            Applications close November 1
+            Applications close {DATES.applicationsCloseLabel}
           </h2>
           <Link
             to={APPLY_PATH}
