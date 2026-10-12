@@ -120,7 +120,7 @@ export function About() {
         <ol className="m-0 p-0 list-none grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-5">
           {TRACKS.map((t) => (
             <li key={t.title} className="rounded bg-mist p-7">
-              <div className="mb-2 text-[16px] italic text-crimson">{t.who}</div>
+              <div className="mb-2 text-[16px] italic text-navy">{t.who}</div>
               <h3 className="m-0 mb-2.5 text-[24px] leading-[1.25]">{t.title}</h3>
               <p className="m-0 text-[17px] leading-[1.6]">{t.body}</p>
             </li>

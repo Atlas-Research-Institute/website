@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { APPLY_PATH, DATES } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
-import { HeroImage } from "@/components/site/HeroImage";
 import { FactStrip } from "@/components/site/FactStrip";
 import { NameList, ResearcherList } from "@/components/site/Researchers";
 import { CountryList, Quote } from "@/components/site/Quote";
@@ -95,17 +94,14 @@ export function Landing() {
         className="mx-auto max-w-[1200px] px-6 pt-16 pb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-x-16 gap-y-12 items-center"
       >
         <div>
-          <p className="m-0 mb-[18px] text-[18px] italic text-crimson">
-            Applications open for the November Fellowship
-          </p>
           <h1 className="m-0 mb-6 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
-            Research is how knowledge gets made. Most students never get a way
-            in.
+            Curiosity is everywhere, yet research training is not.
           </h1>
           <p className="m-0 mb-8 text-[21px] text-body-muted max-w-[30em]">
-            The Atlas Fellowship is six weeks of guided research. You pick a
-            question about education access where you live, learn how to find
-            and test evidence, and finish your first research paper.
+            We teach it for free, to students wherever they live. In six weeks,
+            you pick a question about education access in your own community,
+            learn how to find and test evidence, and finish your first research
+            paper.
           </p>
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
             <Link
@@ -122,7 +118,22 @@ export function Landing() {
             </a>
           </div>
         </div>
-        <HeroImage />
+        {/* The Fuller slide stands in until a real photo of fellows replaces it (src/components/site/HeroImage.tsx). */}
+        <figure className="m-0">
+          <img
+            src="/images/fuller-lesson.webp"
+            alt="Slide from Prof. Bruce Fuller's lesson on research method, titled Method: Describing, Correlating, Explaining"
+            width={1600}
+            height={900}
+            // React 18 only knows the lowercase attribute; camelCase arrives in React 19.
+            {...{ fetchpriority: "high" }}
+            className="block h-auto w-full rounded border border-rule"
+          />
+          <figcaption className="mt-3 text-[16px] italic text-muted">
+            Prof. Bruce Fuller teaching research method to Atlas fellows,
+            August 2026.
+          </figcaption>
+        </figure>
       </section>
 
       {/* Facts */}
@@ -165,30 +176,18 @@ export function Landing() {
 
       {/* Lessons */}
       <section id="lessons" className="mx-auto max-w-[1200px] px-6 py-[104px]">
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-12 items-center">
-          <figure className="m-0">
-            <img
-              src="/images/fuller-lesson.webp"
-              alt="Slide from Prof. Bruce Fuller's lesson on research method, titled Method: Describing, Correlating, Explaining"
-              width={1600}
-              height={900}
-              loading="lazy"
-              className="block h-auto w-full rounded border border-rule"
-            />
-            <figcaption className="mt-3 text-[16px] italic text-muted">
-              Prof. Bruce Fuller teaching research method to Atlas fellows,
-              August 2026.
-            </figcaption>
-          </figure>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-8 items-start">
           <div>
             <SectionHeading className="m-0 mb-4">
               Fellows learn from working researchers
             </SectionHeading>
-            <p className="m-0 mb-7 max-w-[32em]">
+            <p className="m-0 max-w-[32em]">
               Live lessons on how research is done: forming a question,
               choosing a method, reading evidence. To name a few of the
               researchers who teach them:
             </p>
+          </div>
+          <div>
             <ResearcherList noteClassName="mt-6 mb-0" />
           </div>
         </div>
@@ -203,7 +202,7 @@ export function Landing() {
           <ol className="m-0 p-0 list-none grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-5">
             {WEEKS.map((w) => (
               <li key={w.when} className="rounded bg-white p-7">
-                <div className="mb-2 text-[16px] italic text-crimson">{w.when}</div>
+                <div className="mb-2 text-[16px] italic text-navy">{w.when}</div>
                 <h3 className="m-0 mb-2.5 text-[24px] leading-[1.25]">{w.title}</h3>
                 <p className="m-0 text-[17px] leading-[1.6]">{w.body}</p>
               </li>
