@@ -91,7 +91,10 @@ const REQUIRED: Partial<Record<FieldName, string>> = {
   research: "Choose yes or no.",
 };
 
-/** Word limits from the summer application. Minimums block; maximums warn. */
+/**
+ * Word limits from the summer application. Both minimums and maximums block
+ * submission; maximums no longer only warn. datasource has no maximum.
+ */
 const LIMITS = {
   prompt: { min: 40, max: 350 },
   datasource: { min: 5, max: Infinity },
@@ -133,6 +136,8 @@ export function validateApplication(fd: FormData): ApplicationErrors {
         n === 0
           ? "This question is required."
           : `This response is too short to review. You have written ${n} word${n === 1 ? "" : "s"}. Please write at least ${LIMITS[key].min}.`;
+    } else if (n > LIMITS[key].max) {
+      found[key] = `Over ${LIMITS[key].max} words. Cut it to ${LIMITS[key].max} or fewer to submit.`;
     }
   }
 
@@ -649,14 +654,8 @@ function Q({
 function Count({ id, n, min, max }: { id: string; n: number; min: number; max: number }) {
   const over = n > max;
   return (
-    <p id={`${id}-count`} className="m-0 mt-2 text-[16px] italic text-muted">
-      {n} {n === 1 ? "word" : "words"}. {min} to {max} words.
-      {over && (
-        <span className="text-alert">
-          {" "}
-          Over {max} words. Try to tighten it, but you can still submit.
-        </span>
-      )}
+    <p id={`${id}-count`} className={`m-0 mt-2 text-[16px] italic ${over ? "text-alert" : "text-muted"}`}>
+      {over ? `Over ${max} words` : `${n} ${n === 1 ? "word" : "words"}. ${min} to ${max} words.`}
     </p>
   );
 }
