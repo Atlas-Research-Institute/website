@@ -15,43 +15,28 @@
     font-weight: 400;
   }
   ::selection {
-    @apply bg-ink/15 text-ink;
+    @apply bg-navy/15 text-ink;
   }
 
-  /*
-   * Headings are ink and Instrument Serif at weight 400. There is no bold
-   * cut of this face — scale and spacing carry emphasis instead.
-   */
+  /* Headings are navy Source Serif 4 at 600. */
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display text-ink;
-    font-weight: 400;
+    @apply font-display text-navy;
+    font-weight: 600;
   }
 
+  /* Visible on every background: crimson on light, white inside .on-navy. */
   :focus-visible {
-    @apply outline-none ring-2 ring-ink/40 ring-offset-2 ring-offset-paper;
+    outline: 3px solid theme("colors.crimson");
+    outline-offset: 3px;
+  }
+  .on-navy :focus-visible,
+  .on-ink :focus-visible {
+    outline-color: #ffffff;
   }
 
-  /*
-   * PAPER GRAIN.
-   *
-   * Fixed, non-interactive, behind all content. On pure white the previous
-   * settings were nearly invisible, so the rect opacity is lifted from 0.035
-   * to 0.055 — still below the threshold where it touches text contrast, since
-   * it never lands on top of type.
-   */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.6;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-  }
   #root {
     position: relative;
     z-index: 1;
@@ -59,9 +44,9 @@
 }
 
 @layer utilities {
-  /* Small-caps metadata register. Faint by default. */
+  /* Metadata register. Italic, never all-caps. */
   .meta-label {
-    @apply font-sans text-[11px] tracking-meta uppercase text-faint;
+    @apply font-sans text-[15px] italic text-muted;
   }
   .rule {
     @apply border-t border-line;
@@ -70,14 +55,8 @@
   /*
    * TYPE SCALE.
    *
-   * Instrument Serif has ONE weight (400) and no bold cut. A synthesised bold
-   * looks broken, so presence has to come from SIZE, TRACKING and CONTRAST
-   * against the fixed 17px body — never from font-weight. Do not add one.
-   *
-   * Instrument Serif also tracks loose at display sizes, which is a large part
-   * of why it read thin: the letters were far apart as well as light. The
-   * negative tracking below pulls each headline into a denser mass, which is
-   * the main lever this face responds to.
+   * Used by the pages that predate the redesign. The redesigned homepage and
+   * About page set their sizes inline from notes/redesign/.
    */
   .type-hero {
     /* 52px → 104px. 7.6vw reaches the 104px ceiling at 1368px wide. */
@@ -120,15 +99,12 @@
     letter-spacing: -0.014em;
   }
 
-  /*
-   * LINKS. Ink with a 1px underline that thickens on hover. Never coloured.
-   */
+  /* LINKS. Crimson, underlined; darker on hover. */
   .link {
-    @apply text-ink underline underline-offset-4 transition-[text-decoration-thickness];
-    text-decoration-thickness: 1px;
+    @apply text-crimson underline underline-offset-4 transition-colors;
   }
   .link:hover {
-    text-decoration-thickness: 2px;
+    @apply text-crimson-hover;
   }
 
   /* Type inside an ink full-bleed band. */
@@ -145,19 +121,22 @@
     @apply text-paper;
   }
 
+  /* Type inside a navy section. */
+  .on-navy h1,
+  .on-navy h2,
+  .on-navy h3,
+  .on-navy h4 {
+    color: #ffffff;
+  }
+
   /*
-   * Card hover: 1px ink border shift plus a small lift at 120ms.
+   * Card hover: 1px border shift at 120ms. No shadow, no lift.
    */
   .card-hover {
-    transition:
-      border-color 120ms ease,
-      box-shadow 120ms ease,
-      transform 120ms ease;
+    transition: border-color 120ms ease;
   }
   .card-hover:hover {
-    @apply border-ink;
-    box-shadow: 0 6px 20px -8px rgba(14, 14, 16, 0.18);
-    transform: translateY(-2px);
+    @apply border-navy;
   }
 
   /*
@@ -196,8 +175,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  .card-hover:hover {
-    transform: none;
   }
 }

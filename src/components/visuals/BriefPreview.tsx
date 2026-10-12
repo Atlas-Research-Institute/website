@@ -85,7 +85,7 @@ export function BriefPreview({ className }: { className?: string }) {
         x="25"
         y="168"
         fill="#8A8A92"
-        fontFamily="Archivo, system-ui, sans-serif"
+        fontFamily="'Source Serif 4', Georgia, serif"
         fontSize="7"
         letterSpacing="1.2"
       >
@@ -95,7 +95,7 @@ export function BriefPreview({ className }: { className?: string }) {
         x="25"
         y="326"
         fill="#8A8A92"
-        fontFamily="Archivo, system-ui, sans-serif"
+        fontFamily="'Source Serif 4', Georgia, serif"
         fontSize="7"
         letterSpacing="1.2"
       >
