@@ -1,3 +1,4 @@
+// RETIRED October 2026. The icon set is now supplied by hand. Do not run this script: it would regenerate the old mark.
 /**
  * Generate every icon and the OG card from the brand source files.
  *
