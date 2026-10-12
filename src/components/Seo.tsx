@@ -33,6 +33,26 @@ function setMeta(selector: string, attr: "content" | "href", value: string) {
   }
 }
 
+/**
+ * Adds <meta name="robots" content="noindex"> on noindex routes and removes it
+ * everywhere else, so it never lingers after client-side navigation.
+ */
+function setRobots(noindex: boolean) {
+  const existing = document.head.querySelector('meta[name="robots"]');
+  if (!noindex) {
+    existing?.remove();
+    return;
+  }
+  if (existing) {
+    existing.setAttribute("content", "noindex");
+    return;
+  }
+  const meta = document.createElement("meta");
+  meta.setAttribute("name", "robots");
+  meta.setAttribute("content", "noindex");
+  document.head.appendChild(meta);
+}
+
 export function Seo() {
   const { pathname } = useLocation();
 
@@ -49,6 +69,7 @@ export function Seo() {
     setMeta('meta[name="twitter:title"]', "content", title);
     setMeta('meta[name="twitter:description"]', "content", seo.description);
     setMeta('link[rel="canonical"]', "href", canonical);
+    setRobots(Boolean(seo.noindex));
   }, [pathname]);
 
   return null;

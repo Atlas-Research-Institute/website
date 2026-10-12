@@ -41,6 +41,13 @@ export type RouteSeo = {
   /** Rendered as "<title> | Atlas Research Institute". Omit for the home page. */
   title?: string;
   description: string;
+  /**
+   * Keep the route out of search results. Seo.tsx writes
+   * <meta name="robots" content="noindex">; vercel.json also sends an
+   * X-Robots-Tag header, which crawlers see without running JS. Inherited by
+   * child paths through the longest-prefix match below.
+   */
+  noindex?: boolean;
 };
 
 /**
@@ -55,6 +62,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     description: SITE_DESCRIPTION,
   },
   "/research-groups": {
+    noindex: true,
     title: "Research Groups",
     description:
       "Lead an Atlas research group. Three or more students, one research question. Free, at a school, in a community, or entirely online.",
@@ -80,6 +88,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       "Atlas works with journals on submission routes, researchers who run guest sessions, and organisations that mentor student teams.",
   },
   "/get-involved": {
+    noindex: true,
     title: "Get Involved",
     description:
       "Two ways in. Lead a research group in your field, or join the Atlas Student Team. Both open to high school and college students worldwide.",
