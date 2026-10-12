@@ -1,39 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Outcomes } from "@/components/Outcomes";
-import { Field, inputCls, SubmitState } from "@/components/forms";
-import { CONTACT_EMAIL, DATES, WAITLIST_ENDPOINT } from "@/lib/dates";
-import { ELIGIBILITY_LABEL, FELLOWSHIP_WEEKS } from "@/lib/stats";
+import { Container, SectionHeading } from "@/components/site/Container";
+import { FactStrip } from "@/components/site/FactStrip";
+import { CONTACT_EMAIL, DATES, DISCORD_URL, WAITLIST_ENDPOINT } from "@/lib/dates";
 import { logPayload } from "@/lib/payloadLog";
-
-/** Text fields that must be non-blank, with the message shown when they are not. */
-const REQUIRED_TEXT_FIELDS = {
-  name: "Enter your name.",
-  email: "Enter your email address.",
-  school: "Enter your school or institution.",
-  city: "Enter your city.",
-  /*
-   * Country is its own required field, not half of a combined "City, Country"
-   * string. It is the column that feeds src/data/reach.ts, and a free-text
-   * "Lagos, Nigeria" cannot be split back apart reliably — "Washington, DC,
-   * USA" and "Cork, Ireland" do not parse the same way.
-   */
-  country: "Enter your country.",
-} as const;
-
-/**
- * Consent is required and is validated in JS like everything else.
- *
- * The browser's `required` attribute cannot be relied on here: the form sets
- * `noValidate` so that all messages are ours, which makes native constraint
- * validation inert. The attribute stays on the input for assistive tech, but
- * the check below is what actually blocks submission.
- */
-const CONSENT_ERROR = "Agree to the privacy policy to continue.";
-
-type TextFieldName = keyof typeof REQUIRED_TEXT_FIELDS;
-type FieldName = TextFieldName | "privacy";
-export type WaitlistErrors = Partial<Record<FieldName, string>>;
 
 /**
  * The exact keys the Apps Script reads, in the order it appends them.
@@ -42,19 +12,23 @@ export type WaitlistErrors = Partial<Record<FieldName, string>>;
  *
  *   new Date(), name, email, school, city, country, grade, timezone, prompt,
  *   datasource, completion, research, research_desc, consent, referral,
- *   referral_other
+ *   referral_other, discord
  *
- * The script supplies the timestamp itself, so the client sends the fifteen
- * field keys only. EVERY key is always sent as a string — never undefined.
- * `undefined` does not survive JSON.stringify (the key is dropped entirely),
- * which writes a blank the script did not expect and is the exact failure this
- * payload exists to prevent.
+ * The first fifteen are the summer 2026 application's questions, and the
+ * columns of the sheet the summer cohort applied into. `discord` was added for
+ * the November 2026 cohort and goes LAST so no existing column moves. The
+ * script supplies the timestamp, so the client sends the sixteen field keys
+ * only, every one as a string: `undefined` does not survive JSON.stringify and
+ * would shift the columns.
  *
- * Seven of the fifteen are fields this form does not collect. They are sent as
- * empty strings deliberately, so the columns stay aligned with the 85 existing
- * rows rather than shifting.
+ * `discord` is the username with one leading "@" removed, or "Blocked where I
+ * live" when the applicant says Discord is blocked for them.
+ *
+ * `consent` is the OPTIONAL "keep me in the loop" box, Yes or No, as it was in
+ * the summer. The required privacy agreement blocks submission and is not a
+ * column.
  */
-export type WaitlistPayload = {
+export type ApplicationPayload = {
   name: string;
   email: string;
   school: string;
@@ -70,111 +44,247 @@ export type WaitlistPayload = {
   consent: string;
   referral: string;
   referral_other: string;
+  discord: string;
+};
+
+type FieldName =
+  | "name"
+  | "email"
+  | "school"
+  | "city"
+  | "country"
+  | "grade"
+  | "timezone"
+  | "research"
+  | "prompt"
+  | "datasource"
+  | "completion"
+  | "discord"
+  | "agree";
+export type ApplicationErrors = Partial<Record<FieldName, string>>;
+
+/** Field order, so the first error can take focus. */
+const FIELD_ORDER: FieldName[] = [
+  "name",
+  "email",
+  "school",
+  "city",
+  "country",
+  "grade",
+  "timezone",
+  "research",
+  "prompt",
+  "datasource",
+  "completion",
+  "discord",
+  "agree",
+];
+
+const REQUIRED: Partial<Record<FieldName, string>> = {
+  name: "Enter your full name.",
+  email: "Enter your email address.",
+  school: "Enter the name of your school.",
+  city: "Enter your school's city.",
+  country: "Select your country.",
+  grade: "Select your grade or year.",
+  timezone: "Enter your time zone.",
+  research: "Choose yes or no.",
 };
 
 /**
- * What goes in the `referral` column for a waitlist signup.
- *
- * Deliberately NOT "Future interest (applications closed)", which is what the
- * old page sent. The current cohort is running, not closed, so that string is
- * inaccurate on every new row.
+ * Word limits from the summer application. Both minimums and maximums block
+ * submission; maximums no longer only warn. datasource has no maximum.
  */
-export const WAITLIST_REFERRAL = "Waitlist for next cohort";
+const LIMITS = {
+  prompt: { min: 40, max: 350 },
+  datasource: { min: 5, max: Infinity },
+  completion: { min: 20, max: 300 },
+} as const;
 
-/**
- * Build the POST body from the submitted form.
- *
- * Pure and exported so the payload can be asserted directly — the POST is
- * no-cors and its response is unreadable, so this function is the only place
- * the body can actually be verified.
- *
- * Call only after validateWaitlist returns clean. `consent` is hardcoded to
- * "yes" because submission is blocked when the box is unchecked, so a posted
- * row can only ever represent granted consent.
- */
-export function buildWaitlistPayload(fd: FormData): WaitlistPayload {
-  const text = (key: string) => String(fd.get(key) ?? "").trim();
+export function wordCount(s: string): number {
+  const t = s.trim();
+  return t ? t.split(/\s+/).length : 0;
+}
+
+/** A Discord username as typed, trimmed, with one leading "@" removed. */
+export function discordUsername(raw: string): string {
+  return raw.trim().replace(/^@/, "").trim();
+}
+
+/** What goes in the discord column when the applicant cannot use Discord. */
+export const DISCORD_BLOCKED = "Blocked where I live";
+
+/** The validation rule, as a pure function of the submitted FormData. */
+export function validateApplication(fd: FormData): ApplicationErrors {
+  const text = (k: string) => String(fd.get(k) ?? "").trim();
+  const found: ApplicationErrors = {};
+
+  for (const [key, msg] of Object.entries(REQUIRED) as [FieldName, string][]) {
+    if (!text(key)) found[key] = msg;
+  }
+
+  // The browser accepts "x@y"; require a dot in the domain too.
+  if (text("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(text("email"))) {
+    found.email =
+      "Enter a complete email address, including the part after the dot (for example, name@gmail.com).";
+  }
+
+  for (const key of ["prompt", "datasource", "completion"] as const) {
+    const n = wordCount(text(key));
+    if (n < LIMITS[key].min) {
+      found[key] =
+        n === 0
+          ? "This question is required."
+          : `This response is too short to review. You have written ${n} word${n === 1 ? "" : "s"}. Please write at least ${LIMITS[key].min}.`;
+    } else if (n > LIMITS[key].max) {
+      found[key] = `Over ${LIMITS[key].max} words. Cut it to ${LIMITS[key].max} or fewer to submit.`;
+    }
+  }
+
+  if (!fd.get("discord_blocked") && discordUsername(text("discord")).length < 2) {
+    found.discord =
+      "Enter your Discord username, or check the box if Discord is blocked where you live.";
+  }
+
+  // An unchecked checkbox is absent from FormData entirely.
+  if (!fd.get("agree")) found.agree = "Agree to the privacy policy to submit your application.";
+
+  return found;
+}
+
+/** Build the POST body. Call only after validateApplication returns clean. */
+export function buildApplicationPayload(fd: FormData): ApplicationPayload {
+  const text = (k: string) => String(fd.get(k) ?? "").trim();
+  const referral = text("referral");
   return {
     name: text("name"),
     email: text("email"),
     school: text("school"),
     city: text("city"),
     country: text("country"),
-    grade: "",
-    timezone: "",
-    prompt: "",
-    datasource: "",
-    completion: "",
-    research: "",
+    grade: text("grade"),
+    timezone: text("timezone"),
+    prompt: text("prompt"),
+    datasource: text("datasource"),
+    completion: text("completion"),
+    research: text("research"),
     research_desc: text("research_desc"),
-    consent: "yes",
-    referral: WAITLIST_REFERRAL,
-    referral_other: "",
+    consent: fd.get("consent") ? "Yes" : "No",
+    referral,
+    referral_other: referral === "Other" ? text("referral_other") : "",
+    discord: fd.get("discord_blocked") ? DISCORD_BLOCKED : discordUsername(text("discord")),
   };
 }
 
+/* The summer application's option lists, unchanged so the columns stay comparable. */
+const COUNTRIES = "Afghanistan|Albania|Algeria|Argentina|Australia|Austria|Bangladesh|Belgium|Bolivia|Brazil|Cambodia|Canada|Chile|China|Colombia|Czech Republic|Denmark|Ecuador|Egypt|Ethiopia|Finland|France|Germany|Ghana|Greece|Guatemala|Hungary|India|Indonesia|Iran|Iraq|Ireland|Israel|Italy|Japan|Jordan|Kazakhstan|Kenya|Kuwait|Lebanon|Libya|Malaysia|Mexico|Morocco|Myanmar|Nepal|Netherlands|New Zealand|Nigeria|Norway|Oman|Pakistan|Palestine|Panama|Peru|Philippines|Poland|Portugal|Qatar|Romania|Russia|Saudi Arabia|Senegal|Singapore|Somalia|South Africa|South Korea|Spain|Sri Lanka|Sudan|Sweden|Switzerland|Syria|Taiwan|Tanzania|Thailand|Tunisia|Turkey|UAE|Uganda|Ukraine|United Kingdom|USA|Uzbekistan|Venezuela|Vietnam|Yemen|Other".split("|");
+/* "University" is new: university students can now apply. */
+const GRADES = ["9th / Year 10", "10th / Year 11", "11th / Year 12", "12th / Year 13", "University", "Other"];
+const REFERRALS = [
+  "Google search",
+  "ChatGPT or another AI assistant",
+  "Instagram or TikTok",
+  "A friend or classmate",
+  "A teacher or school",
+  "Other",
+];
+
+/* A closed tab should lose nothing. Same idea as the summer form's draft. */
+const DRAFT_KEY = "atlas_application_draft_v2";
+const DRAFT_FIELDS = [
+  "name", "email", "school", "city", "country", "grade", "timezone", "research",
+  "research_desc", "prompt", "datasource", "completion", "referral", "referral_other",
+  "discord",
+];
+
+const inputCls =
+  "w-full rounded border border-rule bg-paper px-4 py-3 text-[17px] leading-[1.5] text-ink placeholder:text-muted focus:border-navy aria-[invalid=true]:border-alert";
+
+type SubmitState = "idle" | "sending" | "sent" | "error";
+
 /**
- * The waitlist validation rule, as a pure function of the submitted FormData.
+ * /fellowship: the November 2026 Fellowship and its application.
  *
- * Exported and kept free of React so the rule can be tested directly rather
- * than only through a rendered form. `onSubmit` does nothing but call this and
- * bail out when it returns anything.
- */
-export function validateWaitlist(fd: FormData): WaitlistErrors {
-  const found: WaitlistErrors = {};
-
-  // Every required text field must be non-blank. Whitespace does not count.
-  for (const key of Object.keys(REQUIRED_TEXT_FIELDS) as TextFieldName[]) {
-    const value = String(fd.get(key) ?? "").trim();
-    if (!value) found[key] = REQUIRED_TEXT_FIELDS[key];
-  }
-
-  /*
-   * Consent. An UNCHECKED checkbox contributes no entry to FormData at all —
-   * it is absent rather than empty or "off" — so absence is the signal. A
-   * checked box yields "on".
-   */
-  if (!fd.get("privacy")) found.privacy = CONSENT_ERROR;
-
-  return found;
-}
-
-/**
- * The Fellowship.
- *
- * APPLICATIONS ARE CLOSED for the current cohort. The cohort is underway and
- * the only action on this page is joining the waitlist for the next cycle.
- *
- * There is deliberately NO path to /apply.html from this page. The waitlist
- * form posts directly to WAITLIST_ENDPOINT — the same live Apps Script backend
- * /apply.html used — so submissions land in the same sheet, using the same
- * no-cors pattern (see the comment on the fetch below for why).
- *
- * Validation runs in JS rather than relying on the browser's `required`
- * attribute alone, so the messages are ours and are announced at the field.
- * The controls still carry `required` for assistive tech.
+ * The form posts to WAITLIST_ENDPOINT, the live Apps Script the summer cohort
+ * applied through. See the comment on the fetch for why the POST is no-cors.
  */
 export function Fellowship() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<SubmitState>("idle");
-  const [errors, setErrors] = useState<WaitlistErrors>({});
+  const [errors, setErrors] = useState<ApplicationErrors>({});
+  const [counts, setCounts] = useState({ prompt: 0, completion: 0 });
+  const [referral, setReferral] = useState("");
+  // The address shown on the confirmation. Held here because the draft in
+  // localStorage is cleared on submit.
+  const [submittedEmail, setSubmittedEmail] = useState("");
+
+  // Restore a saved draft once.
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw) as Record<string, string | boolean>;
+      for (const key of DRAFT_FIELDS) {
+        const v = d[key];
+        if (typeof v !== "string") continue;
+        const el = form.elements.namedItem(key);
+        if (el instanceof RadioNodeList) el.value = v;
+        else if (el && "value" in el) (el as HTMLInputElement).value = v;
+      }
+      (form.elements.namedItem("consent") as HTMLInputElement).checked = Boolean(d.consent);
+      (form.elements.namedItem("discord_blocked") as HTMLInputElement).checked = Boolean(d.discord_blocked);
+      setCounts({
+        prompt: wordCount(String(d.prompt ?? "")),
+        completion: wordCount(String(d.completion ?? "")),
+      });
+      setReferral(String(d.referral ?? ""));
+    } catch {
+      /* storage blocked or draft malformed: start empty */
+    }
+  }, []);
+
+  const saveDraft = () => {
+    const form = formRef.current;
+    if (!form) return;
+    const fd = new FormData(form);
+    const d: Record<string, string | boolean> = {};
+    for (const key of DRAFT_FIELDS) d[key] = String(fd.get(key) ?? "");
+    d.consent = Boolean(fd.get("consent"));
+    d.discord_blocked = Boolean(fd.get("discord_blocked"));
+    setCounts({ prompt: wordCount(String(d.prompt)), completion: wordCount(String(d.completion)) });
+    setReferral(String(d.referral));
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    } catch {
+      /* storage blocked: nothing to save to */
+    }
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
 
-    const found = validateWaitlist(fd);
+    const found = validateApplication(fd);
     if (Object.keys(found).length > 0) {
       setErrors(found);
       setState("idle");
+      const first = FIELD_ORDER.find((k) => found[k]);
+      const el = first && form.elements.namedItem(first);
+      const target = el instanceof RadioNodeList ? (el[0] as HTMLElement) : (el as HTMLElement | null);
+      target?.focus();
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
-    const payload = buildWaitlistPayload(fd);
-
-    // The POST is no-cors, so this is the only way to see what actually left
-    // the browser and confirm every column is populated. Silent on the live
-    // domain — see src/lib/payloadLog.ts.
-    logPayload("waitlist", payload);
+    const payload = buildApplicationPayload(fd);
+    setSubmittedEmail(payload.email);
+    // The POST is no-cors, so this is the only way to see what left the
+    // browser. Silent on the live domain; see src/lib/payloadLog.ts.
+    logPayload("application", payload);
 
     setErrors({});
     setState("sending");
@@ -184,20 +294,11 @@ export function Fellowship() {
        * res.ok or removing mode: "no-cors".
        *
        * The Apps Script /exec endpoint answers a POST with a 302 to
-       * script.googleusercontent.com. That redirect target sends NO
-       * Access-Control-Allow-Origin header, so a normal CORS-mode fetch follows
-       * the redirect, fails the CORS check, and rejects — even though the POST
-       * itself was already processed and the row was written. The visitor would
-       * be told it failed when it had not.
-       *
-       * mode: "no-cors" sends the request opaquely, which is what public/
-       * apply.html has always done and what is known to work. The cost is that
-       * the response is unreadable: status is 0 and res.ok is always false.
-       *
-       * So "sent" below is OPTIMISTIC. It means "the request left the browser",
-       * not "the server accepted it". A genuine server-side failure is not
-       * detectable here, and pretending otherwise would need a CORS-enabled
-       * endpoint.
+       * script.googleusercontent.com, which sends no
+       * Access-Control-Allow-Origin header. A CORS-mode fetch would reject
+       * even though the row was already written. no-cors is what the summer
+       * form used and what is known to work; the cost is that "sent" means
+       * "the request left the browser", not "the server accepted it".
        */
       await fetch(WAITLIST_ENDPOINT, {
         method: "POST",
@@ -205,196 +306,366 @@ export function Fellowship() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* nothing to clear */
+      }
       setState("sent");
     } catch {
-      // Only a network-level failure reaches here; an HTTP error cannot.
+      // Only a network-level failure reaches here.
       setState("error");
     }
   };
 
+  useEffect(() => {
+    if (state === "sent") {
+      doneRef.current?.focus();
+      doneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [state]);
+
+  const errorCount = Object.keys(errors).length;
+
   return (
-    <div className="bg-paper">
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-4xl px-6 pt-16 md:pt-20 pb-12">
-          <p className="meta-label">
-            The Fellowship · A separate programme · Applications closed
+    <div className="bg-paper text-ink text-[19px] leading-[1.65]">
+      <Container className="pt-16 pb-12">
+        <p className="m-0 mb-[18px] text-[18px] italic text-navy">
+          Applications open for the {DATES.cohortName}
+        </p>
+        <h1 className="m-0 mb-6 max-w-[20ch] text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
+          Apply to the Atlas Fellowship
+        </h1>
+        <div className="max-w-[36em] text-[21px] text-body-muted">
+          <p className="m-0 mb-4">
+            The Atlas Fellowship is six weeks of guided research. You pick a
+            question about education access where you live, learn how to find
+            and test evidence, and finish your first research paper.
           </p>
-          <h1 className="type-hero font-display mt-4">
-            A selective {FELLOWSHIP_WEEKS}-week summer cohort.
-          </h1>
-          <p className="mt-6 max-w-2xl type-body text-muted">
-            Free and remote. {ELIGIBILITY_LABEL}. {DATES.cohortState}, so
-            applications for this cohort are closed. {DATES.nextCycle}.
-          </p>
-          <p className="mt-5 max-w-2xl text-[15px] text-muted leading-relaxed">
-            The Fellowship is a separate programme from Atlas research groups.
-            Leading a research group is open now. A student may do both.{" "}
-            <Link to="/research-groups" className="link">
-              See how research groups work
-            </Link>
-            .
+          <p className="m-0">
+            No prior research experience is required. We care about how you
+            think, not what you have already done.
           </p>
         </div>
-      </section>
+      </Container>
 
-      <Outcomes />
+      <Container>
+        <FactStrip />
+      </Container>
 
-      {/*
-        The named-institutions line belongs here and nowhere else: this is the
-        page where guest sessions are discussed. Exact approved phrasing — do
-        not append "and more".
-      */}
-      <section className="bg-paper border-t border-line">
-        <div className="mx-auto max-w-4xl px-6 py-10">
-          <p className="meta-label">Guest sessions</p>
-          <p className="mt-3 max-w-2xl type-body text-ink">
-            Fellows learn from researchers at the University of Melbourne, USC,
-            and Stanford.
-          </p>
-        </div>
-      </section>
+      <section id="apply" className="mx-auto max-w-[760px] px-6 pt-[88px] pb-[104px]">
+        {state === "sent" ? (
+          <div
+            ref={doneRef}
+            tabIndex={-1}
+            role="status"
+            className="rounded bg-mist p-8 md:p-10"
+          >
+            <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
+              Application received.
+            </h2>
+            <p className="m-0 mb-4">
+              Thank you. Your application to the {DATES.cohortName} has been
+              received. We read every application ourselves and will email you
+              our decision by {DATES.decisionsByLabel}.
+            </p>
+            <p className="m-0 mb-4 [overflow-wrap:anywhere]">
+              You should get a confirmation email at{" "}
+              <strong className="font-semibold">{submittedEmail}</strong> from{" "}
+              {CONTACT_EMAIL} within a few minutes. If you do not see it, check
+              your spam folder.
+            </p>
+            <p className="m-0 mb-7">While you wait, say hello in the Atlas Discord.</p>
+            <a
+              href={DISCORD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
+            >
+              Go to the Atlas Discord
+            </a>
+          </div>
+        ) : (
+          <>
+            <SectionHeading className="m-0 mb-3">Apply here</SectionHeading>
+            <p className="m-0 mb-12 text-muted">
+              Applications close {DATES.applicationsCloseLabel}. Your answers
+              are saved in this browser as you type.
+            </p>
 
-      <section id="waitlist" className="bg-surface border-t border-line">
-        <div className="mx-auto max-w-2xl px-6 py-12 md:py-16">
-          <p className="meta-label">Next cohort</p>
-          <h2 className="type-section font-display mt-4">{DATES.waitlist}</h2>
-          <p className="mt-6 text-[15px] text-muted leading-relaxed">
-            {DATES.nextCycle}. Joining the waitlist is not an application and
-            does not affect selection. It means you hear when the next cycle
-            opens.
-          </p>
+            <form
+              ref={formRef}
+              onSubmit={onSubmit}
+              onInput={saveDraft}
+              onChange={saveDraft}
+              noValidate
+              className="grid gap-14"
+            >
+              <Group title="Applicant information">
+                <Q id="name" label="Full name" required error={errors.name}>
+                  <input id="name" name="name" autoComplete="name" required aria-invalid={!!errors.name} aria-describedby="name-error" className={inputCls} />
+                </Q>
+                <Q id="email" label="Email" required error={errors.email}>
+                  <input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!errors.email} aria-describedby="email-error" className={inputCls} placeholder="you@email.com" />
+                </Q>
+                <Q id="school" label="School name" required error={errors.school}>
+                  <input id="school" name="school" autoComplete="organization" required aria-invalid={!!errors.school} aria-describedby="school-error" className={inputCls} />
+                </Q>
+                <Q id="city" label="Your school's city" required hint="The city where your school is located, not necessarily where you live." error={errors.city}>
+                  <input id="city" name="city" required aria-invalid={!!errors.city} aria-describedby="city-hint city-error" className={inputCls} placeholder="e.g. Dhaka, Nairobi, San Jose" />
+                </Q>
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <Q id="country" label="Country" required error={errors.country}>
+                    <select id="country" name="country" required defaultValue="" aria-invalid={!!errors.country} aria-describedby="country-error" className={inputCls}>
+                      <option value="" disabled>Select country</option>
+                      {COUNTRIES.map((c) => <option key={c}>{c}</option>)}
+                    </select>
+                  </Q>
+                  <Q id="grade" label="Grade / year" required error={errors.grade}>
+                    <select id="grade" name="grade" required defaultValue="" aria-invalid={!!errors.grade} aria-describedby="grade-error" className={inputCls}>
+                      <option value="" disabled>Select grade</option>
+                      {GRADES.map((g) => <option key={g}>{g}</option>)}
+                    </select>
+                  </Q>
+                </div>
+                <Q id="timezone" label="Your time zone" required error={errors.timezone}>
+                  <input id="timezone" name="timezone" required aria-invalid={!!errors.timezone} aria-describedby="timezone-error" className={inputCls} placeholder="e.g. PST, GMT+5:30, CET" />
+                </Q>
+              </Group>
 
-          {state === "sent" ? (
-            <div className="mt-9 rounded-card border border-line bg-paper p-10 text-center">
-              <h3 className="font-display text-2xl">You're on the list.</h3>
-              <p className="mt-3 text-muted">
-                We'll write when the next cohort opens.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={onSubmit} noValidate className="mt-9 space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <Field label="Your name" required error={errors.name}>
-                  <input
-                    name="name"
-                    required
-                    aria-invalid={Boolean(errors.name)}
-                    className={inputCls}
-                    autoComplete="name"
-                  />
-                </Field>
-                <Field label="Email" required error={errors.email}>
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    aria-invalid={Boolean(errors.email)}
-                    className={inputCls}
-                    autoComplete="email"
-                  />
-                </Field>
-                <Field
-                  label="School or institution"
+              <Group title="Context">
+                <fieldset className="m-0 border-0 p-0" aria-describedby="research-hint research-error">
+                  <legend className="p-0 font-semibold text-navy">
+                    Have you done research before? <Req required />
+                  </legend>
+                  <p id="research-hint" className="m-0 mt-1 text-[17px] text-muted">
+                    This is for context. Your response does not affect your
+                    chances.
+                  </p>
+                  <div className="mt-3 flex gap-8">
+                    {["Yes", "No"].map((v) => (
+                      <label key={v} className="flex min-h-11 cursor-pointer items-center gap-3">
+                        <input type="radio" name="research" value={v} aria-invalid={!!errors.research} className="h-5 w-5 accent-crimson" />
+                        {v}
+                      </label>
+                    ))}
+                  </div>
+                  <ErrorText id="research" error={errors.research} />
+                </fieldset>
+                <Q id="research_desc" label="If yes, one line on what it was">
+                  <input id="research_desc" name="research_desc" className={inputCls} placeholder="Topic or project, one line" />
+                </Q>
+              </Group>
+
+              <Group title="Written responses">
+                <Q
+                  id="prompt"
+                  label="Where you live, who gets a good education and who gets left behind? Describe one specific problem like this that you have noticed."
                   required
-                  error={errors.school}
+                  hint="This could be about who can afford school, who lives too far from a good one, who has to work instead, who speaks the wrong language in class, or anything else you have seen. Write in your own voice. There is no right answer and no expected vocabulary. We want to see how you notice a problem and how you think about it."
+                  error={errors.prompt}
                 >
-                  <input
-                    name="school"
-                    required
-                    aria-invalid={Boolean(errors.school)}
-                    className={inputCls}
-                    autoComplete="organization"
-                  />
-                </Field>
-                <Field label="City" required error={errors.city}>
-                  <input
-                    name="city"
-                    required
-                    aria-invalid={Boolean(errors.city)}
-                    className={inputCls}
-                    autoComplete="address-level2"
-                    placeholder="e.g. Kathmandu"
-                  />
-                </Field>
-                {/*
-                  Country is separate on purpose — it is the column that feeds
-                  src/data/reach.ts. A combined "City, Country" string cannot be
-                  split back apart reliably.
-                */}
-                <Field label="Country" required error={errors.country}>
-                  <input
-                    name="country"
-                    required
-                    aria-invalid={Boolean(errors.country)}
-                    className={inputCls}
-                    autoComplete="country-name"
-                    placeholder="e.g. Nepal"
-                  />
-                </Field>
-              </div>
+                  <textarea id="prompt" name="prompt" rows={9} required aria-invalid={!!errors.prompt} aria-describedby="prompt-hint prompt-count prompt-error" className={inputCls + " resize-y"} placeholder="Start here..." />
+                  <Count id="prompt" n={counts.prompt} {...LIMITS.prompt} />
+                </Q>
+                <Q
+                  id="datasource"
+                  label="How would you try to find out if this is really happening, and how big it is?"
+                  required
+                  hint="You might look for numbers someone has already collected, like government or school data or a UN report. Or you might describe how you would gather your own, like a survey or interviews."
+                  error={errors.datasource}
+                >
+                  <textarea id="datasource" name="datasource" rows={5} required aria-invalid={!!errors.datasource} aria-describedby="datasource-hint datasource-error" className={inputCls + " resize-y"} placeholder="What you would look at, and why you think it would help." />
+                </Q>
+                <Q
+                  id="completion"
+                  label="Tell us about something you started on your own and finished."
+                  required
+                  hint="We want to know that you finish what you start. Tell us about something you set out to do and saw through to the end: a project, a goal, something you taught yourself, something you built or fixed or organized. What made it hard, and how did you get it done?"
+                  error={errors.completion}
+                >
+                  <textarea id="completion" name="completion" rows={6} required aria-invalid={!!errors.completion} aria-describedby="completion-hint completion-count completion-error" className={inputCls + " resize-y"} placeholder="What you set out to do, and how you saw it through." />
+                  <Count id="completion" n={counts.completion} {...LIMITS.completion} />
+                </Q>
+              </Group>
 
-              <Field
-                label="What would you want to research?"
-                hint="A sentence is plenty. Any field."
-              >
-                <textarea
-                  name="research_desc"
-                  rows={3}
-                  className={inputCls + " resize-y"}
-                />
-              </Field>
+              <Group title="Final details">
+                <Q id="referral" label="How did you hear about Atlas?">
+                  <select id="referral" name="referral" defaultValue="" className={inputCls}>
+                    <option value="">Select one</option>
+                    {REFERRALS.map((r) => <option key={r}>{r}</option>)}
+                  </select>
+                </Q>
+                <div hidden={referral !== "Other"}>
+                  <Q id="referral_other" label="Tell us where">
+                    <input id="referral_other" name="referral_other" className={inputCls} placeholder="Where you heard about us" />
+                  </Q>
+                </div>
+              </Group>
 
-              {/*
-                One consent control, required. Same error treatment as the text
-                fields: alert-coloured message under the control, aria-invalid
-                on the input, and counted in the summary below the button.
-              */}
-              <div>
-                <label className="flex items-start gap-3 text-sm text-muted">
-                  <input
-                    type="checkbox"
-                    name="privacy"
-                    required
-                    aria-invalid={Boolean(errors.privacy)}
-                    className="mt-1 accent-ink"
-                  />
+              <Group title="Join the Atlas Discord">
+                <div>
+                  <p className="m-0 mb-5">
+                    Every applicant joins our Discord. Live sessions,
+                    announcements, and the fellowship channels are all there.
+                    Admission decisions still come by email.
+                  </p>
+                  <a
+                    href={DISCORD_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block rounded border-2 border-crimson bg-white px-6 py-[11px] text-[17px] font-semibold text-crimson no-underline hover:border-crimson-hover hover:text-crimson-hover transition-colors"
+                  >
+                    Open the Atlas Discord
+                  </a>
+                  <p className="m-0 mt-2 text-[16px] italic text-muted">
+                    Opens in a new tab. Your answers on this page are saved.
+                  </p>
+                </div>
+                <Q
+                  id="discord"
+                  label="Your Discord username"
+                  required
+                  hint="If you are admitted, we use this to give you access to the fellowship channels."
+                  error={errors.discord}
+                >
+                  <input id="discord" name="discord" autoComplete="off" required aria-invalid={!!errors.discord} aria-describedby="discord-hint discord-error" className={inputCls} placeholder="e.g. curious_researcher" />
+                </Q>
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input type="checkbox" name="discord_blocked" className="mt-1.5 h-5 w-5 shrink-0 accent-crimson" />
                   <span>
-                    I agree to the{" "}
-                    <Link to="/privacy" className="link">
-                      privacy policy
-                    </Link>
-                    .
+                    Discord is blocked where I live.
+                    <span className="block text-[17px] text-muted">
+                      Check this and leave the username blank. We will reach
+                      you by email instead.
+                    </span>
                   </span>
                 </label>
-                {errors.privacy && (
-                  <p role="alert" className="mt-1.5 text-xs text-alert">
-                    {errors.privacy}
+              </Group>
+
+              <div className="grid gap-5 border-t border-rule pt-8">
+                <div>
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input type="checkbox" name="agree" aria-invalid={!!errors.agree} aria-describedby="agree-error" className="mt-1.5 h-5 w-5 shrink-0 accent-crimson" />
+                    <span>
+                      I agree to the Atlas{" "}
+                      <Link to="/privacy" target="_blank" className="link py-[9px]">
+                        privacy policy
+                      </Link>
+                      . <Req required />
+                      <span className="block text-[17px] text-muted">
+                        Your information is used only to run the fellowship.
+                      </span>
+                    </span>
+                  </label>
+                  <ErrorText id="agree" error={errors.agree} />
+                </div>
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input type="checkbox" name="consent" className="mt-1.5 h-5 w-5 shrink-0 accent-crimson" />
+                  <span>
+                    Yes, keep me in the loop. <Req />
+                    <span className="block text-[17px] text-muted">
+                      Get invitations to live sessions with researchers, and
+                      first notice when the next cohort opens.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={state === "sending"}
+                  className="rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white hover:bg-crimson-hover transition-colors disabled:opacity-60"
+                >
+                  {state === "sending" ? "Submitting..." : "Submit application"}
+                </button>
+                {errorCount > 0 && (
+                  <p role="alert" className="m-0 mt-4 text-[17px] text-alert">
+                    {errorCount === 1
+                      ? "One answer needs attention. It is marked above."
+                      : `${errorCount} answers need attention. They are marked above.`}
+                  </p>
+                )}
+                {state === "error" && (
+                  <p role="alert" className="m-0 mt-4 text-[17px] text-alert">
+                    Something went wrong. Please try again, or email{" "}
+                    {CONTACT_EMAIL}.
                   </p>
                 )}
               </div>
-
-              <button
-                type="submit"
-                disabled={state === "sending"}
-                className="rounded-control bg-ink text-paper px-6 py-3 text-[15px] hover:bg-ink-hover transition-colors disabled:opacity-60"
-              >
-                {state === "sending" ? "Joining" : "Join the waitlist"}
-              </button>
-
-              {Object.keys(errors).length > 0 && (
-                <p role="alert" className="text-sm text-alert">
-                  Fill in the required fields above and submit again.
-                </p>
-              )}
-              {state === "error" && (
-                <p role="alert" className="text-sm text-alert">
-                  Something failed. Please retry, or email {CONTACT_EMAIL}.
-                </p>
-              )}
             </form>
-          )}
-        </div>
+          </>
+        )}
       </section>
     </div>
+  );
+}
+
+function Group({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
+  return (
+    <fieldset className="m-0 grid gap-8 border-0 p-0">
+      <legend className="mb-6 w-full border-b border-rule p-0 pb-3">
+        <span className="text-[24px] font-semibold leading-[1.25] text-navy">{title}</span>
+        {note && <span className="block text-[17px] italic text-muted">{note}</span>}
+      </legend>
+      {children}
+    </fieldset>
+  );
+}
+
+function Req({ required = false }: { required?: boolean }) {
+  return (
+    <span className="ml-1 text-[15px] font-normal italic text-muted">
+      {required ? "required" : "optional"}
+    </span>
+  );
+}
+
+function ErrorText({ id, error }: { id: string; error?: string }) {
+  return (
+    <p id={`${id}-error`} className="m-0 mt-2 text-[17px] text-alert" hidden={!error}>
+      {error}
+    </p>
+  );
+}
+
+function Q({
+  id,
+  label,
+  required = false,
+  hint,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="block font-semibold leading-[1.45] text-navy">
+        {label} <Req required={required} />
+      </label>
+      {hint && (
+        <p id={`${id}-hint`} className="m-0 mt-1 text-[17px] text-muted">
+          {hint}
+        </p>
+      )}
+      <div className="mt-3">{children}</div>
+      <ErrorText id={id} error={error} />
+    </div>
+  );
+}
+
+function Count({ id, n, min, max }: { id: string; n: number; min: number; max: number }) {
+  const over = n > max;
+  return (
+    <p id={`${id}-count`} className={`m-0 mt-2 text-[16px] italic ${over ? "text-alert" : "text-muted"}`}>
+      {over ? `Over ${max} words` : `${n} ${n === 1 ? "word" : "words"}. ${min} to ${max} words.`}
+    </p>
   );
 }

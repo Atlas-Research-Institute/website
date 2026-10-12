@@ -8,10 +8,11 @@ import { CONTACT_EMAIL, PRIVACY_UPDATED } from "@/lib/dates";
  * Two things to keep true if the code changes:
  *
  *   1. The cookie section says this site sets no cookies. That is currently
- *      accurate — Vercel Web Analytics is cookieless and nothing else stores
- *      anything client-side. If any cookie, localStorage, or third-party
- *      script is added, this section must change in the same commit.
- *   2. The collected-fields list matches the waitlist form on /fellowship
+ *      accurate — Vercel Web Analytics is cookieless. The one thing stored
+ *      client-side is the application draft in localStorage, which the
+ *      section describes. If any cookie, other storage, or third-party script
+ *      is added, this section must change in the same commit.
+ *   2. The collected-fields list matches the application form on /fellowship
  *      exactly. Adding a field there means adding it here.
  *
  * PRIVACY_UPDATED lives in src/lib/dates.ts so the date cannot go stale while
@@ -45,36 +46,48 @@ export function Privacy() {
           <h2>What we collect</h2>
           <p>
             One form on this site collects personal information: the Fellowship
-            waitlist form. It asks for:
+            application. It asks for:
           </p>
           <ul>
             <li>Your name</li>
             <li>Your email address</li>
-            <li>Your school or institution</li>
-            <li>Your city and country</li>
+            <li>Your school, and your school's city and country</li>
+            <li>Your grade or year, and your time zone</li>
             <li>
-              Optionally, a short free-text answer about what you would want to
-              research
+              Whether you have done research before, and optionally one line on
+              what it was
+            </li>
+            <li>Your three written responses</li>
+            <li>Optionally, how you heard about Atlas</li>
+            <li>
+              Your Discord username, or that Discord is blocked where you live.
+              We use the username only to give admitted fellows access to the
+              fellowship channels.
+            </li>
+            <li>
+              Whether you want to hear from us about live sessions and future
+              cohorts
             </li>
           </ul>
           <p>
             That is everything. We do not ask for your date of birth, your
-            address, your phone number, your grades, or a résumé. We do not buy
+            address, your phone number, your marks, or a résumé. We do not buy
             information about you from anyone, and we do not sell, rent, or
             share your information with third parties.
           </p>
 
           <h2>How we use it</h2>
           <p>
-            To contact you about the programme you signed up for. That means
-            telling you when the next cohort opens and answering you if you
-            write to us. Nothing else. We do not send unrelated marketing, and
+            To review your application, email you our decision, give admitted
+            fellows access to the fellowship, and answer you if you write to
+            us. If you ticked "keep me in the loop", we also tell you about live
+            sessions and when the next cohort opens. Nothing else. We do not send unrelated marketing, and
             we do not use your information to build a profile of you.
           </p>
 
           <h2>Where it is stored</h2>
           <p>
-            Waitlist submissions are sent through Google Apps Script and stored
+            Applications are sent through Google Apps Script and stored
             in Google Sheets. We use Brevo to send email. Both providers process
             this information on our behalf under their own terms.
           </p>
@@ -84,8 +97,10 @@ export function Privacy() {
 
           <h2>Cookies and analytics</h2>
           <p>
-            <strong>This site sets no cookies.</strong> It stores nothing in
-            your browser's local storage, and there are no advertising
+            <strong>This site sets no cookies.</strong> While you fill in the
+            application, your answers are saved in your own browser's local
+            storage so a closed tab does not lose them. They stay on your
+            device and are cleared when you submit. There are no advertising
             trackers, no social media pixels, and no cross-site tracking of any
             kind.
           </p>

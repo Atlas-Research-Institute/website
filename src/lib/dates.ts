@@ -1,24 +1,27 @@
 /**
- * Single source of truth for cohort state + contact.
+ * Single source of truth for fellowship state + contact.
  *
- * CURRENT STATE: the Fellowship cohort is RUNNING. Applications for the
- * current cohort are closed; the waitlist is open for the next cycle.
- *
- * There is deliberately no deadline field. Nothing on the site may imply an
- * expired deadline — a past date reads as a dead program. When the next cycle
- * opens, set status to "open" and add the date then, not before.
+ * CURRENT STATE: applications for the November 2026 Fellowship are OPEN.
+ * They close October 25, 2026; decisions go out by October 30, 2026; the
+ * fellowship runs November 2 to December 13, 2026. Pages render the labels below, never their own copy of a
+ * date.
  */
 export const DATES = {
-  status: "cohort-running" as const,
-  /** What the current cohort is doing, for status lines. */
-  cohortState: "The current cohort is underway",
-  /** The call to action while applications are closed. */
-  waitlist: "Join the waitlist for the next cohort",
-  /** How the next cycle will be reviewed, stated without committing to a date. */
-  review: "rolling — decisions within days of submission",
-  /** When the next cycle opens. Intentionally undated until it is real. */
-  nextCycle: "Next cohort dates are announced to the waitlist first",
+  status: "open" as const,
+  /** ISO dates, for anything that needs to compare against today. */
+  applicationsClose: "2026-10-25",
+  decisionsBy: "2026-10-30",
+  fellowshipStart: "2026-11-02",
+  fellowshipEnd: "2026-12-13",
+  /** Display labels. */
+  applicationsCloseLabel: "October 25",
+  decisionsByLabel: "October 30",
+  fellowshipRunsLabel: "November 2 to December 13",
+  cohortName: "November Fellowship",
 } as const;
+
+/** The Atlas Discord, linked from the application confirmation. */
+export const DISCORD_URL = "https://discord.gg/MzCHHTqzKs";
 
 /**
  * The contact address, everywhere. There is no second address — do not
@@ -42,21 +45,31 @@ export const PARTNERS_EMAIL = "nirav.goenka@atlas-research.org";
  * Pulled from here so the date cannot go stale silently while the text is
  * edited. Update it in the same commit as any change to the policy content.
  */
-export const PRIVACY_UPDATED = "17 August 2026";
+export const PRIVACY_UPDATED = "12 October 2026";
 
 
 /**
- * DO NOT DELETE — LIVE WAITLIST BACKEND.
+ * DO NOT DELETE — LIVE FELLOWSHIP APPLICATION BACKEND.
  *
- * This is the deployed Google Apps Script that receives every waitlist /
- * fellowship application submitted from public/apply.html. It is a real,
- * in-production endpoint writing to a live Google Sheet. Deleting, renaming,
- * or pointing this elsewhere silently drops applicant submissions on the
- * floor with no error surface.
+ * The deployed Google Apps Script that receives every fellowship application
+ * submitted from /fellowship. The summer 2026 cohort applied through this same
+ * endpoint. The script is bound to a Google Sheet and appends one row per
+ * submission, positionally:
  *
- * The same literal is currently inlined in public/apply.html (that file is a
- * standalone static page, intentionally untouched). If this URL ever changes,
- * it must be updated in BOTH places.
+ *   Timestamp | Name | Email | School | City | Country | Grade | Timezone |
+ *   Prompt | Data_Source | Completion | Research | Research_Desc | Consent |
+ *   Referral | Referral_Other
+ *
+ * The client also sends `discord` as a sixteenth key (added October 2026).
+ * The script, as last documented, appends named keys d.name ... d.referral_other
+ * and IGNORES anything else, so the username is not stored until the script's
+ * appendRow gets `d.discord` at the end, a Discord column header is added, and
+ * the script is redeployed (Deploy > Manage deployments > edit > New version;
+ * the URL stays the same).
+ *
+ * Deleting, renaming, or pointing this elsewhere silently drops applications
+ * on the floor with no error surface. The name is historical: the endpoint was
+ * called the waitlist backend while applications were closed.
  */
 export const WAITLIST_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbzoGRSNMoJhYjcbHbqG2NEdIqCZ9DJ5vGVaMBvnXHwnRnoQInQ6RsuwWirb5nb0iwTqlA/exec";
@@ -84,3 +97,12 @@ export const WAITLIST_ENDPOINT =
  */
 export const FORM_ENDPOINT: string | null =
   "https://script.google.com/macros/s/AKfycbz9ef5zv5geRWZXklzo-tbO9gNV6ix2UcLTsgXOB2n-qT1Rjj6qL10yloM2fOVbIm-ZzA/exec";
+
+/**
+ * Where every Apply button points.
+ *
+ * /fellowship carries the application form. The legacy /apply route and
+ * public/apply.html also send applicants there. Change it here and every Apply
+ * button follows.
+ */
+export const APPLY_PATH = "/fellowship";

@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Applications closed — Atlas Research Institute</title>
+    <title>Apply — Atlas Research Institute</title>
     <meta
       name="description"
-      content="Applications for the current Atlas Fellowship cohort are closed. The cohort is underway. Join the waitlist for the next cycle."
+      content="Applications for the November 2026 Atlas Fellowship are open at /fellowship."
     />
     <meta name="theme-color" content="#FFFFFF" />
     <meta name="robots" content="noindex, follow" />
@@ -18,18 +18,17 @@
       would turn all of them into 404s, so it stays as a minimal signpost to
       /fellowship.
 
-      The 16-column application form that used to live here has been removed:
-      applications for the current cohort are closed, and a live form on a
-      closed cycle collects submissions nobody is reading.
-
-      The live Apps Script waitlist backend is NOT referenced here any more.
-      It lives in src/lib/dates.ts as WAITLIST_ENDPOINT and is used by the
-      waitlist form on /fellowship. Do not re-add a hardcoded copy here.
+      The application form lives on /fellowship, and this page sends visitors
+      there. The live Apps Script backend is WAITLIST_ENDPOINT in
+      src/lib/dates.ts. Do not re-add a hardcoded copy here.
     -->
+    <script>
+      window.location.replace("/fellowship");
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Archivo:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -50,7 +49,7 @@
         margin: 0;
         background: var(--paper);
         color: var(--ink);
-        font-family: Archivo, system-ui, sans-serif;
+        font-family: 'Source Serif 4', Georgia, serif;
         -webkit-font-smoothing: antialiased;
         display: grid;
         place-items: center;
@@ -66,14 +65,13 @@
         padding: 40px 32px;
       }
       .eyebrow {
-        font-size: 11px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+        font-size: 15px;
+        font-style: italic;
         color: var(--muted);
         margin: 0;
       }
       h1 {
-        font-family: 'Instrument Serif', Georgia, serif;
+        font-family: 'Source Serif 4', Georgia, serif;
         font-weight: 400;
         color: var(--accentless-ink);
         font-size: 1.9rem;
@@ -129,23 +127,15 @@
   <body>
     <main>
       <p class="eyebrow">Atlas Fellowship</p>
-      <h1>Applications for this cohort are closed.</h1>
+      <h1>Applications are open.</h1>
       <p>
-        The current Fellowship cohort is underway. Applications are not being
-        accepted right now.
-      </p>
-      <p>
-        The waitlist for the next cohort is open. Next cohort dates are announced
-        to the waitlist first.
+        Applications for the November Fellowship close October 25. The
+        application form is on the Fellowship page.
       </p>
       <div class="actions">
-        <a class="btn primary" href="/fellowship">Join the waitlist</a>
-        <a class="btn secondary" href="/research-groups"
-          >Browse research groups</a
-        >
+        <a class="btn primary" href="/fellowship">Apply to the November Fellowship</a>
       </div>
       <footer>
-        Starting a research group is open now, independently of the Fellowship.
         Atlas Research Institute operates as a project of a California nonprofit
         public benefit corporation. For more information contact
         <a href="mailto:admin@atlas-research.org">admin@atlas-research.org</a>
