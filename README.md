@@ -165,7 +165,8 @@ and rules before adding any.
   review decides. Working papers are never described as peer reviewed.
 - Named institutions are always "fellows learn from researchers at…", never
   "partnered with".
-- Lumiere is a **discount** partner, never scholarships.
+- Lumiere offers **scholarships** to Lumiere programs for Atlas fellows, never
+  discounts.
 - Never write "ISSN", "501(c)(3)", "tax deductible", an EIN, a street address,
   or an individual's name.
 - Research groups are student-led; **Atlas itself is not described as
