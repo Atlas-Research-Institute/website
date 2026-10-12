@@ -1,27 +1,30 @@
-# Hard word limits on /fellowship
+# Confirmation-email notice on /fellowship
 
-Branch: `redesign` (checked with `git branch --show-current`). Commit `a1bbf2f`, pushed to `origin redesign` only. `npm run build` passes.
+Branch: `redesign` (checked with `git branch --show-current`). Commit `54993f7`, pushed to `origin redesign` only. `npm run build` passes.
 
 ## What changed (`src/pages/Fellowship.tsx` only)
 
-- **Count line, within limits:** unchanged, for example "120 words. 20 to 300 words."
-- **Count line, over the maximum:** shows only "Over 300 words" (or "Over 350 words" for the first question) in the alert colour. "Try to tighten it, but you can still submit." is gone.
-- **Validation:** `validateApplication` now blocks when the count is over `LIMITS[key].max`, with "Over {max} words. Cut it to {max} or fewer to submit." The field takes focus and scrolls into view, like the other errors.
-- **`LIMITS` comment:** now says both minimums and maximums block. The data source question has no maximum (`Infinity`), so it can never trip this check.
+- **New paragraph** in the "Application received." box, between the thank-you paragraph and "While you wait, say hello in the Atlas Discord.":
+  "You should get a confirmation email at **{email}** from {CONTACT_EMAIL} within a few minutes. If you do not see it, check your spam folder."
+- **Where the address comes from:** it is saved in component state (`submittedEmail`) at submit time, from the payload's trimmed email. It is not read from localStorage. The sender comes from `CONTACT_EMAIL` in `src/lib/dates.ts`.
+- **Long addresses:** the paragraph uses `overflow-wrap: anywhere`, so they wrap inside the box.
+- **Not changed:** the payload, the endpoint and the fetch.
 
 ## Browser checks
 
-Run in headless Chrome. Requests to the Apps Script were intercepted and answered locally, so nothing reached the live sheet.
+Run in headless Chrome. The POST was intercepted and answered locally, so nothing reached the live sheet. Test address: a 104-character email, typed with surrounding spaces.
 
-| Case | Count line | Result |
-| --- | --- | --- |
-| Completion, 301 words | "Over 300 words", alert colour | Blocked, error shown, completion focused and in view, no POST |
-| Completion, 300 words | "300 words. 20 to 300 words." | Submitted, one POST |
-| First question, 351 words | "Over 350 words", alert colour | Blocked, error shown, field focused and in view, no POST |
-| First question, 350 words | "350 words. 40 to 350 words." | Submitted, one POST |
+| Width | Sideways scroll | Address | Inside the box |
+| --- | --- | --- | --- |
+| 1280px | none | trimmed, semibold (600) | yes |
+| 375px | none | trimmed, semibold, wraps over five lines | yes |
 
-No console errors.
+The paragraphs appear in the requested order. The draft was cleared after submit, and the address still showed. The payload still has 16 keys. No console errors.
 
 ## Not asked for
 
 Nothing.
+
+## Note
+
+The site only says what the email will say. I can't see or test the Apps Script's email, so I haven't confirmed that it sends, that it comes from admin@atlas-research.org, or that it arrives within a few minutes.
