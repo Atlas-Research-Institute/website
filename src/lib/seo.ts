@@ -87,6 +87,11 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     description:
       "Two ways in. Lead a research group in your field, or join the Atlas Student Team. Both open to high school and college students worldwide.",
   },
+  "/about": {
+    title: "About",
+    description:
+      "We introduce research to students who have never had a way in. Atlas gives those students a first chance to run their own project, for free.",
+  },
   "/privacy": {
     title: "Privacy",
     description:
