@@ -154,13 +154,15 @@ and rules before adding any.
 ## Current state — read before editing copy
 
 - **Applications for the November 2026 Fellowship are open.** They close
-  November 1, 2026; the fellowship runs November 2 to December 13, 2026. The
-  dates live in `src/lib/dates.ts` (`DATES`). Every Apply button points at
-  `APPLY_PATH` (`/fellowship`).
+  October 25, 2026, decisions go out by October 30, 2026, and the fellowship
+  runs November 2 to December 13, 2026. The dates live in `src/lib/dates.ts`
+  (`DATES`). Every Apply button points at `APPLY_PATH` (`/fellowship`).
 - The application form on `/fellowship` posts to `WAITLIST_ENDPOINT` in
   `src/lib/dates.ts`, the live Apps Script the summer 2026 cohort applied
-  through. It appends 16 columns positionally. Do not change the payload keys or
-  their order.
+  through. The payload is 16 keys; `discord` is last and new keys only ever go
+  at the end. Do not rename, reorder or remove a key. The script must append
+  `d.discord` before that column is actually stored (see the comment on
+  `WAITLIST_ENDPOINT`).
 - `public/apply.html` redirects to `/fellowship`. It is kept because old emails
   link to it.
 - The research groups, events, get-involved and partners pages still exist but

@@ -2,18 +2,20 @@
  * Single source of truth for fellowship state + contact.
  *
  * CURRENT STATE: applications for the November 2026 Fellowship are OPEN.
- * They close November 1, 2026; the fellowship runs November 2 to
- * December 13, 2026. Pages render the labels below, never their own copy of a
+ * They close October 25, 2026; decisions go out by October 30, 2026; the
+ * fellowship runs November 2 to December 13, 2026. Pages render the labels below, never their own copy of a
  * date.
  */
 export const DATES = {
   status: "open" as const,
   /** ISO dates, for anything that needs to compare against today. */
-  applicationsClose: "2026-11-01",
+  applicationsClose: "2026-10-25",
+  decisionsBy: "2026-10-30",
   fellowshipStart: "2026-11-02",
   fellowshipEnd: "2026-12-13",
   /** Display labels. */
-  applicationsCloseLabel: "November 1",
+  applicationsCloseLabel: "October 25",
+  decisionsByLabel: "October 30",
   fellowshipRunsLabel: "November 2 to December 13",
   cohortName: "November Fellowship",
 } as const;
@@ -43,7 +45,7 @@ export const PARTNERS_EMAIL = "nirav.goenka@atlas-research.org";
  * Pulled from here so the date cannot go stale silently while the text is
  * edited. Update it in the same commit as any change to the policy content.
  */
-export const PRIVACY_UPDATED = "17 August 2026";
+export const PRIVACY_UPDATED = "12 October 2026";
 
 
 /**
@@ -57,6 +59,13 @@ export const PRIVACY_UPDATED = "17 August 2026";
  *   Timestamp | Name | Email | School | City | Country | Grade | Timezone |
  *   Prompt | Data_Source | Completion | Research | Research_Desc | Consent |
  *   Referral | Referral_Other
+ *
+ * The client also sends `discord` as a sixteenth key (added October 2026).
+ * The script, as last documented, appends named keys d.name ... d.referral_other
+ * and IGNORES anything else, so the username is not stored until the script's
+ * appendRow gets `d.discord` at the end, a Discord column header is added, and
+ * the script is redeployed (Deploy > Manage deployments > edit > New version;
+ * the URL stays the same).
  *
  * Deleting, renaming, or pointing this elsewhere silently drops applications
  * on the floor with no error surface. The name is historical: the endpoint was

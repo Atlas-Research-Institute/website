@@ -12,12 +12,17 @@ import { logPayload } from "@/lib/payloadLog";
  *
  *   new Date(), name, email, school, city, country, grade, timezone, prompt,
  *   datasource, completion, research, research_desc, consent, referral,
- *   referral_other
+ *   referral_other, discord
  *
- * These are the summer 2026 application's questions, and the columns of the
- * sheet the summer cohort applied into. The script supplies the timestamp, so
- * the client sends the fifteen field keys only, every one as a string:
- * `undefined` does not survive JSON.stringify and would shift the columns.
+ * The first fifteen are the summer 2026 application's questions, and the
+ * columns of the sheet the summer cohort applied into. `discord` was added for
+ * the November 2026 cohort and goes LAST so no existing column moves. The
+ * script supplies the timestamp, so the client sends the sixteen field keys
+ * only, every one as a string: `undefined` does not survive JSON.stringify and
+ * would shift the columns.
+ *
+ * `discord` is the username with one leading "@" removed, or "Blocked where I
+ * live" when the applicant says Discord is blocked for them.
  *
  * `consent` is the OPTIONAL "keep me in the loop" box, Yes or No, as it was in
  * the summer. The required privacy agreement blocks submission and is not a
@@ -39,6 +44,7 @@ export type ApplicationPayload = {
   consent: string;
   referral: string;
   referral_other: string;
+  discord: string;
 };
 
 type FieldName =
@@ -53,6 +59,7 @@ type FieldName =
   | "prompt"
   | "datasource"
   | "completion"
+  | "discord"
   | "agree";
 export type ApplicationErrors = Partial<Record<FieldName, string>>;
 
@@ -69,6 +76,7 @@ const FIELD_ORDER: FieldName[] = [
   "prompt",
   "datasource",
   "completion",
+  "discord",
   "agree",
 ];
 
@@ -95,6 +103,14 @@ export function wordCount(s: string): number {
   return t ? t.split(/\s+/).length : 0;
 }
 
+/** A Discord username as typed, trimmed, with one leading "@" removed. */
+export function discordUsername(raw: string): string {
+  return raw.trim().replace(/^@/, "").trim();
+}
+
+/** What goes in the discord column when the applicant cannot use Discord. */
+export const DISCORD_BLOCKED = "Blocked where I live";
+
 /** The validation rule, as a pure function of the submitted FormData. */
 export function validateApplication(fd: FormData): ApplicationErrors {
   const text = (k: string) => String(fd.get(k) ?? "").trim();
@@ -118,6 +134,11 @@ export function validateApplication(fd: FormData): ApplicationErrors {
           ? "This question is required."
           : `This response is too short to review. You have written ${n} word${n === 1 ? "" : "s"}. Please write at least ${LIMITS[key].min}.`;
     }
+  }
+
+  if (!fd.get("discord_blocked") && discordUsername(text("discord")).length < 2) {
+    found.discord =
+      "Enter your Discord username, or check the box if Discord is blocked where you live.";
   }
 
   // An unchecked checkbox is absent from FormData entirely.
@@ -146,6 +167,7 @@ export function buildApplicationPayload(fd: FormData): ApplicationPayload {
     consent: fd.get("consent") ? "Yes" : "No",
     referral,
     referral_other: referral === "Other" ? text("referral_other") : "",
+    discord: fd.get("discord_blocked") ? DISCORD_BLOCKED : discordUsername(text("discord")),
   };
 }
 
@@ -167,6 +189,7 @@ const DRAFT_KEY = "atlas_application_draft_v2";
 const DRAFT_FIELDS = [
   "name", "email", "school", "city", "country", "grade", "timezone", "research",
   "research_desc", "prompt", "datasource", "completion", "referral", "referral_other",
+  "discord",
 ];
 
 const inputCls =
@@ -204,6 +227,7 @@ export function Fellowship() {
         else if (el && "value" in el) (el as HTMLInputElement).value = v;
       }
       (form.elements.namedItem("consent") as HTMLInputElement).checked = Boolean(d.consent);
+      (form.elements.namedItem("discord_blocked") as HTMLInputElement).checked = Boolean(d.discord_blocked);
       setCounts({
         prompt: wordCount(String(d.prompt ?? "")),
         completion: wordCount(String(d.completion ?? "")),
@@ -221,6 +245,7 @@ export function Fellowship() {
     const d: Record<string, string | boolean> = {};
     for (const key of DRAFT_FIELDS) d[key] = String(fd.get(key) ?? "");
     d.consent = Boolean(fd.get("consent"));
+    d.discord_blocked = Boolean(fd.get("discord_blocked"));
     setCounts({ prompt: wordCount(String(d.prompt)), completion: wordCount(String(d.completion)) });
     setReferral(String(d.referral));
     try {
@@ -296,7 +321,7 @@ export function Fellowship() {
   return (
     <div className="bg-paper text-ink text-[19px] leading-[1.65]">
       <Container className="pt-16 pb-12">
-        <p className="m-0 mb-[18px] text-[18px] italic text-crimson">
+        <p className="m-0 mb-[18px] text-[18px] italic text-navy">
           Applications open for the {DATES.cohortName}
         </p>
         <h1 className="m-0 mb-6 max-w-[20ch] text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
@@ -330,22 +355,24 @@ export function Fellowship() {
             <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
               Application received.
             </h2>
-            <p className="m-0 mb-7">
+            <p className="m-0 mb-4">
               Thank you. Your application to the {DATES.cohortName} has been
-              received. We read every application ourselves.
+              received. We read every application ourselves and will email you
+              our decision by {DATES.decisionsByLabel}.
             </p>
+            <p className="m-0 mb-7">While you wait, say hello in the Atlas Discord.</p>
             <a
               href={DISCORD_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
             >
-              Join the Atlas Discord
+              Go to the Atlas Discord
             </a>
           </div>
         ) : (
           <>
-            <SectionHeading className="m-0 mb-3">Your application</SectionHeading>
+            <SectionHeading className="m-0 mb-3">Apply here</SectionHeading>
             <p className="m-0 mb-12 text-muted">
               Applications close {DATES.applicationsCloseLabel}. Your answers
               are saved in this browser as you type.
@@ -359,7 +386,7 @@ export function Fellowship() {
               noValidate
               className="grid gap-14"
             >
-              <Group title="Who you are">
+              <Group title="Applicant information">
                 <Q id="name" label="Full name" required error={errors.name}>
                   <input id="name" name="name" autoComplete="name" required aria-invalid={!!errors.name} aria-describedby="name-error" className={inputCls} />
                 </Q>
@@ -386,8 +413,8 @@ export function Fellowship() {
                     </select>
                   </Q>
                 </div>
-                <Q id="timezone" label="Your time zone" required hint="Lessons run across many time zones. This helps us schedule sessions you can actually attend." error={errors.timezone}>
-                  <input id="timezone" name="timezone" required aria-invalid={!!errors.timezone} aria-describedby="timezone-hint timezone-error" className={inputCls} placeholder="e.g. PST, GMT+5:30, CET" />
+                <Q id="timezone" label="Your time zone" required error={errors.timezone}>
+                  <input id="timezone" name="timezone" required aria-invalid={!!errors.timezone} aria-describedby="timezone-error" className={inputCls} placeholder="e.g. PST, GMT+5:30, CET" />
                 </Q>
               </Group>
 
@@ -397,8 +424,8 @@ export function Fellowship() {
                     Have you done research before? <Req required />
                   </legend>
                   <p id="research-hint" className="m-0 mt-1 text-[17px] text-muted">
-                    This is context, not a requirement. Most fellows have not.
-                    It does not affect your chances.
+                    This is for context. Your response does not affect your
+                    chances.
                   </p>
                   <div className="mt-3 flex gap-8">
                     {["Yes", "No"].map((v) => (
@@ -415,7 +442,7 @@ export function Fellowship() {
                 </Q>
               </Group>
 
-              <Group title="How you think and work" note="This is what we read most closely.">
+              <Group title="Written responses">
                 <Q
                   id="prompt"
                   label="Where you live, who gets a good education and who gets left behind? Describe one specific problem like this that you have noticed."
@@ -430,7 +457,7 @@ export function Fellowship() {
                   id="datasource"
                   label="How would you try to find out if this is really happening, and how big it is?"
                   required
-                  hint="You might look for numbers someone has already collected, like government or school data or a UN report. Or you might describe how you would gather your own, like a survey or interviews. There is no single right source. We want to see how you would start looking."
+                  hint="You might look for numbers someone has already collected, like government or school data or a UN report. Or you might describe how you would gather your own, like a survey or interviews."
                   error={errors.datasource}
                 >
                   <textarea id="datasource" name="datasource" rows={5} required aria-invalid={!!errors.datasource} aria-describedby="datasource-hint datasource-error" className={inputCls + " resize-y"} placeholder="What you would look at, and why you think it would help." />
@@ -447,7 +474,7 @@ export function Fellowship() {
                 </Q>
               </Group>
 
-              <Group title="One last thing">
+              <Group title="Final details">
                 <Q id="referral" label="How did you hear about Atlas?">
                   <select id="referral" name="referral" defaultValue="" className={inputCls}>
                     <option value="">Select one</option>
@@ -459,6 +486,46 @@ export function Fellowship() {
                     <input id="referral_other" name="referral_other" className={inputCls} placeholder="Where you heard about us" />
                   </Q>
                 </div>
+              </Group>
+
+              <Group title="Join the Atlas Discord">
+                <div>
+                  <p className="m-0 mb-5">
+                    Every applicant joins our Discord. Live sessions,
+                    announcements, and the fellowship channels are all there.
+                    Admission decisions still come by email.
+                  </p>
+                  <a
+                    href={DISCORD_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block rounded border-2 border-crimson bg-white px-6 py-[11px] text-[17px] font-semibold text-crimson no-underline hover:border-crimson-hover hover:text-crimson-hover transition-colors"
+                  >
+                    Open the Atlas Discord
+                  </a>
+                  <p className="m-0 mt-2 text-[16px] italic text-muted">
+                    Opens in a new tab. Your answers on this page are saved.
+                  </p>
+                </div>
+                <Q
+                  id="discord"
+                  label="Your Discord username"
+                  required
+                  hint="If you are admitted, we use this to give you access to the fellowship channels."
+                  error={errors.discord}
+                >
+                  <input id="discord" name="discord" autoComplete="off" required aria-invalid={!!errors.discord} aria-describedby="discord-hint discord-error" className={inputCls} placeholder="e.g. curious_researcher" />
+                </Q>
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input type="checkbox" name="discord_blocked" className="mt-1.5 h-5 w-5 shrink-0 accent-crimson" />
+                  <span>
+                    Discord is blocked where I live.
+                    <span className="block text-[17px] text-muted">
+                      Check this and leave the username blank. We will reach
+                      you by email instead.
+                    </span>
+                  </span>
+                </label>
               </Group>
 
               <div className="grid gap-5 border-t border-rule pt-8">
