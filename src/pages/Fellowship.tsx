@@ -170,7 +170,7 @@ const DRAFT_FIELDS = [
 ];
 
 const inputCls =
-  "w-full rounded border border-rule bg-paper px-4 py-3 text-[17px] leading-[1.5] text-ink placeholder:text-muted focus:border-navy aria-[invalid=true]:border-crimson";
+  "w-full rounded border border-rule bg-paper px-4 py-3 text-[17px] leading-[1.5] text-ink placeholder:text-muted focus:border-navy aria-[invalid=true]:border-alert";
 
 type SubmitState = "idle" | "sending" | "sent" | "error";
 
@@ -499,14 +499,14 @@ export function Fellowship() {
                   {state === "sending" ? "Submitting..." : "Submit application"}
                 </button>
                 {errorCount > 0 && (
-                  <p role="alert" className="m-0 mt-4 text-[17px] text-crimson">
+                  <p role="alert" className="m-0 mt-4 text-[17px] text-alert">
                     {errorCount === 1
                       ? "One answer needs attention. It is marked above."
                       : `${errorCount} answers need attention. They are marked above.`}
                   </p>
                 )}
                 {state === "error" && (
-                  <p role="alert" className="m-0 mt-4 text-[17px] text-crimson">
+                  <p role="alert" className="m-0 mt-4 text-[17px] text-alert">
                     Something went wrong. Please try again, or email{" "}
                     {CONTACT_EMAIL}.
                   </p>
@@ -542,7 +542,7 @@ function Req({ required = false }: { required?: boolean }) {
 
 function ErrorText({ id, error }: { id: string; error?: string }) {
   return (
-    <p id={`${id}-error`} className="m-0 mt-2 text-[17px] text-crimson" hidden={!error}>
+    <p id={`${id}-error`} className="m-0 mt-2 text-[17px] text-alert" hidden={!error}>
       {error}
     </p>
   );
@@ -585,7 +585,7 @@ function Count({ id, n, min, max }: { id: string; n: number; min: number; max: n
     <p id={`${id}-count`} className="m-0 mt-2 text-[16px] italic text-muted">
       {n} {n === 1 ? "word" : "words"}. {min} to {max} words.
       {over && (
-        <span className="text-crimson">
+        <span className="text-alert">
           {" "}
           Over {max} words. Try to tighten it, but you can still submit.
         </span>

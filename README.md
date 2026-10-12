@@ -44,7 +44,9 @@ resolve to it. Do not add a second typeface.
 | `on-navy-muted` | `#C9D3E3` | secondary text on navy |
 | `paper` | `#FFFFFF` | page background |
 
-`surface`, `line`, `ink-hover`, `faint` and `alert` remain for pages that have
+`alert` (`#B3402F`) is for form errors only.
+
+`surface`, `line`, `ink-hover` and `faint` remain for pages that have
 not been redesigned (journal, research groups, events). Do not use them on new
 work.
 
