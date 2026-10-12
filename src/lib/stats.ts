@@ -38,7 +38,7 @@ export const HOST_INSTITUTIONS: number | null = null;
 export const ELIGIBILITY_LABEL = "Secondary and university students worldwide";
 
 /** Length of the Fellowship cohort, in weeks. */
-export const FELLOWSHIP_WEEKS = 4;
+export const FELLOWSHIP_WEEKS = 6;
 
 /** True when a stat has a real value and may be rendered. */
 export function hasStat(value: number | null): value is number {
