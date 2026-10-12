@@ -43,23 +43,13 @@
     <meta name="twitter:image" content="https://atlas-research.org/og-image.png" />
 
     <!--
-      Favicon set is the Atlas mark. THE VECTOR SOURCE IS public/atlas-mark.svg,
-      not this file and not the component — src/components/AtlasMark.tsx copies
-      that path verbatim, and every icon below is generated from it, so all of
-      them share one geometry by construction rather than by hand.
-
-      Regenerate together whenever the mark changes: favicon.svg, favicon.ico,
+      The icon set is a plain capital A set in Source Serif 4, white on navy
+      #13294B. Every file is supplied by hand: favicon.svg, favicon.ico,
       favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png, icon-192.png,
-      icon-512.png, og.svg, og-image.png. The generator is
-      scripts/generate-icons.mjs.
-
-      og-image.png below is rasterised FROM public/og.svg by that script, so the
-      OG card's vector and the file served here are the same artwork. Do not
-      hand-edit one of them.
-
-      The PNG icons and .ico are the DARK TILE treatment — white mark on #0E0E10
-      — matching favicon.svg and apple-touch-icon.png. They were white-ground
-      before, which is why the set visibly disagreed with itself.
+      icon-512.png, og-image.png, atlas-mark.svg and atlas-mark-tile.svg. There
+      is no generator. scripts/generate-icons.mjs is retired and would
+      regenerate the old mark, so do not run it. To change the icons, replace
+      the files themselves.
 
       Multiple formats on purpose: SVG for current browsers, .ico for older ones
       and for crawlers that only probe /favicon.ico, and PNGs for the rest.
