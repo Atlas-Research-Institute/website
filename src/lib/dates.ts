@@ -84,3 +84,13 @@ export const WAITLIST_ENDPOINT =
  */
 export const FORM_ENDPOINT: string | null =
   "https://script.google.com/macros/s/AKfycbz9ef5zv5geRWZXklzo-tbO9gNV6ix2UcLTsgXOB2n-qT1Rjj6qL10yloM2fOVbIm-ZzA/exec";
+
+/**
+ * Where every Apply button points.
+ *
+ * Before the redesign the site had no button labelled "Apply"; the legacy
+ * /apply route and public/apply.html both send applicants to /fellowship, which
+ * carries the application (waitlist) form. The redesign keeps that target so
+ * the form itself is untouched. Change it here and every Apply button follows.
+ */
+export const APPLY_PATH = "/fellowship";
