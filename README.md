@@ -1,10 +1,11 @@
 # Atlas Research Institute — website
 
-Vite + React 18 + TypeScript + Tailwind CSS 3. No animation library, no runtime
-dependencies beyond React Router and two class utilities.
+Vite + React 18 + TypeScript + Tailwind CSS 3. No animation library. Runtime
+dependencies are React Router, react-icons (footer brand icons) and two class
+utilities.
 
-The primary programme is **student research groups**. The Fellowship is a
-separate, secondary programme whose applications are currently closed.
+The site leads with **the Atlas Fellowship**: a free, six-week online research
+fellowship. Applications for the November 2026 Fellowship are open.
 
 ## Run locally
 
@@ -23,40 +24,44 @@ Vercel auto-detects Vite. Build command `npm run build`, output directory
 
 ## Design system
 
-Light mode only, and **pure monochrome — there is no accent colour.** Tokens live
-in `tailwind.config.ts`:
+Light mode only. Tokens live in `tailwind.config.ts`.
+
+**Type: Source Serif 4 only**, weights 400 to 700, roman and italic, loaded from
+Google Fonts in `index.html`. `font-display`, `font-serif` and `font-sans` all
+resolve to it. Do not add a second typeface.
 
 | Token | Value | Job |
 | --- | --- | --- |
+| `navy` | `#13294B` | headings, dark sections |
+| `crimson` | `#8C1D2F` | buttons and links only |
+| `crimson-hover` | `#6A1523` | crimson hover |
+| `ink` | `#1B2433` | body text |
+| `body-muted` | `#39455A` | lead paragraphs, figcaptions |
+| `muted` | `#4A5568` | captions, affiliations, secondary text |
+| `mist` | `#F2F4F7` | light sections and cards |
+| `rule` | `#D9DDE3` | hairline borders |
+| `navy-border` | `#4A6189` | borders on navy |
+| `on-navy-muted` | `#C9D3E3` | secondary text on navy |
 | `paper` | `#FFFFFF` | page background |
-| `surface` | `#F5F5F6` | cards, raised surfaces, alternating sections |
-| `line` | `#E4E4E6` | hairline borders |
-| `ink` | `#0E0E10` | primary text, primary buttons, dark bands |
-| `ink-hover` | `#26262A` | primary button hover only |
-| `muted` | `#57575C` | secondary text |
-| `faint` | `#8A8A92` | eyebrows, meta labels, tertiary text |
-| `alert` | `#B3402F` | form errors only |
 
-Rules that are easy to break by accident:
+`surface`, `line`, `ink-hover`, `faint` and `alert` remain for pages that have
+not been redesigned (journal, research groups, events). Do not use them on new
+work.
 
-- **Never colour a link.** Links are ink with a 1px underline that thickens to
-  2px on hover — the `.link` utility. There is no link colour to reach for.
-- **If a design problem seems to need a colour, it needs size, spacing, or a
-  rule instead.** `alert` is the only non-grey token and it is form errors only.
-- **Instrument Serif has ONE weight (400).** There is no bold cut. Where a
-  heavier heading is wanted, use size and spacing — never `font-weight`.
-- **Ink full-bleed bands are rationed.** On the homepage: the proof band, the
-  closing CTA, and the statement panel. Bands carry `on-ink` so headings render
-  paper instead of ink.
-- **Primary buttons** are `bg-ink` + paper text. **Secondary** are paper with a
-  `line` border and ink text.
-- Type scale utilities: `.type-hero`, `.type-section`, `.type-panel`,
-  `.type-card`, `.type-body` (fixed 17px). The contrast between the display
-  sizes and the fixed body is the effect.
-- Radii: `rounded-card` (10px) for cards, `rounded-control` (6px) for controls.
-- **Hover states only.** No scroll-entrance or staggered animation. The only
-  motion is the globe's rotation and the citation network's drift, both static
-  under `prefers-reduced-motion`.
+Rules:
+
+- **Crimson is only for things you can click**: buttons and links. Never a
+  heading, a label colour or decoration.
+- **4px corner radius** everywhere (`rounded`, `rounded-card` and
+  `rounded-control` are all 4px). No shadows, no gradients.
+- **No all-caps labels.** Labels are italic, sentence case.
+- Headings are navy at weight 600. Body is 19px with 1.65 line height on the
+  redesigned pages.
+- Dark sections are navy with the `on-navy` class, which turns headings white and
+  the focus outline white.
+- Keyboard focus is a 3px crimson outline, offset 3px. Never remove it.
+- Tap targets are at least 44px.
+- The design reference for the homepage and About page is `notes/redesign/`.
 
 ### Brand mark
 
@@ -118,7 +123,7 @@ hardcodes a group, role, event, or publication.
 | `src/data/events.ts` | every event |
 | `src/data/publications.ts` | journal working papers and articles |
 | `src/lib/stats.ts` | every displayed number |
-| `src/lib/dates.ts` | cohort state, contact email, form endpoints |
+| `src/lib/dates.ts` | fellowship dates, Apply target, contact email, form endpoints |
 
 Behaviour that is automatic, so you never edit a page for it:
 
@@ -146,40 +151,48 @@ and rules before adding any.
 
 ## Current state — read before editing copy
 
-- **The Fellowship cohort is underway and applications are closed.** The only
-  action is the waitlist. `src/lib/dates.ts` has no `deadline` field on purpose:
-  a past date reads as a dead programme.
-- `public/apply.html` is a **noindex signpost** kept because old emails link to
-  it. The live Apps Script waitlist backend is `WAITLIST_ENDPOINT` in
-  `src/lib/dates.ts` — do not delete it, and do not re-inline it in the HTML.
-- `FORM_ENDPOINT` is `null`, so the Partners form renders **visibly disabled**.
-  There is no mailto fallback anywhere.
-- Placeholder seed data is marked `PLACEHOLDER` in every data file and must be
-  replaced before launch.
+- **Applications for the November 2026 Fellowship are open.** They close
+  November 1, 2026; the fellowship runs November 2 to December 13, 2026. The
+  dates live in `src/lib/dates.ts` (`DATES`). Every Apply button points at
+  `APPLY_PATH` (`/fellowship`).
+- The application form on `/fellowship` posts to `WAITLIST_ENDPOINT` in
+  `src/lib/dates.ts`, the live Apps Script the summer 2026 cohort applied
+  through. It appends 16 columns positionally. Do not change the payload keys or
+  their order.
+- `public/apply.html` redirects to `/fellowship`. It is kept because old emails
+  link to it.
+- The research groups, events, get-involved and partners pages still exist but
+  no page links to them. Events, get-involved and partners are out of the
+  sitemap.
 
 ## Copy rules
 
-- Topic agnostic. A research group works in any of eight fields. No
-  education-inequality or education-access framing.
-- **Publication is never guaranteed.** Completed work *may be submitted*;
-  review decides. Working papers are never described as peer reviewed.
-- Named institutions are always "fellows learn from researchers at…", never
-  "partnered with".
-- Lumiere offers **scholarships** to Lumiere programs for Atlas fellows, never
+- **Education access framing is allowed** and is the fellowship's theme.
+- **Testimonials use first name and country only.** Never a surname, school or
+  photo without permission.
+- **Named researchers always appear with the non-affiliation line**: "Atlas is
+  not affiliated with or endorsed by these universities." `ResearcherList` in
+  `src/components/site/Researchers.tsx` renders both together; use it.
+- **Never say Atlas partnered with a university.** Researchers teach Atlas
+  fellows; their universities are not partners.
+- **Lumiere gives scholarships** to Lumiere programs for Atlas fellows. Never
   discounts.
-- Never write "ISSN", "501(c)(3)", "tax deductible", an EIN, a street address,
-  or an individual's name.
-- Research groups are student-led; **Atlas itself is not described as
-  student-run** at the organisational level.
-- Eligibility is prose, not a grade range. Never "9-12".
+- **The Atlas Journal is read by Atlas editors and is not externally peer
+  reviewed.** Never call it peer reviewed. Acceptance at outside journals is the
+  journal's decision, never promised.
+- Never write "ISSN", "501(c)(3)", "tax deductible", an EIN or a street address.
 - Contact is `admin@atlas-research.org` everywhere.
 - Banned words: empower, foster, robust, holistic, comprehensive, leverage,
   unlock, cutting-edge, seamless, journey, passionate, dedicated to.
 
 ## Routes
 
-`/` · `/research-groups` · `/research-groups/:slug` · `/events` · `/journal` ·
-`/journal/:slug` · `/get-involved` · `/fellowship` · `/partners` · `/privacy`
+In the nav, footer or sitemap: `/` · `/fellowship` · `/about` · `/journal` ·
+`/journal/:slug` · `/privacy`
+
+Still routed but linked from no page: `/research-groups`,
+`/research-groups/:slug`, `/events`, `/events/:slug`, `/get-involved`,
+`/partners`
 
 `/chapters`, `/chapters/:slug`, and `/apply` redirect to their current
 equivalents so older links keep working.
