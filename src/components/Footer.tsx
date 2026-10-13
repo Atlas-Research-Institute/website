@@ -22,7 +22,7 @@ export function Footer() {
             Journal
           </Link>
           <Link to="/get-involved" className={linkCls}>
-            Get involved
+            Get Involved
           </Link>
           <Link to="/privacy" className={linkCls}>
             Privacy
