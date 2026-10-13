@@ -9,7 +9,7 @@
   src/lib/seo.ts together — a sitemap disagreeing with the canonical tags is
   worse than either being wrong alone.
 
-  LISTED: only the eight real, indexable routes.
+  LISTED: only the real, indexable routes.
 
   DELIBERATELY ABSENT:
     /apply, /chapters, /chapters/:slug   legacy redirects, not destinations
@@ -41,6 +41,11 @@
     <loc>https://atlas-research.org/fellowship</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/get-involved</loc>
+    <lastmod>2026-10-12</lastmod>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://atlas-research.org/privacy</loc>

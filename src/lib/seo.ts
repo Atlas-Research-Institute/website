@@ -88,10 +88,9 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       "Atlas works with journals on submission routes, researchers who run guest sessions, and organisations that mentor student teams.",
   },
   "/get-involved": {
-    noindex: true,
     title: "Get Involved",
     description:
-      "Two ways in. Lead a research group in your field, or join the Atlas Student Team. Both open to high school and college students worldwide.",
+      "We are looking for people who want to bring research training to students who never had it, in their own school, in their country, or online.",
   },
   "/about": {
     title: "About",
