@@ -1,376 +1,128 @@
-import {
-  CATEGORY_LABEL,
-  effectiveStatus,
-  isFormPending,
-  researchGroupOpenings,
-  teamOpenings,
-  type Opening,
-} from "@/data/openings";
-import { CONTACT_EMAIL } from "@/lib/dates";
-import { HatchDivider } from "@/components/visuals/HatchDivider";
-import { cn } from "@/lib/utils";
+import { Container, SectionHeading } from "@/components/site/Container";
+import { CONTACT_EMAIL, GET_INVOLVED_FORM_URL } from "@/lib/dates";
 
 /**
- * Get Involved — the front door for anyone who is not starting a research
- * group.
+ * Get Involved — recruits volunteers to the Atlas team through one Google
+ * Form (GET_INVOLVED_FORM_URL).
  *
- * Two tracks on one page, both anchored: #researchers and #students.
+ *   intro · where you could help (mist) · how it works · navy join band
  *
- * The researchers track comes FIRST and is an INVITATION, not a roster. There
- * is no advisor grid, no names, and nothing implying anyone has signed up. A
- * future named-contributor row can slot in via CONTRIBUTORS below without a
- * redesign.
- *
- * The students track renders entirely from src/data/openings.ts. Adding,
- * editing, opening, or closing a role must remain a one-file change there.
+ * The old two-track page rendered from src/data/openings.ts; that file and
+ * the components it used are left in place, unused by this page.
  */
 
-/** Prefilled mailto, so an enquiry arrives already sorted. */
-function mailto(subject: string): string {
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
-}
-
-const WAYS = [
+const AREAS = [
   {
-    title: "Run a guest session",
-    body: "A 30 to 40 minute session teaching one part of the research process through your experience. What you struggled with and how you approached it. Topics can include how to build a question, how to choose a method, how to read a paper, how to handle a result you did not expect, and speakers can suggest their own. Recorded with your permission so groups in other time zones can watch. Atlas handles scheduling, the invite, and the recording.",
-    cta: "Offer a guest session",
-    subject: "Guest session — offer to speak with Atlas research groups",
+    title: "Grow Atlas where you are",
+    body: "Bring Atlas to students in your school, city or country. Connect us with teachers, clubs and local groups.",
   },
   {
-    title: "Mentor a research group",
-    body: "Periodic feedback on one group's question, sources, and draft. Realistically this is two to four hours a term, spread across three or four checkpoints, plus reading a draft near the end. It is not weekly, and it is not open-ended: the commitment ends when the group's project does.",
-    cta: "Offer to mentor a group",
-    subject: "Mentorship — offer to mentor an Atlas research group",
+    title: "Help run Atlas",
+    body: "Outreach, social media, design, writing and operations. The work that keeps Atlas going every week.",
   },
   {
-    title: "Review for the journal",
-    body: "Read submitted student work against the Atlas Journal's stated criteria and return a recommendation. Most reviews are one manuscript at a time, on your own schedule. Reviewers decide what advances; revision is the normal outcome and saying so plainly is part of the job.",
-    cta: "Offer to review",
-    subject: "Journal review — offer to review for the Atlas Journal",
-  },
-  {
-    title: "Institutional or organisational partnership",
-    body: "For universities, journals, labs, schools, and nonprofits: submission routes, shared programming, or supporting groups in a particular region. These conversations run through the Partners page.",
-    cta: "See the Partners page",
-    href: "/partners",
+    title: "Mentor students",
+    body: "For university students, professors, and researchers. Give feedback on fellows' research and help with lessons.",
   },
 ];
 
-/**
- * Named contributors, for a future row beneath the invitation.
- *
- * EMPTY UNTIL CONFIRMED. Never add a name without that person having agreed to
- * appear — a named researcher on this page reads as an endorsement.
- */
-const CONTRIBUTORS: { name: string; affiliation: string; role: string }[] = [];
+const STEPS = [
+  {
+    title: "Fill out a short form",
+    body: "About ten minutes. Tell us what you have led, what research you have done, and where you want to help.",
+  },
+  {
+    title: "Talk with us",
+    body: "A short video call with someone from the Atlas team.",
+  },
+  {
+    title: "Join a team",
+    body: "We place you where your skills fit and introduce you to the people you will work with.",
+  },
+];
 
 export function GetInvolved() {
   return (
-    <div className="bg-paper">
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-4xl px-6 pt-16 md:pt-20 pb-12">
-          <p className="meta-label">Get involved</p>
-          <h1 className="type-hero font-display mt-4">
-            Two ways in.
-          </h1>
-          <p className="mt-6 max-w-2xl type-body text-muted">
-            Researchers and professionals can teach, mentor, and review. College
-            and high school students can lead a research group, or join the Atlas
-            Student Team. Each applies through its own form. Both start below.
+    <div className="bg-paper text-ink text-[19px] leading-[1.65]">
+      {/* Intro */}
+      <Container className="pt-16 pb-[88px]">
+        <h1 className="m-0 mb-6 max-w-[20ch] text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
+          Help bring research to more students
+        </h1>
+        <div className="max-w-[36em] text-[21px] text-body-muted">
+          <p className="m-0 mb-4">
+            We are looking for people who want to bring research training to
+            students who never had it, in their own school, in their country,
+            or online.
           </p>
-          <p className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
-            <a href="#researchers" className="link">
-              Researchers and professionals
-            </a>
-            <a href="#students" className="link">
-              Students
-            </a>
+          <p className="m-0">
+            You do not need a title or a perfect record. We care about what you
+            have started, what you have finished, and why this matters to you.
           </p>
         </div>
-      </section>
+      </Container>
 
-      {/* ---------------- TRACK 1 — Researchers (first) ---------------- */}
-      <section id="researchers" className="border-b border-line bg-surface">
-        <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
-          <p className="meta-label">Track one</p>
-          <h2 className="type-section font-display mt-3">
-            Researchers and professionals
-          </h2>
-
-          {/*
-            States the shape of the ask before the boxes: one thing, taught
-            well, to an audience that is mid-project. The scope and the topic
-            list live in the "Run a guest session" box rather than here, so this
-            paragraph does not restate what the box is about to say.
-          */}
-          <p className="mt-7 max-w-2xl type-body text-muted">
-            Sessions are professional and focused. You teach one thing you know
-            well to students doing research right now.
-          </p>
-
-          <div className="mt-10 grid gap-px border border-line bg-line md:grid-cols-2">
-            {WAYS.map((way) => (
-              <div key={way.title} className="bg-paper p-6 md:p-7 flex flex-col">
-                <h3 className="type-card font-display">{way.title}</h3>
-                <p className="mt-3 flex-1 text-[15px] text-muted leading-relaxed">
-                  {way.body}
-                </p>
-                <p className="mt-5">
-                  {way.href ? (
-                    <a href={way.href} className="text-[15px] link">
-                      {way.cta}
-                    </a>
-                  ) : (
-                    <a
-                      href={mailto(way.subject as string)}
-                      className="text-[15px] link"
-                    >
-                      {way.cta}
-                    </a>
-                  )}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {CONTRIBUTORS.length > 0 && (
-            <div className="mt-10 pt-8 border-t border-line">
-              <p className="meta-label">Contributors</p>
-              <ul className="mt-4 grid gap-3 md:grid-cols-2">
-                {CONTRIBUTORS.map((c) => (
-                  <li key={c.name} className="text-[15px] text-ink">
-                    {c.name}
-                    <span className="text-muted">
-                      , {c.affiliation} · {c.role}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <HatchDivider id="get-involved" className="bg-paper" />
-
-      {/* ---------------- TRACK 2 — Students ---------------- */}
-      <section id="students" className="border-t border-line bg-paper">
-        <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
-          <p className="meta-label">Track two</p>
-          <h2 className="type-section font-display mt-3">Students</h2>
-          <p className="mt-7 max-w-2xl type-body text-muted">
-            Two separate pathways. You may hold both.
-          </p>
-
-          <RoleGroup
-            label={CATEGORY_LABEL.chapter}
-            openings={researchGroupOpenings()}
-          />
-          <RoleGroup label={CATEGORY_LABEL.team} openings={teamOpenings()} />
-        </div>
-      </section>
-    </div>
-  );
-}
-
-/**
- * One pathway: a heading, then its role cards.
- *
- * THE HEADING IS DROPPED when the pathway holds exactly one opening whose title
- * already equals the label. That happens on the Principal Researcher pathway,
- * where the role is the pathway — renaming the role to match the label put the
- * same words on screen twice in a row. Suppressing the duplicate is better than
- * inventing a second name for one thing.
- *
- * Compared case-insensitively and trimmed, so a stray capital or a trailing space
- * in either string does not resurrect the duplicate.
- *
- * Deliberately conditional rather than removed: the Atlas Student Team pathway
- * has five openings and needs its heading, and this pathway will need one again
- * the moment it gains a second role.
- */
-function RoleGroup({
-  label,
-  openings,
-}: {
-  label: string;
-  openings: Opening[];
-}) {
-  if (openings.length === 0) return null;
-
-  const norm = (v: string) => v.trim().toLowerCase();
-  const headingIsRedundant =
-    openings.length === 1 && norm(openings[0].title) === norm(label);
-
-  return (
-    <div className="mt-12 first:mt-10">
-      {!headingIsRedundant && (
-        <h3 className="font-display text-[26px]">{label}</h3>
-      )}
-      <div className={cn("space-y-5", !headingIsRedundant && "mt-6")}>
-        {openings.map((opening) => (
-          <RoleCard key={opening.slug} opening={opening} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * One role. Closed roles still render, visibly marked and without a link — a
- * disappearing role looks like a site error to someone who bookmarked it.
- */
-function RoleCard({ opening }: { opening: Opening }) {
-  const status = effectiveStatus(opening);
-  const closed = status === "closed";
-  const pending = isFormPending(opening);
-
-  return (
-    <article className="rounded-card border border-line bg-surface p-6 md:p-7">
-      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-        <div className="min-w-0">
-          <h4 className="type-card font-display">{opening.title}</h4>
-          <p className="mt-1.5 meta-label">{opening.area}</p>
-        </div>
-        <span
-          className={
-            "shrink-0 inline-flex items-center rounded-full border px-2.5 py-1 meta-label " +
-            (closed
-              ? "border-line text-faint"
-              : "border-ink/40 bg-ink/[0.05] !text-ink")
-          }
-        >
-          {closed ? "Closed" : status === "rolling" ? "Rolling" : "Open"}
-        </span>
-      </div>
-
-      <p className="mt-4 text-[15px] text-ink">{opening.oneLine}</p>
-
-      <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-        {opening.commitment && (
-          <Meta label="Commitment">{opening.commitment}</Meta>
-        )}
-        {opening.selectivity && (
-          <Meta label="Selectivity">{opening.selectivity}</Meta>
-        )}
-        <Meta label="Deadline">
-          {opening.deadline ? formatDate(opening.deadline) : "Rolling"}
-        </Meta>
-      </dl>
-
-      <div className="mt-5 space-y-4 text-[15px] text-muted leading-relaxed">
-        {opening.description.split(/\n\s*\n/).map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
-      </div>
-
-      {opening.regions && opening.regions.length > 0 && (
-        <div className="mt-6">
-          <p className="meta-label">Regions</p>
-          <ul className="mt-2.5 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-muted">
-            {opening.regions.map((r) => (
-              <li key={r}>{r}</li>
+      {/* Where you could help */}
+      <section className="bg-mist">
+        <Container className="py-24">
+          <SectionHeading className="m-0 mb-9">Where you could help</SectionHeading>
+          <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-3 gap-5">
+            {AREAS.map((a) => (
+              <li key={a.title} className="rounded bg-white p-7">
+                <h3 className="m-0 mb-2.5 text-[24px] leading-[1.25]">{a.title}</h3>
+                <p className="m-0 text-[17px] leading-[1.6]">{a.body}</p>
+              </li>
             ))}
           </ul>
-        </div>
-      )}
+        </Container>
+      </section>
 
-      {/*
-        ONE COLUMN OR TWO, depending on whether the role states criteria. An
-        empty lookingFor drops the second column rather than rendering an empty
-        heading, and the grid collapses to one column so the responsibilities do
-        not sit in a half-width gutter with dead space beside them.
-      */}
-      <div
-        className={cn(
-          "mt-6 grid gap-6",
-          opening.lookingFor.length > 0
-            ? "md:grid-cols-2"
-            : // Single column: cap the measure. Full width let four short lines
-              // run the whole card. max-w-2xl is the site's body measure.
-              "max-w-2xl"
-        )}
-      >
-        <BulletList title="Responsibilities" items={opening.responsibilities} />
-        {opening.lookingFor.length > 0 && (
-          <BulletList title="What we look for" items={opening.lookingFor} />
-        )}
-      </div>
-
-      <div className="mt-7 pt-5 border-t border-line flex flex-wrap items-center gap-4">
-        {closed ? (
-          <span className="text-[15px] text-faint">
-            This role is not accepting applications.
-          </span>
-        ) : pending ? (
-          <span
-            aria-disabled="true"
-            className="rounded-control border border-line px-5 py-2.5 text-sm text-muted cursor-not-allowed"
-          >
-            Opening soon
-          </span>
-        ) : (
+      {/* How it works */}
+      <section className="mx-auto max-w-[1200px] px-6 py-[104px]">
+        <SectionHeading className="m-0 mb-9">How it works</SectionHeading>
+        <ol className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8">
+          {STEPS.map((s, i) => (
+            <li key={s.title} className="border-t-2 border-navy pt-5">
+              <div className="mb-2 text-[16px] italic text-navy">Step {i + 1}</div>
+              <h3 className="m-0 mb-2.5 text-[24px] leading-[1.25]">{s.title}</h3>
+              <p className="m-0 text-[17px] leading-[1.6]">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="m-0 mt-12 text-[17px] text-muted">
+          Organizations who want to work with Atlas: email{" "}
           <a
-            href={opening.formUrl as string}
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="underline underline-offset-4 hover:text-crimson break-words"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          .
+        </p>
+      </section>
+
+      {/* Join */}
+      <section className="on-navy bg-navy text-white">
+        <Container className="py-20 flex flex-wrap items-center justify-between gap-x-12 gap-y-7">
+          <div>
+            <h2 className="m-0 mb-3 text-[length:clamp(30px,4vw,46px)] leading-[1.12]">
+              Join the Atlas team
+            </h2>
+            <p className="m-0 text-[20px] text-on-navy-muted">
+              Volunteer roles, open to secondary and university students
+              anywhere.
+            </p>
+          </div>
+          <a
+            href={GET_INVOLVED_FORM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-control bg-ink text-paper px-5 py-2.5 text-sm hover:bg-ink-hover transition-colors"
+            className="inline-block rounded bg-white px-[30px] py-4 text-[19px] font-semibold text-navy no-underline hover:bg-mist transition-colors"
           >
-            Open the application form
+            Fill out the form
           </a>
-        )}
-        {!closed && opening.formNote && (
-          <span className="text-sm text-muted">{opening.formNote}</span>
-        )}
-      </div>
-    </article>
-  );
-}
-
-function Meta({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <dt className="meta-label">{label}</dt>
-      <dd className="mt-1 text-ink">{children}</dd>
+        </Container>
+      </section>
     </div>
   );
-}
-
-function BulletList({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div>
-      <p className="meta-label">{title}</p>
-      <ul className="mt-2.5 space-y-2">
-        {items.map((item) => (
-          <li
-            key={item}
-            className="flex gap-2.5 text-[15px] text-muted leading-relaxed"
-          >
-            <span aria-hidden className="text-faint shrink-0">
-              —
-            </span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
 }

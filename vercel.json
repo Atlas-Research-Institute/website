@@ -10,10 +10,6 @@
     {
       "source": "/research-groups/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
-    },
-    {
-      "source": "/get-involved",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     }
   ]
 }

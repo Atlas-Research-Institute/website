@@ -21,6 +21,9 @@ export function Footer() {
           <Link to="/journal" className={linkCls}>
             Journal
           </Link>
+          <Link to="/get-involved" className={linkCls}>
+            Get involved
+          </Link>
           <Link to="/privacy" className={linkCls}>
             Privacy
           </Link>
