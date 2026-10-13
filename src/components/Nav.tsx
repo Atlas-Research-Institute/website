@@ -3,18 +3,18 @@ import { APPLY_PATH } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 /**
- * Sitewide header: an 8px navy bar, the wordmark, four links and the Apply
+ * Sitewide header: an 8px navy bar, the wordmark, five links and the Apply
  * button.
  *
  * Fellowship and Lessons are sections of the homepage. Research Groups,
- * Events, Get Involved and Partners are no longer in the nav; their pages
- * still exist.
+ * Events and Partners are no longer in the nav; their pages still exist.
  */
 const LINKS = [
   { to: "/#fellowship", label: "Fellowship" },
   { to: "/#lessons", label: "Lessons" },
   { to: "/journal", label: "Journal" },
   { to: "/about", label: "About" },
+  { to: "/get-involved", label: "Get Involved" },
 ];
 
 export function Nav() {
