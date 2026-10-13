@@ -49,17 +49,11 @@ export function GetInvolved() {
         <h1 className="m-0 mb-6 max-w-[20ch] text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
           Help bring research to more students
         </h1>
-        <div className="max-w-[36em] text-[21px] text-body-muted">
-          <p className="m-0 mb-4">
-            We are looking for people who want to bring research training to
-            students who never had it, in their own school, in their country,
-            or online.
-          </p>
-          <p className="m-0">
-            You do not need a title or a perfect record. We care about what you
-            have started, what you have finished, and why this matters to you.
-          </p>
-        </div>
+        <p className="m-0 max-w-[36em] text-[21px] text-body-muted">
+          We are looking for people who want to bring research training to
+          students who never had it, in their own school, in their country, or
+          online.
+        </p>
       </Container>
 
       {/* Where you could help */}
