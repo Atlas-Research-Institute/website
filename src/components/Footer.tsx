@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { FaInstagram, FaLinkedin } from "react-icons/fa6";
+import { FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa6";
 import { CONTACT_EMAIL } from "@/lib/dates";
 
 const INSTAGRAM_URL = "https://www.instagram.com/research.atlas/";
 const LINKEDIN_URL = "https://www.linkedin.com/company/atlas-research-institute";
+const TIKTOK_URL = "https://www.tiktok.com/@research_atlas";
+const YOUTUBE_URL = "https://www.youtube.com/@atlas-research";
 
 const linkCls =
   "py-3 text-muted underline underline-offset-4 hover:text-crimson transition-colors";
@@ -48,6 +50,24 @@ export function Footer() {
               className="inline-flex h-11 w-11 items-center justify-center text-muted hover:text-crimson transition-colors"
             >
               <FaLinkedin aria-hidden size={22} />
+            </a>
+            <a
+              href={TIKTOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Atlas on TikTok"
+              className="inline-flex h-11 w-11 items-center justify-center text-muted hover:text-crimson transition-colors"
+            >
+              <FaTiktok aria-hidden size={22} />
+            </a>
+            <a
+              href={YOUTUBE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Atlas on YouTube"
+              className="inline-flex h-11 w-11 items-center justify-center text-muted hover:text-crimson transition-colors"
+            >
+              <FaYoutube aria-hidden size={22} />
             </a>
           </span>
         </div>
