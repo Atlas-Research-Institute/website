@@ -1,30 +1,20 @@
-# Confirmation-email notice on /fellowship
+# Referral required; select answers stay in English under browser translation
 
-Branch: `redesign` (checked with `git branch --show-current`). Commit `54993f7`, pushed to `origin redesign` only. `npm run build` passes.
+## Changes (`src/pages/Fellowship.tsx` only)
+- **Translation-proof selects.** Each `<option>` in the country, grade and referral selects now has `value` set to its English text (`value={c}`, `value={g}`, `value={r}`). The placeholder options keep `value=""`. The research radios already had `value={v}` ("Yes" / "No"), so they needed no change.
+- **"Other" check.** The "Tell us where" toggle and the payload both read the select's value through FormData, so they now compare against the English value, not the visible text.
+- **Referral required.** It shows the "required" marker and gets the error "Tell us how you heard about Atlas." It is added to `REQUIRED`, `FieldName` and `FIELD_ORDER` (after `completion`).
+- **"Tell us where" required when Other is chosen.** Its error is "Tell us where you heard about Atlas." It is added to `FieldName` and `FIELD_ORDER` right after `referral`.
+- **Not changed:** the payload keys and their order, the endpoint and the fetch.
 
-## What changed (`src/pages/Fellowship.tsx` only)
+## Verification
+`npm run build` passed. The browser checks ran in headless Chromium against `vite preview`. Every POST was intercepted and answered locally, so nothing reached the live sheet.
 
-- **New paragraph** in the "Application received." box, between the thank-you paragraph and "While you wait, say hello in the Atlas Discord.":
-  "You should get a confirmation email at **{email}** from {CONTACT_EMAIL} within a few minutes. If you do not see it, check your spam folder."
-- **Where the address comes from:** it is saved in component state (`submittedEmail`) at submit time, from the payload's trimmed email. It is not read from localStorage. The sender comes from `CONTACT_EMAIL` in `src/lib/dates.ts`.
-- **Long addresses:** the paragraph uses `overflow-wrap: anywhere`, so they wrap inside the box.
-- **Not changed:** the payload, the endpoint and the fetch.
+| Check | Result |
+| --- | --- |
+| Submit with no referral (rest valid) | Showed "Tell us how you heard about Atlas.", focused `#referral`, 0 POSTs |
+| Other with "Tell us where" empty | Showed "Tell us where you heard about Atlas.", focused `#referral_other`, 0 POSTs |
+| Option text rewritten with JS ("Brasil (pt)", "Outro (pt)", etc.) | "Tell us where" still appeared. The payload sent `country: "Brazil"`, `grade: "11th / Year 12"`, `referral: "Other"`. The 16 keys were in the same order |
+| 375px width | `scrollWidth` 375 = `clientWidth`, so no sideways scroll |
 
-## Browser checks
-
-Run in headless Chrome. The POST was intercepted and answered locally, so nothing reached the live sheet. Test address: a 104-character email, typed with surrounding spaces.
-
-| Width | Sideways scroll | Address | Inside the box |
-| --- | --- | --- | --- |
-| 1280px | none | trimmed, semibold (600) | yes |
-| 375px | none | trimmed, semibold, wraps over five lines | yes |
-
-The paragraphs appear in the requested order. The draft was cleared after submit, and the address still showed. The payload still has 16 keys. No console errors.
-
-## Not asked for
-
-Nothing.
-
-## Note
-
-The site only says what the email will say. I can't see or test the Apps Script's email, so I haven't confirmed that it sends, that it comes from admin@atlas-research.org, or that it arrives within a few minutes.
+notes/redesign/ and public/atlas-linkedin-cover-4200x700.png were not added.

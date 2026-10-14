@@ -59,6 +59,8 @@ type FieldName =
   | "prompt"
   | "datasource"
   | "completion"
+  | "referral"
+  | "referral_other"
   | "discord"
   | "agree";
 export type ApplicationErrors = Partial<Record<FieldName, string>>;
@@ -76,6 +78,8 @@ const FIELD_ORDER: FieldName[] = [
   "prompt",
   "datasource",
   "completion",
+  "referral",
+  "referral_other",
   "discord",
   "agree",
 ];
@@ -89,6 +93,7 @@ const REQUIRED: Partial<Record<FieldName, string>> = {
   grade: "Select your grade or year.",
   timezone: "Enter your time zone.",
   research: "Choose yes or no.",
+  referral: "Tell us how you heard about Atlas.",
 };
 
 /**
@@ -139,6 +144,10 @@ export function validateApplication(fd: FormData): ApplicationErrors {
     } else if (n > LIMITS[key].max) {
       found[key] = `Over ${LIMITS[key].max} words. Cut it to ${LIMITS[key].max} or fewer to submit.`;
     }
+  }
+
+  if (text("referral") === "Other" && !text("referral_other")) {
+    found.referral_other = "Tell us where you heard about Atlas.";
   }
 
   if (!fd.get("discord_blocked") && discordUsername(text("discord")).length < 2) {
@@ -418,13 +427,13 @@ export function Fellowship() {
                   <Q id="country" label="Country" required error={errors.country}>
                     <select id="country" name="country" required defaultValue="" aria-invalid={!!errors.country} aria-describedby="country-error" className={inputCls}>
                       <option value="" disabled>Select country</option>
-                      {COUNTRIES.map((c) => <option key={c}>{c}</option>)}
+                      {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </Q>
                   <Q id="grade" label="Grade / year" required error={errors.grade}>
                     <select id="grade" name="grade" required defaultValue="" aria-invalid={!!errors.grade} aria-describedby="grade-error" className={inputCls}>
                       <option value="" disabled>Select grade</option>
-                      {GRADES.map((g) => <option key={g}>{g}</option>)}
+                      {GRADES.map((g) => <option key={g} value={g}>{g}</option>)}
                     </select>
                   </Q>
                 </div>
@@ -490,15 +499,15 @@ export function Fellowship() {
               </Group>
 
               <Group title="Final details">
-                <Q id="referral" label="How did you hear about Atlas?">
-                  <select id="referral" name="referral" defaultValue="" className={inputCls}>
+                <Q id="referral" label="How did you hear about Atlas?" required error={errors.referral}>
+                  <select id="referral" name="referral" required defaultValue="" aria-invalid={!!errors.referral} aria-describedby="referral-error" className={inputCls}>
                     <option value="">Select one</option>
-                    {REFERRALS.map((r) => <option key={r}>{r}</option>)}
+                    {REFERRALS.map((r) => <option key={r} value={r}>{r}</option>)}
                   </select>
                 </Q>
                 <div hidden={referral !== "Other"}>
-                  <Q id="referral_other" label="Tell us where">
-                    <input id="referral_other" name="referral_other" className={inputCls} placeholder="Where you heard about us" />
+                  <Q id="referral_other" label="Tell us where" required error={errors.referral_other}>
+                    <input id="referral_other" name="referral_other" aria-invalid={!!errors.referral_other} aria-describedby="referral_other-error" className={inputCls} placeholder="Where you heard about us" />
                   </Q>
                 </div>
               </Group>
