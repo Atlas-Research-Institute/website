@@ -253,7 +253,7 @@ export function Landing() {
             to={APPLY_PATH}
             className="inline-block rounded bg-white px-[30px] py-4 text-[19px] font-semibold text-navy no-underline hover:bg-mist transition-colors"
           >
-            Apply to the November Fellowship
+            Apply to the {DATES.cohortName}
           </Link>
         </Container>
       </section>

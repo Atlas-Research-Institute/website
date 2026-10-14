@@ -1,23 +1,23 @@
 /**
  * Single source of truth for fellowship state + contact.
  *
- * CURRENT STATE: applications for the November 2026 Fellowship are OPEN.
- * They close October 25, 2026; decisions go out by October 30, 2026; the
- * fellowship runs November 2 to December 13, 2026. Pages render the labels below, never their own copy of a
- * date.
+ * CURRENT STATE: applications for the Winter Fellowship are OPEN.
+ * They close December 21, 2026; decisions go out by December 28, 2026; the
+ * fellowship runs January 4 to February 14, 2027. Pages render the labels
+ * below, never their own copy of a date.
  */
 export const DATES = {
   status: "open" as const,
   /** ISO dates, for anything that needs to compare against today. */
-  applicationsClose: "2026-10-25",
-  decisionsBy: "2026-10-30",
-  fellowshipStart: "2026-11-02",
-  fellowshipEnd: "2026-12-13",
+  applicationsClose: "2026-12-21",
+  decisionsBy: "2026-12-28",
+  fellowshipStart: "2027-01-04",
+  fellowshipEnd: "2027-02-14",
   /** Display labels. */
-  applicationsCloseLabel: "October 25",
-  decisionsByLabel: "October 30",
-  fellowshipRunsLabel: "November 2 to December 13",
-  cohortName: "November Fellowship",
+  applicationsCloseLabel: "December 21",
+  decisionsByLabel: "December 28",
+  fellowshipRunsLabel: "January 4 to February 14",
+  cohortName: "Winter Fellowship",
 } as const;
 
 /** The Atlas Discord, linked from the application confirmation. */

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Container } from "@/components/site/Container";
-import { APPLY_PATH } from "@/lib/dates";
+import { APPLY_PATH, DATES } from "@/lib/dates";
 
 /**
  * The Atlas Journal: a next-issue notice until the journal system is rebuilt.
@@ -29,9 +29,9 @@ export function Journal() {
           <div>
             <p className="m-0 mb-1 text-[16px] italic text-muted">Next issue</p>
             <p className="m-0 mb-2 text-[length:clamp(26px,3vw,34px)] leading-[1.2] font-semibold text-navy">
-              Winter 2026. Coming soon.
+              Spring 2027. Coming soon.
             </p>
-            <p className="m-0">Papers from the November 2026 Fellowship.</p>
+            <p className="m-0">Papers from the {DATES.cohortName}.</p>
           </div>
           <Link
             to={APPLY_PATH}

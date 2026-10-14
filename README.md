@@ -5,7 +5,7 @@ dependencies are React Router, react-icons (footer brand icons) and two class
 utilities.
 
 The site leads with **the Atlas Fellowship**: a free, six-week online research
-fellowship. Applications for the November 2026 Fellowship are open.
+fellowship. Applications for the Winter Fellowship are open.
 
 ## Run locally
 
@@ -153,9 +153,9 @@ and rules before adding any.
 
 ## Current state — read before editing copy
 
-- **Applications for the November 2026 Fellowship are open.** They close
-  October 25, 2026, decisions go out by October 30, 2026, and the fellowship
-  runs November 2 to December 13, 2026. The dates live in `src/lib/dates.ts`
+- **Applications for the Winter Fellowship are open.** They close
+  December 21, 2026, decisions go out by December 28, 2026, and the fellowship
+  runs January 4 to February 14, 2027. The dates live in `src/lib/dates.ts`
   (`DATES`). Every Apply button points at `APPLY_PATH` (`/fellowship`).
 - The application form on `/fellowship` posts to `WAITLIST_ENDPOINT` in
   `src/lib/dates.ts`, the live Apps Script the summer 2026 cohort applied

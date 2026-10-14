@@ -203,7 +203,7 @@ const inputCls =
 type SubmitState = "idle" | "sending" | "sent" | "error";
 
 /**
- * /fellowship: the November 2026 Fellowship and its application.
+ * /fellowship: the current fellowship (DATES.cohortName) and its application.
  *
  * The form posts to WAITLIST_ENDPOINT, the live Apps Script the summer cohort
  * applied through. See the comment on the fetch for why the POST is no-cors.
