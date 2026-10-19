@@ -45,10 +45,10 @@ and how they heard about Atlas.
 
 ## The summer 2026 fellowship
 
-About 500 students applied in two weeks. Atlas admitted 25 fellows from 20
-countries, and they wrote research papers. 88% of the fellows surveyed had never
-finished an independent research project before Atlas. 94% said, at the end of
-the fellowship, that they plan to keep doing research.
+Atlas admitted 25 fellows from 20 countries, and they wrote research papers. 88%
+of the fellows surveyed had never finished an independent research project
+before Atlas. 94% said, at the end of the fellowship, that they plan to keep
+doing research.
 
 ## Researchers who have taught Atlas fellows
 
@@ -80,7 +80,7 @@ Atlas is not affiliated with or endorsed by these universities.
   date.
 - Research groups, for fellows who finish: small groups, each run by a student
   lead, that take the work further and write papers for submission. Students
-  lead 19 research groups in 9 countries.
+  lead 18 research groups in 9 countries.
 
 ## Key details
 
