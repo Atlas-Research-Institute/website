@@ -94,27 +94,6 @@ export function About() {
         </div>
       </Container>
 
-      <section className="on-navy bg-navy text-white">
-        <Container className="py-20">
-          <SubHeading className="m-0 mb-6">The summer 2026 fellowship</SubHeading>
-          <p className="m-0 mb-9 max-w-[34ch] text-[length:clamp(24px,2.8vw,32px)] leading-[1.4]">
-            About 500 students applied in two weeks. We admitted 25 fellows
-            from 20 countries, and they wrote research papers.
-          </p>
-          <div className="grid max-w-[1040px] grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-x-12 gap-y-5 border-t border-navy-border pt-6 text-on-navy-muted">
-            <p className="m-0">
-              <strong className="font-semibold text-white">88%</strong> of the
-              fellows we surveyed had never finished an independent research
-              project before Atlas.
-            </p>
-            <p className="m-0">
-              <strong className="font-semibold text-white">94%</strong> said, at
-              the end of the fellowship, that they plan to keep doing research.
-            </p>
-          </div>
-        </Container>
-      </section>
-
       <Container className="py-24">
         <SectionHeading className="m-0 mb-8">How Atlas works</SectionHeading>
         <ol className="m-0 p-0 list-none grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-5">
@@ -128,7 +107,7 @@ export function About() {
         </ol>
         <div className="mt-14 border-t border-rule pt-8">
           <p className="m-0 mb-[18px] text-[length:clamp(24px,2.8vw,32px)] leading-[1.3] font-semibold text-navy">
-            Students lead 19 research groups in 9 countries.
+            Students lead 18 research groups in 9 countries.
           </p>
           <CountryList countries={GROUP_COUNTRIES} itemClassName="bg-mist" />
         </div>
