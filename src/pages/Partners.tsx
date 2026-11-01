@@ -7,6 +7,9 @@ import {
   SubmitState,
 } from "@/components/forms";
 import { FORM_ENDPOINT, PARTNERS_EMAIL } from "@/lib/dates";
+import { Container, SectionHeading } from "@/components/site/Container";
+import { NameList } from "@/components/site/Researchers";
+import { CountryList } from "@/components/site/Quote";
 import { logPayload } from "@/lib/payloadLog";
 
 /** Fields that must be non-blank, with the message shown when they are not. */
@@ -17,7 +20,7 @@ const REQUIRED_TEXT_FIELDS = {
    * Required, not optional. An enquiry with no affiliation cannot be evaluated —
    * "who is this and what are they part of" is the first thing a reviewer needs.
    */
-  titleorg: "Enter your title and organisation.",
+  titleorg: "Enter your title and organization.",
 } as const;
 
 /**
@@ -102,8 +105,48 @@ export function validatePartnership(fd: FormData): PartnershipErrors {
   return found;
 }
 
+/** Countries for the impact band. Moved from the homepage unchanged. */
+const COUNTRIES = [
+  "Kazakhstan",
+  "Bangladesh",
+  "Ghana",
+  "Ethiopia",
+  "Uzbekistan",
+  "Türkiye",
+  "Lebanon",
+  "Spain",
+  "Poland",
+  "United States",
+];
+
+/** Same entries and wording as the About page's list. */
+const PARTNERS = [
+  {
+    name: "International Journal of High School Research",
+    detail: "Peer-reviewed submission route for fellows' papers.",
+  },
+  { name: "The Curieux Review", detail: "Student research writing partner." },
+  {
+    name: "Lumiere Education",
+    detail: "Program partner. Scholarships to Lumiere programs for Atlas fellows.",
+  },
+  {
+    name: "The Atlas Journal",
+    detail:
+      "Where fellows share finished work. Read by Atlas editors before it goes up, not externally peer reviewed.",
+  },
+];
+
 /**
- * Partners — partnership enquiries.
+ * Partners — for funders, nonprofits and grant organizations.
+ *
+ *   hero · impact (navy) · access, not ability · partners and journals
+ *   contact form (#contact)
+ *
+ * The impact band and the Lumiere scholarship entry moved here from the
+ * homepage, figures unchanged.
+ *
+ * Partnership enquiries.
  *
  * Posts to FORM_ENDPOINT, a different Apps Script deployment and a different
  * sheet from the fellowship waitlist. Same no-cors pattern, because it is the
@@ -172,40 +215,109 @@ export function Partners() {
   };
 
   return (
-    <div className="bg-paper">
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-3xl px-6 pt-16 md:pt-24 pb-12">
-          <p className="meta-label">Partners</p>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl leading-[1.06]">
-            Work with Atlas.
-          </h1>
-          <p className="mt-6 text-lg text-muted leading-relaxed">
-            Atlas runs student research groups in eight fields. We work with
-            journals on submission routes, with researchers who run guest
-            sessions, and with organisations that mentor student teams.
+    <div className="bg-paper text-ink text-[19px] leading-[1.65]">
+      {/* Hero */}
+      <Container className="pt-16 pb-[88px]">
+        <h1 className="m-0 mb-6 max-w-[22ch] text-[length:clamp(38px,5vw,58px)] leading-[1.1] tracking-[-0.01em]">
+          Partner with us to bring research training to students who have
+          never had it.
+        </h1>
+        <p className="m-0 mb-8 max-w-[36em] text-[21px] text-body-muted">
+          Curiosity is everywhere, yet research training is not. Atlas runs a
+          free, six-week online fellowship where high school students pick a
+          question about education access in their own community and write
+          their first research paper.
+        </p>
+        <a
+          href="#contact"
+          className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
+        >
+          Contact us
+        </a>
+      </Container>
+
+      {/* Impact. Moved from the homepage; every figure is as it was there. */}
+      <section className="on-navy bg-navy text-white">
+        <Container className="pt-[88px] pb-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-x-[72px] gap-y-11 items-center">
+          <div>
+            <p className="m-0 mb-5 text-[length:clamp(30px,3.6vw,42px)] leading-[1.22] font-semibold">
+              88% of the fellows we surveyed last summer had never finished a
+              research project before Atlas.
+            </p>
+            <p className="m-0 mb-3 text-[20px] text-on-navy-muted">
+              94% said they plan to keep doing research.
+            </p>
+            <p className="m-0 text-[20px] text-on-navy-muted">
+              Students lead 18 research groups across 9 countries.
+            </p>
+          </div>
+          <figure className="m-0 rounded bg-white p-8 text-ink">
+            <blockquote className="m-0 mb-5 text-[21px] leading-[1.55] italic">
+              “Before the fellowship, I did not have much experience with the
+              whole research process. During the program, I learned how to find
+              reliable sources, check the information carefully, work with
+              data, and bring everything together into a research paper.”
+            </blockquote>
+            <figcaption className="text-[17px] text-body-muted">
+              <strong className="font-semibold text-navy">Mahajabin</strong>,
+              Bangladesh
+            </figcaption>
+          </figure>
+        </Container>
+        <Container className="pb-[88px]">
+          <p className="m-0 mb-3.5 text-[18px] italic text-on-navy-muted">
+            Last summer's fellows came from 20 countries, including
           </p>
-        </div>
+          <CountryList countries={COUNTRIES} itemClassName="border border-navy-border" />
+        </Container>
       </section>
 
-      <section className="mx-auto max-w-2xl px-6 py-14 md:py-20">
+      {/* Who we reach */}
+      <Container className="py-24">
+        <SectionHeading className="m-0 mb-5">Access, not ability</SectionHeading>
+        <p className="m-0 max-w-[36em]">
+          Most fellows from Nepal, Bangladesh, Pakistan, Syria and Bolivia told
+          us they had little or no research experience before Atlas. Fellows
+          from the US, Canada and China more often arrived with some already.
+          The gap we see is access to training, not ability.
+        </p>
+      </Container>
+
+      {/* Partners and journals */}
+      <section className="bg-mist">
+        <Container className="py-24">
+          <SectionHeading className="m-0 mb-4">Partners and journals</SectionHeading>
+          <p className="m-0 mb-8 max-w-[36em]">
+            Where fellows' work goes, and who supports them.
+          </p>
+          <NameList items={PARTNERS} gap="gap-5" />
+        </Container>
+      </section>
+
+      {/* Contact form */}
+      <section id="contact" className="mx-auto max-w-[848px] px-6 pt-[88px] pb-[104px]">
         {state === "sent" ? (
-          <div className="rounded-card border border-line bg-surface p-10 text-center">
-            <h2 className="font-display text-2xl">Message received.</h2>
-            <p className="mt-3 text-muted">We reply to every enquiry.</p>
+          <div role="status" className="rounded bg-mist p-8 md:p-10">
+            <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
+              Message received.
+            </h2>
+            <p className="m-0">We reply to every inquiry.</p>
           </div>
         ) : (
           <>
+            <SectionHeading className="m-0 mb-10">Contact us</SectionHeading>
+
             {/*
               Retained deliberately. Unreachable while FORM_ENDPOINT holds a URL,
               and it is what makes nulling that constant safe — the form disables
               itself rather than posting into a void.
             */}
             {!enabled && (
-              <div className="mb-8 rounded-card border border-line bg-surface p-6">
-                <h2 className="font-display text-lg">
+              <div className="mb-8 rounded bg-mist p-6">
+                <h3 className="m-0 text-[22px] leading-[1.3]">
                   This form is not open yet.
-                </h2>
-                <p className="mt-2.5 text-[15px] text-muted leading-relaxed">
+                </h3>
+                <p className="m-0 mt-2.5 text-[17px] text-muted">
                   Submissions are not being accepted through the site right now.
                   Write to <span className="text-ink">{PARTNERS_EMAIL}</span> and
                   we will reply.
@@ -238,7 +350,7 @@ export function Partners() {
                 </div>
 
                 <Field
-                  label="Title and organisation"
+                  label="Title and organization"
                   required
                   error={errors.titleorg}
                   hint="e.g. Professor of Chemistry, or a journal or NGO name"
@@ -257,7 +369,7 @@ export function Partners() {
                     name="interest"
                     rows={5}
                     className={inputCls + " resize-y"}
-                    placeholder="Mentorship, a submission route, a guest session"
+                    placeholder="Funding, a program partnership, schools or data"
                   />
                 </Field>
 
@@ -294,7 +406,7 @@ export function Partners() {
                   <button
                     type="submit"
                     disabled={state === "sending"}
-                    className="rounded-control bg-ink text-paper px-6 py-3 text-[15px] hover:bg-ink-hover transition-colors disabled:opacity-60"
+                    className="rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white hover:bg-crimson-hover transition-colors disabled:opacity-60"
                   >
                     {state === "sending" ? "Sending" : "Send to Atlas"}
                   </button>

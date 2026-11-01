@@ -3,34 +3,23 @@ import { APPLY_PATH, DATES } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
 import { NameList, ResearcherList } from "@/components/site/Researchers";
-import { CountryList, Quote } from "@/components/site/Quote";
+import { Quote } from "@/components/site/Quote";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { VideoTestimonial } from "@/components/home/VideoTestimonial";
 
 /**
  * The homepage, built from notes/redesign/home.html.
  *
- *   hero · partner logos · facts · navy proof · lessons · fellowship weeks
+ *   hero · partner logos · facts · one stat · lessons · fellowship weeks
  *   fellow video · written testimonials · where your paper goes · navy apply
  *
  * Copy is the reference text word for word, except the hero headline and the
  * first sentence of its lead, which were rewritten to say plainly what Atlas
  * does. The research groups listing and the stat band are no longer on this
- * page; their components are kept in src/components/home/.
+ * page; their components are kept in src/components/home/. The navy impact
+ * band (88% and 94%, the Mahajabin quote, the country list) and the Lumiere
+ * scholarship entry moved to /partners.
  */
-
-const COUNTRIES = [
-  "Kazakhstan",
-  "Bangladesh",
-  "Ghana",
-  "Ethiopia",
-  "Uzbekistan",
-  "Türkiye",
-  "Lebanon",
-  "Spain",
-  "Poland",
-  "United States",
-];
 
 const WEEKS = [
   {
@@ -82,10 +71,6 @@ const PARTNERS = [
     detail: "Peer-reviewed submission route.",
   },
   { name: "The Curieux Review", detail: "Student research writing partner." },
-  {
-    name: "Lumiere Education",
-    detail: "Program partner. Scholarships to Lumiere programs for Atlas fellows.",
-  },
 ];
 
 export function Landing() {
@@ -145,38 +130,13 @@ export function Landing() {
         <FactStrip />
       </Container>
 
-      {/* Navy proof */}
-      <section className="on-navy mt-[88px] bg-navy text-white">
-        <Container className="pt-[88px] pb-11 grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-x-[72px] gap-y-11 items-center">
-          <div>
-            <p className="m-0 mb-5 text-[length:clamp(30px,3.6vw,42px)] leading-[1.22] font-semibold">
-              88% of the fellows we surveyed last summer had never finished a
-              research project before Atlas.
-            </p>
-            <p className="m-0 text-[20px] text-on-navy-muted">
-              94% said they plan to keep doing research.
-            </p>
-          </div>
-          <figure className="m-0 rounded bg-white p-8 text-ink">
-            <blockquote className="m-0 mb-5 text-[21px] leading-[1.55] italic">
-              “Before the fellowship, I did not have much experience with the
-              whole research process. During the program, I learned how to find
-              reliable sources, check the information carefully, work with
-              data, and bring everything together into a research paper.”
-            </blockquote>
-            <figcaption className="text-[17px] text-body-muted">
-              <strong className="font-semibold text-navy">Mahajabin</strong>,
-              Bangladesh
-            </figcaption>
-          </figure>
-        </Container>
-        <Container className="pb-[88px]">
-          <p className="m-0 mb-3.5 text-[18px] italic text-on-navy-muted">
-            Last summer's fellows came from 20 countries, including
-          </p>
-          <CountryList countries={COUNTRIES} itemClassName="border border-navy-border" />
-        </Container>
-      </section>
+      {/* One stat. The full impact band, with its quote and countries, is on /partners. */}
+      <Container className="mt-[88px]">
+        <p className="m-0 max-w-[30em] border-t border-rule pt-8 text-[length:clamp(26px,3vw,34px)] leading-[1.3] font-semibold text-navy">
+          88% of the fellows we surveyed last summer had never finished a
+          research project before Atlas.
+        </p>
+      </Container>
 
       {/* Lessons */}
       <section id="lessons" className="mx-auto max-w-[1200px] px-6 py-[104px]">
@@ -254,13 +214,13 @@ export function Landing() {
         id="apply"
         className="on-navy flex min-h-[min(80vh,720px)] items-center bg-navy text-white"
       >
-        <Container className="w-full py-20 flex flex-wrap items-center justify-between gap-x-12 gap-y-7">
+        <Container className="w-full py-20 flex flex-wrap items-center justify-center gap-x-12 gap-y-7 text-center">
           <h2 className="m-0 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08]">
             Applications close {DATES.applicationsCloseLabel}
           </h2>
           <Link
             to={APPLY_PATH}
-            className="inline-block rounded bg-white px-[30px] py-4 text-[19px] font-semibold text-navy no-underline hover:bg-mist transition-colors"
+            className="inline-block rounded bg-white px-[30px] py-4 text-center text-[19px] font-semibold text-navy no-underline hover:bg-mist transition-colors"
           >
             Apply to the {DATES.cohortName}
           </Link>

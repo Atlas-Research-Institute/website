@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL } from "@/lib/dates";
+import { Link } from "react-router-dom";
 import { Container, SectionHeading, SubHeading } from "@/components/site/Container";
 import { NameList, ResearcherList } from "@/components/site/Researchers";
 import { CountryList, Quote } from "@/components/site/Quote";
@@ -149,12 +149,12 @@ export function About() {
           We work with researchers, schools, journals and organizations that
           want to bring research to students without access to it.
         </p>
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="inline-block rounded bg-crimson px-[26px] py-[15px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors break-all"
+        <Link
+          to="/partners"
+          className="inline-block rounded bg-crimson px-[26px] py-[15px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
         >
-          {CONTACT_EMAIL}
-        </a>
+          Partner with Atlas
+        </Link>
       </Container>
     </div>
   );

@@ -87,7 +87,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   "/partners": {
     title: "Partners",
     description:
-      "Atlas works with journals on submission routes, researchers who run guest sessions, and organisations that mentor student teams.",
+      "Partner with Atlas to bring free research training to students who lack access. For funders, nonprofits and grant organizations.",
   },
   "/get-involved": {
     title: "Get Involved",
