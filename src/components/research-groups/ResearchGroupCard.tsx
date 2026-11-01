@@ -100,8 +100,14 @@ export function ResearchGroupCard({
 
   const where = settingLine(group);
 
+  /*
+   * self-stretch so the card fills its grid row even when the grid sets
+   * items-start (as /research-groups does). Together with mt-auto on the
+   * footer, that pins "Read the brief" / "Apply to join" to the same height on
+   * every card in a row.
+   */
   return (
-    <article className="card-hover flex flex-col overflow-hidden rounded-card border border-line bg-surface">
+    <article className="card-hover flex flex-col self-stretch overflow-hidden rounded-card border border-line bg-surface">
       {hasImage ? (
         <div className="aspect-[16/9] w-full overflow-hidden bg-ink">
           <img
@@ -188,9 +194,13 @@ export function ResearchGroupCard({
           </>
         )}
 
+        {/*
+          * Clamped to four lines so one long summary cannot stretch the whole
+          * grid row. The full text is on the group's brief page.
+          */}
         <p
           className={cn(
-            "leading-relaxed text-muted",
+            "line-clamp-4 leading-relaxed text-muted",
             hasImage ? "mt-2.5" : "",
             featured ? "text-[17px]" : "text-[15px]"
           )}
@@ -198,13 +208,13 @@ export function ResearchGroupCard({
           {group.oneLine}
         </p>
 
-        <dl className="mt-5 space-y-1 text-sm">
+        <dl className="mt-5 mb-6 space-y-1 text-sm">
           <Row label="Lead">{group.leadName}</Row>
           <Row label="Setting">{where}</Row>
           <Row label="Members">{group.memberCount}</Row>
         </dl>
 
-        <div className="mt-6 pt-4 border-t border-line flex items-center justify-between gap-4">
+        <div className="mt-auto pt-4 border-t border-line flex items-center justify-between gap-4">
           <Link
             to={`/research-groups/${group.slug}`}
             className="text-sm link"
