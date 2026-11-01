@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Container, SectionHeading } from "@/components/site/Container";
+import { Container } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
 import { CONTACT_EMAIL, DATES, DISCORD_URL, WAITLIST_ENDPOINT } from "@/lib/dates";
 import { logPayload } from "@/lib/payloadLog";

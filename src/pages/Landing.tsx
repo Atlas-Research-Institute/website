@@ -4,16 +4,19 @@ import { Container, SectionHeading } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
 import { NameList, ResearcherList } from "@/components/site/Researchers";
 import { CountryList, Quote } from "@/components/site/Quote";
+import { TrustedBy } from "@/components/home/TrustedBy";
+import { VideoTestimonial } from "@/components/home/VideoTestimonial";
 
 /**
  * The homepage, built from notes/redesign/home.html.
  *
- *   hero · facts · navy proof · lessons · fellowship weeks · testimonials
- *   where your paper goes · navy apply · (footer)
+ *   hero · partner logos · facts · navy proof · lessons · fellowship weeks
+ *   fellow video · written testimonials · where your paper goes · navy apply
  *
- * Copy is the reference text word for word. The research groups listing, the
- * partner logos and the stat band are no longer on this page; their components
- * are kept in src/components/home/.
+ * Copy is the reference text word for word, except the hero headline and the
+ * first sentence of its lead, which were rewritten to say plainly what Atlas
+ * does. The research groups listing and the stat band are no longer on this
+ * page; their components are kept in src/components/home/.
  */
 
 const COUNTRIES = [
@@ -95,13 +98,12 @@ export function Landing() {
       >
         <div>
           <h1 className="m-0 mb-6 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
-            Curiosity is everywhere, yet research training is not.
+            We bring research to students who have never been taught it.
           </h1>
           <p className="m-0 mb-8 text-[21px] text-body-muted max-w-[30em]">
-            We teach it for free, to students wherever they live. In six weeks,
-            you pick a question about education access in your own community,
-            learn how to find and test evidence, and finish your first research
-            paper.
+            It is free, wherever you live. In six weeks, you pick a question
+            about education access in your own community, learn how to find
+            and test evidence, and finish your first research paper.
           </p>
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
             <Link
@@ -136,8 +138,10 @@ export function Landing() {
         </figure>
       </section>
 
+      <TrustedBy />
+
       {/* Facts */}
-      <Container>
+      <Container className="mt-12">
         <FactStrip />
       </Container>
 
@@ -211,6 +215,8 @@ export function Landing() {
         </Container>
       </section>
 
+      <VideoTestimonial />
+
       {/* Testimonials */}
       <section id="fellows" className="mx-auto max-w-[1200px] px-6 pt-[104px] pb-[88px]">
         <SectionHeading className="m-0 mb-9">From the summer 2026 fellows</SectionHeading>
@@ -244,9 +250,12 @@ export function Landing() {
       </section>
 
       {/* Apply */}
-      <section id="apply" className="on-navy bg-navy text-white">
-        <Container className="py-20 flex flex-wrap items-center justify-between gap-x-12 gap-y-7">
-          <h2 className="m-0 text-[length:clamp(30px,4vw,46px)] leading-[1.12]">
+      <section
+        id="apply"
+        className="on-navy flex min-h-[min(80vh,720px)] items-center bg-navy text-white"
+      >
+        <Container className="w-full py-20 flex flex-wrap items-center justify-between gap-x-12 gap-y-7">
+          <h2 className="m-0 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08]">
             Applications close {DATES.applicationsCloseLabel}
           </h2>
           <Link
