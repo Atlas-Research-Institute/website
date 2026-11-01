@@ -362,7 +362,7 @@ export function Fellowship() {
         <FactStrip />
       </Container>
 
-      <section id="apply" className="mx-auto max-w-[760px] px-6 pt-[88px] pb-[104px]">
+      <section id="apply" className="mx-auto max-w-[848px] px-6 pt-[88px] pb-[104px]">
         {state === "sent" ? (
           <div
             ref={doneRef}
@@ -396,12 +396,6 @@ export function Fellowship() {
           </div>
         ) : (
           <>
-            <SectionHeading className="m-0 mb-3">Apply here</SectionHeading>
-            <p className="m-0 mb-12 text-muted">
-              Applications close {DATES.applicationsCloseLabel}. Your answers
-              are saved in this browser as you type.
-            </p>
-
             <form
               ref={formRef}
               onSubmit={onSubmit}
@@ -413,6 +407,9 @@ export function Fellowship() {
               <Group title="Applicant information">
                 <Q id="name" label="Full name" required error={errors.name}>
                   <input id="name" name="name" autoComplete="name" required aria-invalid={!!errors.name} aria-describedby="name-error" className={inputCls} />
+                  <p className="m-0 mt-2 text-[15px] text-muted">
+                    Your answers are saved in this browser as you type.
+                  </p>
                 </Q>
                 <Q id="email" label="Email" required error={errors.email}>
                   <input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!errors.email} aria-describedby="email-error" className={inputCls} placeholder="you@email.com" />
