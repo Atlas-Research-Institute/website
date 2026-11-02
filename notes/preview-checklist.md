@@ -25,7 +25,6 @@ Every one should render with no console errors.
 | `/get-involved#researchers` | Jumps to the researchers section |
 | `/get-involved#students` | Jumps to the students section |
 | `/fellowship` | "Applications closed", waitlist form, guest-sessions line |
-| `/partners` | Form rendered **visibly disabled** |
 | `/privacy` | Real policy, "Last updated 17 August 2026" |
 
 **Redirects**
@@ -33,6 +32,7 @@ Every one should render with no console errors.
 - [ ] `/chapters` → `/research-groups`
 - [ ] `/chapters/placeholder-transit-reliability` → `/research-groups/placeholder-transit-reliability` (**slug preserved**)
 - [ ] `/apply` → `/fellowship`
+- [ ] `/partners` → `/about`
 - [ ] `/apply.html` → signpost page, then `/fellowship`
 - [ ] `/privacy.html` → redirects to `/privacy`
 

@@ -195,8 +195,8 @@ In the nav, footer or sitemap: `/` · `/fellowship` · `/about` · `/journal` ·
 `/journal/:slug` · `/privacy`
 
 Still routed but linked from no page: `/research-groups`,
-`/research-groups/:slug`, `/events`, `/events/:slug`, `/get-involved`,
-`/partners`
+`/research-groups/:slug`, `/events`, `/events/:slug`, `/get-involved`
 
-`/chapters`, `/chapters/:slug`, and `/apply` redirect to their current
+`/chapters`, `/chapters/:slug`, `/apply`, and `/partners` (merged into
+`/about`, also a 301 in `vercel.json`) redirect to their current
 equivalents so older links keep working.

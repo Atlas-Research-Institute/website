@@ -213,7 +213,8 @@ export async function fetchSheetRows(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), SHEET_FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { signal: controller.signal, redirect: "follow" });
+    const bust = (url.includes("?") ? "&" : "?") + "cb=" + Date.now();
+    const res = await fetch(url + bust, { signal: controller.signal, redirect: "follow", cache: "no-store" });
     if (!res.ok) {
       warn(`sheet fetch returned ${res.status}; using fallback data`);
       return null;

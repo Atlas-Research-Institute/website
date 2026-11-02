@@ -84,11 +84,6 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     description:
       `Apply to the Atlas ${DATES.cohortName}: six weeks of guided research, free and online. Applications close ${DATES.applicationsCloseLabel}.`,
   },
-  "/partners": {
-    title: "Partners",
-    description:
-      "Atlas works with journals on submission routes, researchers who run guest sessions, and organisations that mentor student teams.",
-  },
   "/get-involved": {
     title: "Get Involved",
     description:
@@ -97,7 +92,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   "/about": {
     title: "About",
     description:
-      "We introduce research to students who have never had a way in. Atlas gives those students a first chance to run their own project, for free.",
+      "Partner with Atlas to bring free research training to students who lack access. For funders, nonprofits and grant organizations.",
   },
   "/privacy": {
     title: "Privacy",

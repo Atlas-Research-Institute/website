@@ -7,6 +7,7 @@ import {
   SubmitState,
 } from "@/components/forms";
 import { FORM_ENDPOINT, PARTNERS_EMAIL } from "@/lib/dates";
+import { SectionHeading } from "@/components/site/Container";
 import { logPayload } from "@/lib/payloadLog";
 
 /** Fields that must be non-blank, with the message shown when they are not. */
@@ -17,7 +18,7 @@ const REQUIRED_TEXT_FIELDS = {
    * Required, not optional. An enquiry with no affiliation cannot be evaluated —
    * "who is this and what are they part of" is the first thing a reviewer needs.
    */
-  titleorg: "Enter your title and organisation.",
+  titleorg: "Enter your title and organization.",
 } as const;
 
 /**
@@ -103,7 +104,11 @@ export function validatePartnership(fd: FormData): PartnershipErrors {
 }
 
 /**
- * Partners — partnership enquiries.
+ * The partnership enquiry form, rendered inside About's #contact section.
+ *
+ * Moved as is from the former src/pages/Partners.tsx. The payload builder,
+ * the validation rule, the field names, the endpoint and the fetch call are
+ * unchanged.
  *
  * Posts to FORM_ENDPOINT, a different Apps Script deployment and a different
  * sheet from the fellowship waitlist. Same no-cors pattern, because it is the
@@ -113,7 +118,7 @@ export function validatePartnership(fd: FormData): PartnershipErrors {
  * nulling FORM_ENDPOINT restores the disabled state automatically with no other
  * edit.
  */
-export function Partners() {
+export function PartnershipForm() {
   const [state, setState] = useState<SubmitState>("idle");
   const [errors, setErrors] = useState<PartnershipErrors>({});
   const enabled = isFormEndpointConfigured();
@@ -172,149 +177,137 @@ export function Partners() {
   };
 
   return (
-    <div className="bg-paper">
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-3xl px-6 pt-16 md:pt-24 pb-12">
-          <p className="meta-label">Partners</p>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl leading-[1.06]">
-            Work with Atlas.
-          </h1>
-          <p className="mt-6 text-lg text-muted leading-relaxed">
-            Atlas runs student research groups in eight fields. We work with
-            journals on submission routes, with researchers who run guest
-            sessions, and with organisations that mentor student teams.
-          </p>
+    <>
+      {state === "sent" ? (
+        <div role="status" className="rounded bg-mist p-8 md:p-10">
+          <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
+            Message received.
+          </h2>
+          <p className="m-0">We reply to every inquiry.</p>
         </div>
-      </section>
+      ) : (
+        <>
+          <SectionHeading className="m-0 mb-10">Contact us</SectionHeading>
 
-      <section className="mx-auto max-w-2xl px-6 py-14 md:py-20">
-        {state === "sent" ? (
-          <div className="rounded-card border border-line bg-surface p-10 text-center">
-            <h2 className="font-display text-2xl">Message received.</h2>
-            <p className="mt-3 text-muted">We reply to every enquiry.</p>
-          </div>
-        ) : (
-          <>
-            {/*
-              Retained deliberately. Unreachable while FORM_ENDPOINT holds a URL,
-              and it is what makes nulling that constant safe — the form disables
-              itself rather than posting into a void.
-            */}
-            {!enabled && (
-              <div className="mb-8 rounded-card border border-line bg-surface p-6">
-                <h2 className="font-display text-lg">
-                  This form is not open yet.
-                </h2>
-                <p className="mt-2.5 text-[15px] text-muted leading-relaxed">
-                  Submissions are not being accepted through the site right now.
-                  Write to <span className="text-ink">{PARTNERS_EMAIL}</span> and
-                  we will reply.
-                </p>
-              </div>
-            )}
+          {/*
+            Retained deliberately. Unreachable while FORM_ENDPOINT holds a URL,
+            and it is what makes nulling that constant safe — the form disables
+            itself rather than posting into a void.
+          */}
+          {!enabled && (
+            <div className="mb-8 rounded bg-mist p-6">
+              <h3 className="m-0 text-[22px] leading-[1.3]">
+                This form is not open yet.
+              </h3>
+              <p className="m-0 mt-2.5 text-[17px] text-muted">
+                Submissions are not being accepted through the site right now.
+                Write to <span className="text-ink">{PARTNERS_EMAIL}</span> and
+                we will reply.
+              </p>
+            </div>
+          )}
 
-            <form onSubmit={onSubmit} noValidate className="space-y-6">
-              <fieldset disabled={!enabled} className="space-y-6 border-0 p-0">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <Field label="Your name" required error={errors.name}>
-                    <input
-                      name="name"
-                      required
-                      aria-invalid={Boolean(errors.name)}
-                      className={inputCls}
-                      autoComplete="name"
-                    />
-                  </Field>
-                  <Field label="Your email" required error={errors.email}>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      aria-invalid={Boolean(errors.email)}
-                      className={inputCls}
-                      autoComplete="email"
-                    />
-                  </Field>
-                </div>
-
-                <Field
-                  label="Title and organisation"
-                  required
-                  error={errors.titleorg}
-                  hint="e.g. Professor of Chemistry, or a journal or NGO name"
-                >
+          <form onSubmit={onSubmit} noValidate className="space-y-6">
+            <fieldset disabled={!enabled} className="space-y-6 border-0 p-0">
+              <div className="grid md:grid-cols-2 gap-6">
+                <Field label="Your name" required error={errors.name}>
                   <input
-                    name="titleorg"
+                    name="name"
                     required
-                    aria-invalid={Boolean(errors.titleorg)}
+                    aria-invalid={Boolean(errors.name)}
                     className={inputCls}
-                    autoComplete="organization"
+                    autoComplete="name"
                   />
                 </Field>
-
-                <Field label="What would you like to explore together?">
-                  <textarea
-                    name="interest"
-                    rows={5}
-                    className={inputCls + " resize-y"}
-                    placeholder="Mentorship, a submission route, a guest session"
+                <Field label="Your email" required error={errors.email}>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    aria-invalid={Boolean(errors.email)}
+                    className={inputCls}
+                    autoComplete="email"
                   />
                 </Field>
+              </div>
 
-                {/*
-                  One consent control, required. Same treatment as the waitlist:
-                  alert-coloured message under the control, aria-invalid on the
-                  input, and counted in the summary below the button.
-                */}
-                <div>
-                  <label className="flex items-start gap-3 text-sm text-muted">
-                    <input
-                      type="checkbox"
-                      name="privacy"
-                      required
-                      aria-invalid={Boolean(errors.privacy)}
-                      className="mt-1 accent-ink"
-                    />
-                    <span>
-                      I agree to the{" "}
-                      <Link to="/privacy" className="link">
-                        privacy policy
-                      </Link>
-                      .
-                    </span>
-                  </label>
-                  {errors.privacy && (
-                    <p role="alert" className="mt-1.5 text-xs text-alert">
-                      {errors.privacy}
-                    </p>
-                  )}
-                </div>
+              <Field
+                label="Title and organization"
+                required
+                error={errors.titleorg}
+                hint="e.g. Professor of Chemistry, or a journal or NGO name"
+              >
+                <input
+                  name="titleorg"
+                  required
+                  aria-invalid={Boolean(errors.titleorg)}
+                  className={inputCls}
+                  autoComplete="organization"
+                />
+              </Field>
 
-                <div className="flex flex-wrap items-center gap-4 pt-2">
-                  <button
-                    type="submit"
-                    disabled={state === "sending"}
-                    className="rounded-control bg-ink text-paper px-6 py-3 text-[15px] hover:bg-ink-hover transition-colors disabled:opacity-60"
-                  >
-                    {state === "sending" ? "Sending" : "Send to Atlas"}
-                  </button>
+              <Field label="What would you like to explore together?">
+                <textarea
+                  name="interest"
+                  rows={5}
+                  className={inputCls + " resize-y"}
+                  placeholder="Funding, a program partnership, schools or data"
+                />
+              </Field>
 
-                  {Object.keys(errors).length > 0 && (
-                    <p role="alert" className="text-sm text-alert">
-                      Fill in the required fields above and submit again.
-                    </p>
-                  )}
-                  {state === "error" && (
-                    <p role="alert" className="text-sm text-alert">
-                      Something failed. Please retry, or email {PARTNERS_EMAIL}.
-                    </p>
-                  )}
-                </div>
-              </fieldset>
-            </form>
-          </>
-        )}
-      </section>
-    </div>
+              {/*
+                One consent control, required. Same treatment as the waitlist:
+                alert-coloured message under the control, aria-invalid on the
+                input, and counted in the summary below the button.
+              */}
+              <div>
+                <label className="flex items-start gap-3 text-sm text-muted">
+                  <input
+                    type="checkbox"
+                    name="privacy"
+                    required
+                    aria-invalid={Boolean(errors.privacy)}
+                    className="mt-1 accent-ink"
+                  />
+                  <span>
+                    I agree to the{" "}
+                    <Link to="/privacy" className="link">
+                      privacy policy
+                    </Link>
+                    .
+                  </span>
+                </label>
+                {errors.privacy && (
+                  <p role="alert" className="mt-1.5 text-xs text-alert">
+                    {errors.privacy}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <button
+                  type="submit"
+                  disabled={state === "sending"}
+                  className="rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white hover:bg-crimson-hover transition-colors disabled:opacity-60"
+                >
+                  {state === "sending" ? "Sending" : "Send to Atlas"}
+                </button>
+
+                {Object.keys(errors).length > 0 && (
+                  <p role="alert" className="text-sm text-alert">
+                    Fill in the required fields above and submit again.
+                  </p>
+                )}
+                {state === "error" && (
+                  <p role="alert" className="text-sm text-alert">
+                    Something failed. Please retry, or email {PARTNERS_EMAIL}.
+                  </p>
+                )}
+              </div>
+            </fieldset>
+          </form>
+        </>
+      )}
+    </>
   );
 }

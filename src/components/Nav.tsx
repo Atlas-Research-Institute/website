@@ -3,15 +3,14 @@ import { APPLY_PATH } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 /**
- * Sitewide header: an 8px navy bar, the wordmark, five links and the Apply
+ * Sitewide header: an 8px navy bar, the wordmark, three links and the Apply
  * button.
  *
- * Fellowship and Lessons are sections of the homepage. Research Groups,
- * Events and Partners are no longer in the nav; their pages still exist.
+ * Every link is a page. Homepage anchors were removed: mixing jump links
+ * with pages made the nav behave inconsistently. Research Groups and Events
+ * are not in the nav; their pages still exist.
  */
 const LINKS = [
-  { to: "/#fellowship", label: "Fellowship" },
-  { to: "/#lessons", label: "Lessons" },
   { to: "/journal", label: "Journal" },
   { to: "/about", label: "About" },
   { to: "/get-involved", label: "Get Involved" },

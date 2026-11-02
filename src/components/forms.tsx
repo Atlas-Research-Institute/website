@@ -89,7 +89,7 @@ export type SubmitState = "idle" | "sending" | "sent" | "error";
  * been written and the sender is told it failed when it had not.
  *
  * Both forms now post inline with `mode: "no-cors"` — see the comments in
- * src/pages/Fellowship.tsx and src/pages/Partners.tsx. Do not reintroduce a
+ * src/pages/Fellowship.tsx and src/components/PartnershipForm.tsx. Do not reintroduce a
  * shared CORS-mode helper; it would be a trap that looks correct.
  */
 

@@ -50,3 +50,30 @@ export function NameList({
     </ul>
   );
 }
+
+/**
+ * The researchers as three white cards, one row on desktop, stacked on narrow
+ * screens. Used on /about. Like ResearcherList, it renders the
+ * non-affiliation line itself, directly under the cards.
+ */
+export function ResearcherCards({ noteClassName }: { noteClassName: string }) {
+  return (
+    <>
+      <ul className="m-0 grid list-none grid-cols-1 gap-5 p-0 md:grid-cols-3">
+        {RESEARCHERS.map((r) => (
+          <li key={r.name} className="rounded border border-rule bg-white p-7">
+            <div className="text-[20px] font-semibold leading-[1.3] text-navy">
+              {r.name}
+            </div>
+            <div className="mt-1.5 text-[17px] italic text-muted">
+              {r.affiliation}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p className={`${noteClassName} text-[16px] text-muted`}>
+        Atlas is not affiliated with or endorsed by these universities.
+      </p>
+    </>
+  );
+}

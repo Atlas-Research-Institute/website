@@ -20,8 +20,12 @@ export const DATES = {
   cohortName: "Winter Fellowship",
 } as const;
 
-/** The Atlas Discord, linked from the application confirmation. */
-export const DISCORD_URL = "https://discord.gg/MzCHHTqzKs";
+/**
+ * The Atlas Discord invite. Every Discord link on the site uses this: the
+ * homepage hero and community band, the footer icon, and the application
+ * form and confirmation.
+ */
+export const DISCORD_URL = "https://discord.gg/Km9zmYmc8S";
 
 /**
  * The contact address, everywhere. There is no second address — do not
@@ -30,14 +34,13 @@ export const DISCORD_URL = "https://discord.gg/MzCHHTqzKs";
 export const CONTACT_EMAIL = "admin@atlas-research.org";
 
 /**
- * Partnership enquiries only, used on the Partners page.
+ * Partnership enquiries, used by the contact form on /about.
  *
- * This is the ONE page that does not use CONTACT_EMAIL. Every other surface —
- * footer, privacy policy, form errors — uses the address above. Kept as a named
- * constant so the exception exists in exactly one place rather than being
- * pasted into a page.
+ * Currently the same address as CONTACT_EMAIL. Kept as a named constant so the
+ * partnership form can be pointed at a different mailbox in one place if that is
+ * ever wanted.
  */
-export const PARTNERS_EMAIL = "nirav.goenka@atlas-research.org";
+export const PARTNERS_EMAIL = "admin@atlas-research.org";
 
 /**
  * When the privacy policy was last substantively changed.
@@ -79,7 +82,7 @@ export const WAITLIST_ENDPOINT =
  * DO NOT DELETE — LIVE PARTNERSHIP ENQUIRY BACKEND.
  *
  * This is the deployed Google Apps Script that receives every partnership
- * enquiry submitted from /partners. It is a real, in-production endpoint
+ * enquiry submitted from the /about contact form. It is a real, in-production endpoint
  * writing to a live Google Sheet. Deleting, renaming, or pointing this
  * elsewhere silently drops enquiries on the floor with no error surface.
  *
