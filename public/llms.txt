@@ -88,7 +88,7 @@ Atlas is not affiliated with or endorsed by these universities.
 - Apply to the fellowship: https://atlas-research.org/fellowship
 - About: https://atlas-research.org/about
 - Journal: https://atlas-research.org/journal
-- Funders, nonprofits and grant organizations: https://atlas-research.org/partners
+- Funders, nonprofits and grant organizations: https://atlas-research.org/about
 - Privacy policy: https://atlas-research.org/privacy
 - Contact: admin@atlas-research.org
 - Instagram: https://www.instagram.com/research.atlas/

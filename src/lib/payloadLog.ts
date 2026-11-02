@@ -5,7 +5,7 @@
  * responses are unreadable. Logging the body is the only way to confirm what
  * actually left the browser.
  *
- * Shared by /fellowship and /partners. There is ONE host rule — do not write a
+ * Shared by /fellowship and the partnership form on /about. There is ONE host rule — do not write a
  * second copy of this in a page.
  */
 

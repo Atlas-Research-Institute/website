@@ -18,7 +18,7 @@ import { VideoTestimonial } from "@/components/home/VideoTestimonial";
  * does. The research groups listing and the stat band are no longer on this
  * page; their components are kept in src/components/home/. The navy impact
  * band (88% and 94%, the Mahajabin quote, the country list) and the Lumiere
- * scholarship entry moved to /partners.
+ * scholarship entry moved to /about.
  */
 
 const WEEKS = [
@@ -130,7 +130,7 @@ export function Landing() {
         <FactStrip />
       </Container>
 
-      {/* One stat. The full impact band, with its quote and countries, is on /partners. */}
+      {/* One stat. The full impact band, with its quote and countries, is on /about. */}
       <Container className="mt-[88px]">
         <p className="m-0 max-w-[30em] border-t border-rule pt-8 text-[length:clamp(26px,3vw,34px)] leading-[1.3] font-semibold text-navy">
           88% of the fellows we surveyed last summer had never finished a

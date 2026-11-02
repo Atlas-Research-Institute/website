@@ -30,10 +30,10 @@ export const DISCORD_URL = "https://discord.gg/MzCHHTqzKs";
 export const CONTACT_EMAIL = "admin@atlas-research.org";
 
 /**
- * Partnership enquiries, used on the Partners page.
+ * Partnership enquiries, used by the contact form on /about.
  *
  * Currently the same address as CONTACT_EMAIL. Kept as a named constant so the
- * Partners page can be pointed at a different mailbox in one place if that is
+ * partnership form can be pointed at a different mailbox in one place if that is
  * ever wanted.
  */
 export const PARTNERS_EMAIL = "admin@atlas-research.org";
@@ -78,7 +78,7 @@ export const WAITLIST_ENDPOINT =
  * DO NOT DELETE — LIVE PARTNERSHIP ENQUIRY BACKEND.
  *
  * This is the deployed Google Apps Script that receives every partnership
- * enquiry submitted from /partners. It is a real, in-production endpoint
+ * enquiry submitted from the /about contact form. It is a real, in-production endpoint
  * writing to a live Google Sheet. Deleting, renaming, or pointing this
  * elsewhere silently drops enquiries on the floor with no error surface.
  *

@@ -29,7 +29,7 @@
  *   "guest session" — the RESEARCHER- AND PARTNER-FACING register. Used when
  *                     inviting a researcher to teach or describing that
  *                     contribution to an institution: /get-involved's "Run a
- *                     guest session", /partners, and the matching seo.ts
+ *                     guest session", /about, and the matching seo.ts
  *                     descriptions. "Run a lesson" is the wrong register to put
  *                     in front of university faculty.
  *

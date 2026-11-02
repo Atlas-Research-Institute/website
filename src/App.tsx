@@ -12,7 +12,6 @@ import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
 import { Landing } from "./pages/Landing";
 import { Fellowship } from "./pages/Fellowship";
-import { Partners } from "./pages/Partners";
 import { ResearchGroups } from "./pages/ResearchGroups";
 import { ResearchGroupBrief } from "./pages/ResearchGroupBrief";
 import { Journal } from "./pages/Journal";
@@ -73,7 +72,6 @@ export default function App() {
             <Route path="/journal/:slug" element={<JournalArticle />} />
             <Route path="/fellowship" element={<Fellowship />} />
             <Route path="/get-involved" element={<GetInvolved />} />
-            <Route path="/partners" element={<Partners />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/about" element={<About />} />
 
@@ -86,6 +84,11 @@ export default function App() {
             <Route
               path="/apply"
               element={<Navigate to="/fellowship" replace />}
+            />
+            {/* /partners was merged into /about. vercel.json also 301s it. */}
+            <Route
+              path="/partners"
+              element={<Navigate to="/about" replace />}
             />
 
             <Route path="*" element={<NotFound />} />
