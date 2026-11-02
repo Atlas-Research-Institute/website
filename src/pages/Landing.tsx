@@ -143,7 +143,6 @@ export function Landing() {
       <section id="lessons" className="mx-auto max-w-[1200px] px-6 py-[104px]">
         {/*
           No photo here: the hero above already shows the Fuller lesson.
-          /about uses ResearchersWithPhoto.
         */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-8 items-start">
           <div>

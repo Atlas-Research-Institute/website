@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 /**
  * Researchers who have taught Atlas fellows.
  *
@@ -54,38 +52,28 @@ export function NameList({
 }
 
 /**
- * The researchers block with a lesson photo: intro and list on the left, the
- * Fuller lesson in a bordered frame on the right. The image drops below the
- * list on narrow screens. Used on /about. The homepage uses the plain
- * ResearcherList, because its hero already shows the same photo.
- * ResearcherList still carries the non-affiliation line.
+ * The researchers as three white cards, one row on desktop, stacked on narrow
+ * screens. Used on /about. Like ResearcherList, it renders the
+ * non-affiliation line itself, directly under the cards.
  */
-export function ResearchersWithPhoto({
-  intro,
-  noteClassName,
-}: {
-  intro: ReactNode;
-  noteClassName: string;
-}) {
+export function ResearcherCards({ noteClassName }: { noteClassName: string }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-x-[72px] gap-y-12">
-      <div>
-        {intro}
-        <ResearcherList noteClassName={noteClassName} />
-      </div>
-      <figure className="m-0">
-        <img
-          src="/images/fuller-lesson.webp"
-          alt="Slide from Prof. Bruce Fuller's lesson on research method, titled Method: Describing, Correlating, Explaining"
-          width={1600}
-          height={900}
-          loading="lazy"
-          className="block h-auto w-full rounded border border-rule"
-        />
-        <figcaption className="mt-3 text-[16px] italic text-muted">
-          Prof. Bruce Fuller teaching Atlas fellows
-        </figcaption>
-      </figure>
-    </div>
+    <>
+      <ul className="m-0 grid list-none grid-cols-1 gap-5 p-0 md:grid-cols-3">
+        {RESEARCHERS.map((r) => (
+          <li key={r.name} className="rounded border border-rule bg-white p-7">
+            <div className="text-[20px] font-semibold leading-[1.3] text-navy">
+              {r.name}
+            </div>
+            <div className="mt-1.5 text-[17px] italic text-muted">
+              {r.affiliation}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p className={`${noteClassName} text-[16px] text-muted`}>
+        Atlas is not affiliated with or endorsed by these universities.
+      </p>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import { Container, SectionHeading } from "@/components/site/Container";
-import { NameList, ResearchersWithPhoto } from "@/components/site/Researchers";
+import { NameList, ResearcherCards } from "@/components/site/Researchers";
 import { CountryList, Quote } from "@/components/site/Quote";
 import { PartnershipForm } from "@/components/PartnershipForm";
 
@@ -41,6 +41,10 @@ const GROUP_COUNTRIES = [
   "Nepal",
   "Pakistan",
 ];
+
+/** "Access, not ability": the countries named in its paragraph, grouped. */
+const LITTLE_EXPERIENCE = ["Nepal", "Bangladesh", "Pakistan", "Syria", "Bolivia"];
+const SOME_EXPERIENCE = ["United States", "Canada", "China"];
 
 /** Same entries and wording as before the merge. */
 const PARTNERS = [
@@ -181,14 +185,40 @@ export function About() {
       </section>
 
       {/* Who we reach */}
-      <Container className="py-24">
-        <SectionHeading className="m-0 mb-5">Access, not ability</SectionHeading>
-        <p className="m-0 max-w-[36em]">
-          Most fellows from Nepal, Bangladesh, Pakistan, Syria and Bolivia told
-          us they had little or no research experience before Atlas. Fellows
-          from the US, Canada and China more often arrived with some already.
-          The gap we see is access to training, not ability.
-        </p>
+      <Container className="py-24 grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-x-[72px] gap-y-10">
+        <div>
+          <SectionHeading className="m-0 mb-5">Access, not ability</SectionHeading>
+          <p className="m-0 max-w-[36em]">
+            Most fellows from Nepal, Bangladesh, Pakistan, Syria and Bolivia told
+            us they had little or no research experience before Atlas. Fellows
+            from the US, Canada and China more often arrived with some already.
+            The gap we see is access to training, not ability.
+          </p>
+        </div>
+        {/*
+          The same countries as the paragraph, grouped. Filled navy for the
+          first group, outlined for the second, so the two read apart.
+        */}
+        <div className="grid gap-7">
+          <div>
+            <p className="m-0 mb-3 text-[17px] italic text-muted">
+              Little or no research experience before Atlas
+            </p>
+            <CountryList
+              countries={LITTLE_EXPERIENCE}
+              itemClassName="bg-navy text-white"
+            />
+          </div>
+          <div>
+            <p className="m-0 mb-3 text-[17px] italic text-muted">
+              More often arrived with some
+            </p>
+            <CountryList
+              countries={SOME_EXPERIENCE}
+              itemClassName="border border-navy-border text-navy"
+            />
+          </div>
+        </div>
       </Container>
 
       {/* How Atlas works */}
@@ -209,17 +239,11 @@ export function About() {
 
       {/* Researchers */}
       <Container className="py-24">
-        <ResearchersWithPhoto
-          noteClassName="mt-[22px] mb-0"
-          intro={
-            <>
-              <SectionHeading className="m-0 mb-3">
-                Researchers who have taught Atlas fellows
-              </SectionHeading>
-              <p className="m-0 mb-[22px]">To name a few:</p>
-            </>
-          }
-        />
+        <SectionHeading className="m-0 mb-3">
+          Researchers who have taught Atlas fellows
+        </SectionHeading>
+        <p className="m-0 mb-8">To name a few:</p>
+        <ResearcherCards noteClassName="mt-6 mb-0" />
       </Container>
 
       {/* Testimonials */}
