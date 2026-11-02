@@ -29,6 +29,19 @@ const COUNTRIES = [
   "United States",
 ];
 
+/** Where the research groups are. The original About list, in its original order. */
+const GROUP_COUNTRIES = [
+  "Vietnam",
+  "India",
+  "United States",
+  "Bhutan",
+  "China",
+  "Türkiye",
+  "Brazil",
+  "Nepal",
+  "Pakistan",
+];
+
 /** Same entries and wording as before the merge. */
 const PARTNERS = [
   {
@@ -123,6 +136,17 @@ export function About() {
             <p className="m-0 text-[20px] text-on-navy-muted">
               Students lead 18 research groups across 9 countries.
             </p>
+            {/*
+              Filled white chips, so this list reads as separate from the
+              outlined "20 countries" list of last summer's fellows below.
+            */}
+            <p className="m-0 mt-5 mb-2.5 text-[16px] italic text-on-navy-muted">
+              Research groups in:
+            </p>
+            <CountryList
+              countries={GROUP_COUNTRIES}
+              itemClassName="bg-white px-3 py-1 text-[16px] text-navy"
+            />
           </div>
           <figure className="m-0 rounded bg-white p-8 text-ink">
             <blockquote className="m-0 mb-5 text-[21px] leading-[1.55] italic">
