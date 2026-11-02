@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaDiscord, FaInstagram, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa6";
-import { CONTACT_EMAIL, DISCORD_URL } from "@/lib/dates";
+import { CONTACT_EMAIL, DISCORD_URLS } from "@/lib/dates";
 
 const INSTAGRAM_URL = "https://www.instagram.com/research.atlas/";
 const LINKEDIN_URL = "https://www.linkedin.com/company/atlas-research-institute";
@@ -70,7 +70,7 @@ export function Footer() {
               <FaYoutube aria-hidden size={22} />
             </a>
             <a
-              href={DISCORD_URL}
+              href={DISCORD_URLS.general}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Atlas on Discord"

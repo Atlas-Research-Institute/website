@@ -1,18 +1,27 @@
 import { FaDiscord } from "react-icons/fa6";
-import { DISCORD_URL } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 /**
  * "Join our Discord", white on Discord blurple with the Discord mark.
  *
- * The one Discord button on the site, so the hero and the community band
- * cannot drift apart. Blurple is Discord's brand color, used here and nowhere
- * else; crimson stays the primary action (Apply) wherever both appear.
+ * The one Discord button style on the site, used on the homepage (hero and
+ * community band) and on the application's thank-you screen. Blurple is
+ * Discord's brand color, used here and nowhere else; crimson stays the primary
+ * action (Apply) wherever both appear.
+ *
+ * `href` is required and should be one of DISCORD_URLS in src/lib/dates.ts:
+ * each placement has its own invite.
  */
-export function DiscordButton({ className }: { className?: string }) {
+export function DiscordButton({
+  href,
+  className,
+}: {
+  href: string;
+  className?: string;
+}) {
   return (
     <a
-      href={DISCORD_URL}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={cn(

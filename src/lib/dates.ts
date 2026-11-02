@@ -21,11 +21,44 @@ export const DATES = {
 } as const;
 
 /**
- * The Atlas Discord invite. Every Discord link on the site uses this: the
- * homepage hero and community band, the footer icon, and the application
- * form and confirmation.
+ * The Atlas Discord invites, one per placement.
+ *
+ * Each placement has its own invite so Server Settings → Invites shows which
+ * one brings people in. Every Discord link on the site uses one of these:
+ *
+ *   home          homepage hero button and community band button
+ *   apply         the "Open the Atlas Discord" button inside the application
+ *   confirmation  the thank-you screen after submitting an application
+ *   general       footer icon and any other Discord link
  */
-export const DISCORD_URL = "https://discord.gg/Km9zmYmc8S";
+export const DISCORD_URLS = {
+  home: "https://discord.gg/qzcNaqWeSx",
+  apply: "https://discord.gg/c3kKPfvcaa",
+  confirmation: "https://discord.gg/MzCHHTqzKs",
+  general: "https://discord.gg/Km9zmYmc8S",
+} as const;
+
+/**
+ * Countries where Discord is blocked. THE ONE PLACE TO EDIT THIS LIST.
+ *
+ * On the application, the "Discord is blocked where I live." checkbox appears
+ * only when the selected country is in this list, and only then may the
+ * Discord username be left blank. Spellings must match the country options in
+ * src/pages/Fellowship.tsx exactly ("Turkey", "UAE"), or the box never shows.
+ */
+export const DISCORD_BLOCKED_COUNTRIES: readonly string[] = [
+  "China",
+  "Egypt",
+  "Iran",
+  "Jordan",
+  "Russia",
+  "Turkey",
+  "UAE",
+];
+
+export function isDiscordBlockedCountry(country: string): boolean {
+  return DISCORD_BLOCKED_COUNTRIES.includes(country);
+}
 
 /**
  * The contact address, everywhere. There is no second address — do not

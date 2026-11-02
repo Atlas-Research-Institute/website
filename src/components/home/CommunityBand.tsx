@@ -1,5 +1,6 @@
 import { Container, SectionHeading } from "@/components/site/Container";
 import { DiscordButton } from "@/components/DiscordButton";
+import { DISCORD_URLS } from "@/lib/dates";
 
 const ITEMS = [
   "Live sessions with researchers",
@@ -28,7 +29,7 @@ export function CommunityBand() {
             </li>
           ))}
         </ul>
-        <DiscordButton className="px-9 py-[18px] text-[20px]" />
+        <DiscordButton href={DISCORD_URLS.home} className="px-9 py-[18px] text-[20px]" />
       </Container>
     </section>
   );

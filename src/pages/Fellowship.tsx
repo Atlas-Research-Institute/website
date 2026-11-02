@@ -2,7 +2,14 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Container } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
-import { CONTACT_EMAIL, DATES, DISCORD_URL, WAITLIST_ENDPOINT } from "@/lib/dates";
+import {
+  CONTACT_EMAIL,
+  DATES,
+  DISCORD_URLS,
+  WAITLIST_ENDPOINT,
+  isDiscordBlockedCountry,
+} from "@/lib/dates";
+import { DiscordButton } from "@/components/DiscordButton";
 import { logPayload } from "@/lib/payloadLog";
 
 /**
@@ -22,7 +29,9 @@ import { logPayload } from "@/lib/payloadLog";
  * would shift the columns.
  *
  * `discord` is the username with one leading "@" removed, or "Blocked where I
- * live" when the applicant says Discord is blocked for them.
+ * live" when the applicant checks "Discord is blocked where I live". That box
+ * only exists for countries in DISCORD_BLOCKED_COUNTRIES (src/lib/dates.ts),
+ * and only counts when the country is in that list (isDiscordBlocked).
  *
  * `consent` is the OPTIONAL "keep me in the loop" box, Yes or No, as it was in
  * the summer. The required privacy agreement blocks submission and is not a
@@ -119,6 +128,19 @@ export function discordUsername(raw: string): string {
 /** What goes in the discord column when the applicant cannot use Discord. */
 export const DISCORD_BLOCKED = "Blocked where I live";
 
+/**
+ * Whether this submission counts as "Discord is blocked where I live": the box
+ * is checked AND the selected country is in DISCORD_BLOCKED_COUNTRIES
+ * (src/lib/dates.ts). A checked box with any other country does not count, so
+ * a stale draft or a changed country can never skip the username.
+ */
+export function isDiscordBlocked(fd: FormData): boolean {
+  return (
+    Boolean(fd.get("discord_blocked")) &&
+    isDiscordBlockedCountry(String(fd.get("country") ?? "").trim())
+  );
+}
+
 /** The validation rule, as a pure function of the submitted FormData. */
 export function validateApplication(fd: FormData): ApplicationErrors {
   const text = (k: string) => String(fd.get(k) ?? "").trim();
@@ -150,7 +172,7 @@ export function validateApplication(fd: FormData): ApplicationErrors {
     found.referral_other = "Tell us where you heard about Atlas.";
   }
 
-  if (!fd.get("discord_blocked") && discordUsername(text("discord")).length < 2) {
+  if (!isDiscordBlocked(fd) && discordUsername(text("discord")).length < 2) {
     found.discord =
       "Enter your Discord username, or check the box if Discord is blocked where you live.";
   }
@@ -181,7 +203,7 @@ export function buildApplicationPayload(fd: FormData): ApplicationPayload {
     consent: fd.get("consent") ? "Yes" : "No",
     referral,
     referral_other: referral === "Other" ? text("referral_other") : "",
-    discord: fd.get("discord_blocked") ? DISCORD_BLOCKED : discordUsername(text("discord")),
+    discord: isDiscordBlocked(fd) ? DISCORD_BLOCKED : discordUsername(text("discord")),
   };
 }
 
@@ -224,6 +246,15 @@ export function Fellowship() {
   const [errors, setErrors] = useState<ApplicationErrors>({});
   const [counts, setCounts] = useState({ prompt: 0, completion: 0 });
   const [referral, setReferral] = useState("");
+  // The selected country decides whether the "Discord is blocked" box exists.
+  const [country, setCountry] = useState("");
+  // The box is controlled so a draft can be restored before it is rendered,
+  // and so changing to a country not in the list unchecks it.
+  const [discordBlocked, setDiscordBlocked] = useState(false);
+  const showDiscordBlocked = isDiscordBlockedCountry(country);
+  // Whether the submitted application said Discord is blocked: picks the
+  // thank-you screen.
+  const [submittedBlocked, setSubmittedBlocked] = useState(false);
   // The address shown on the confirmation. Held here because the draft in
   // localStorage is cleared on submit.
   const [submittedEmail, setSubmittedEmail] = useState("");
@@ -244,7 +275,11 @@ export function Fellowship() {
         else if (el && "value" in el) (el as HTMLInputElement).value = v;
       }
       (form.elements.namedItem("consent") as HTMLInputElement).checked = Boolean(d.consent);
-      (form.elements.namedItem("discord_blocked") as HTMLInputElement).checked = Boolean(d.discord_blocked);
+      // A draft that says "blocked" for a country not in the list is treated
+      // as unchecked. The box itself renders once `country` is set.
+      const restoredCountry = String(d.country ?? "");
+      setCountry(restoredCountry);
+      setDiscordBlocked(Boolean(d.discord_blocked) && isDiscordBlockedCountry(restoredCountry));
       setCounts({
         prompt: wordCount(String(d.prompt ?? "")),
         completion: wordCount(String(d.completion ?? "")),
@@ -262,9 +297,13 @@ export function Fellowship() {
     const d: Record<string, string | boolean> = {};
     for (const key of DRAFT_FIELDS) d[key] = String(fd.get(key) ?? "");
     d.consent = Boolean(fd.get("consent"));
-    d.discord_blocked = Boolean(fd.get("discord_blocked"));
+    // Same rule as submission: only a listed country can save "blocked".
+    d.discord_blocked = isDiscordBlocked(fd);
     setCounts({ prompt: wordCount(String(d.prompt)), completion: wordCount(String(d.completion)) });
     setReferral(String(d.referral));
+    setCountry(String(d.country));
+    // Changing to a country not in the list unchecks and hides the box.
+    if (!isDiscordBlockedCountry(String(d.country))) setDiscordBlocked(false);
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
     } catch {
@@ -291,6 +330,7 @@ export function Fellowship() {
 
     const payload = buildApplicationPayload(fd);
     setSubmittedEmail(payload.email);
+    setSubmittedBlocked(payload.discord === DISCORD_BLOCKED);
     // The POST is no-cors, so this is the only way to see what left the
     // browser. Silent on the live domain; see src/lib/payloadLog.ts.
     logPayload("application", payload);
@@ -370,29 +410,42 @@ export function Fellowship() {
             role="status"
             className="rounded bg-mist p-8 md:p-10"
           >
-            <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
-              Application received.
-            </h2>
+            {submittedBlocked ? (
+              <>
+                <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
+                  Application received.
+                </h2>
+                <p className="m-0 mb-6 text-[21px] font-semibold text-navy">
+                  You are all set. We will reach you by email.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="m-0 mb-3 text-[length:clamp(30px,3.4vw,42px)] leading-[1.15]">
+                  One last step: join the Atlas Discord
+                </h2>
+                <p className="m-0 mb-7">
+                  Your application is not complete until you join. This is
+                  where announcements, live sessions and your fellowship
+                  channels will be.
+                </p>
+                <DiscordButton
+                  href={DISCORD_URLS.confirmation}
+                  className="mb-9 w-full px-6 py-[18px] text-[18px] sm:w-auto sm:px-9 sm:text-[20px]"
+                />
+              </>
+            )}
             <p className="m-0 mb-4">
               Thank you. Your application to the {DATES.cohortName} has been
               received. We read every application ourselves and will email you
               our decision by {DATES.decisionsByLabel}.
             </p>
-            <p className="m-0 mb-4 [overflow-wrap:anywhere]">
+            <p className="m-0 [overflow-wrap:anywhere]">
               You should get a confirmation email at{" "}
               <strong className="font-semibold">{submittedEmail}</strong> from{" "}
               {CONTACT_EMAIL} within a few minutes. If you do not see it, check
               your spam folder.
             </p>
-            <p className="m-0 mb-7">While you wait, say hello in the Atlas Discord.</p>
-            <a
-              href={DISCORD_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
-            >
-              Go to the Atlas Discord
-            </a>
           </div>
         ) : (
           <>
@@ -512,12 +565,12 @@ export function Fellowship() {
               <Group title="Join the Atlas Discord">
                 <div>
                   <p className="m-0 mb-5">
-                    Every applicant joins our Discord. Live sessions,
-                    announcements, and the fellowship channels are all there.
-                    Admission decisions still come by email.
+                    Joining the Atlas Discord is required to apply. Live
+                    sessions, announcements and the fellowship channels are all
+                    there. Admission decisions still come by email.
                   </p>
                   <a
-                    href={DISCORD_URL}
+                    href={DISCORD_URLS.apply}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block rounded border-2 border-crimson bg-white px-6 py-[11px] text-[17px] font-semibold text-crimson no-underline hover:border-crimson-hover hover:text-crimson-hover transition-colors"
@@ -537,16 +590,29 @@ export function Fellowship() {
                 >
                   <input id="discord" name="discord" autoComplete="off" required aria-invalid={!!errors.discord} aria-describedby="discord-hint discord-error" className={inputCls} placeholder="e.g. curious_researcher" />
                 </Q>
-                <label className="flex cursor-pointer items-start gap-3">
-                  <input type="checkbox" name="discord_blocked" className="mt-1.5 h-5 w-5 shrink-0 accent-crimson" />
-                  <span>
-                    Discord is blocked where I live.
-                    <span className="block text-[17px] text-muted">
-                      Check this and leave the username blank. We will reach
-                      you by email instead.
+                {/*
+                  Only for countries in DISCORD_BLOCKED_COUNTRIES
+                  (src/lib/dates.ts). Unmounted otherwise, so it is absent from
+                  FormData and cannot excuse a blank username.
+                */}
+                {showDiscordBlocked && (
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      name="discord_blocked"
+                      checked={discordBlocked}
+                      onChange={(e) => setDiscordBlocked(e.target.checked)}
+                      className="mt-1.5 h-5 w-5 shrink-0 accent-crimson"
+                    />
+                    <span>
+                      Discord is blocked where I live.
+                      <span className="block text-[17px] text-muted">
+                        Check this and leave the username blank. We will reach
+                        you by email instead.
+                      </span>
                     </span>
-                  </span>
-                </label>
+                  </label>
+                )}
               </Group>
 
               <div className="grid gap-5 border-t border-rule pt-8">
