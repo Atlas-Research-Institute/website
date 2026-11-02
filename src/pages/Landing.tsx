@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { APPLY_PATH, DATES } from "@/lib/dates";
+import { APPLY_PATH, DATES, DISCORD_URLS } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
 import { NameList, ResearcherList } from "@/components/site/Researchers";
@@ -100,7 +100,7 @@ export function Landing() {
             >
               Apply by {DATES.applicationsCloseLabel}
             </Link>
-            <DiscordButton className="w-full sm:w-auto" />
+            <DiscordButton href={DISCORD_URLS.home} className="w-full sm:w-auto" />
           </div>
           <p className="m-0 mt-3 text-[15px] leading-[1.5] text-muted">
             The Discord is free and open to everyone, even before you apply.
