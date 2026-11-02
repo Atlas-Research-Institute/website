@@ -201,37 +201,24 @@
   animation-play-state: paused;
 }
 
-/* Reduced motion: a static, centered row of the three logos, no repeats. */
+/* Reduced motion: a static, centered row of the logos, no repeats. */
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none !important;
     width: 100%;
     flex-wrap: wrap;
     justify-content: center;
-    column-gap: 3.5rem;
+    column-gap: 3rem;
     row-gap: 1rem;
   }
+  /*
+   * !important because Tailwind emits responsive utilities (md:pr-20) after
+   * this file's plain CSS, so without it the desktop padding wins.
+   */
   .marquee-item {
-    padding-right: 0;
+    padding-right: 0 !important;
   }
   .marquee-dup {
     display: none;
-  }
-  /*
-   * Badges: no fixed width, text may wrap, row height follows the text. The
-   * widest badge is wider than a phone-width strip. Logos keep their fixed
-   * height and clipping (the Curieux crop depends on it).
-   */
-  .marquee-badge-item {
-    height: auto;
-    max-width: 100%;
-    overflow: visible;
-  }
-  .marquee-badge {
-    width: auto;
-    max-width: 100%;
-  }
-  .marquee-badge-text {
-    white-space: normal;
   }
 }

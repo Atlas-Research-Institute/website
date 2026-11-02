@@ -46,6 +46,22 @@ const GROUP_COUNTRIES = [
 const LITTLE_EXPERIENCE = ["Nepal", "Bangladesh", "Pakistan", "Syria", "Bolivia"];
 const SOME_EXPERIENCE = ["United States", "Canada", "China"];
 
+/** Recognition, word for word as supplied. */
+const RECOGNITION = [
+  {
+    name: "Invited to present at the AAA 2026 Annual Meeting.",
+    detail: "American Anthropological Association.",
+  },
+  {
+    name: "Published in Teaching Anthropology.",
+    detail: "A journal of the Royal Anthropological Institute.",
+  },
+  {
+    name: "Certificate of Special Congressional Recognition.",
+    detail: "Rep. Mark DeSaulnier, for founding Atlas.",
+  },
+];
+
 /** Same entries and wording as before the merge. */
 const PARTNERS = [
   {
@@ -258,8 +274,14 @@ export function About() {
         </Container>
       </section>
 
+      {/* Recognition. The logos for AAA and Teaching Anthropology are in the homepage strip; the context is here. */}
+      <Container className="py-24">
+        <SectionHeading className="m-0 mb-8">Recognition</SectionHeading>
+        <NameList items={RECOGNITION} gap="gap-5" />
+      </Container>
+
       {/* Partners and journals */}
-      <section>
+      <section className="border-t border-rule">
         <Container className="py-24">
           <SectionHeading className="m-0 mb-4">Partners and journals</SectionHeading>
           <p className="m-0 mb-8 max-w-[36em]">
