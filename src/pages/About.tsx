@@ -1,5 +1,5 @@
 import { Container, SectionHeading } from "@/components/site/Container";
-import { NameList, ResearcherList } from "@/components/site/Researchers";
+import { NameList, ResearchersWithPhoto } from "@/components/site/Researchers";
 import { CountryList, Quote } from "@/components/site/Quote";
 import { PartnershipForm } from "@/components/PartnershipForm";
 
@@ -198,11 +198,17 @@ export function About() {
 
       {/* Researchers */}
       <Container className="py-24">
-        <SectionHeading className="m-0 mb-3">
-          Researchers who have taught Atlas fellows
-        </SectionHeading>
-        <p className="m-0 mb-[22px]">To name a few:</p>
-        <ResearcherList noteClassName="mt-[22px] mb-0" />
+        <ResearchersWithPhoto
+          noteClassName="mt-[22px] mb-0"
+          intro={
+            <>
+              <SectionHeading className="m-0 mb-3">
+                Researchers who have taught Atlas fellows
+              </SectionHeading>
+              <p className="m-0 mb-[22px]">To name a few:</p>
+            </>
+          }
+        />
       </Container>
 
       {/* Testimonials */}

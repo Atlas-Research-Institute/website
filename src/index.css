@@ -177,3 +177,44 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Partner logo marquee (src/components/home/TrustedBy.tsx).
+ *
+ * The track holds two identical halves, so moving it by exactly -50% lands on
+ * a frame identical to the start and the loop has no visible jump. Paused on
+ * hover and while a logo link has keyboard focus.
+ */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 30s linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: a static, centered row of the three logos, no repeats. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 3.5rem;
+    row-gap: 1rem;
+  }
+  .marquee-item {
+    padding-right: 0;
+  }
+  .marquee-dup {
+    display: none;
+  }
+}

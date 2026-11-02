@@ -20,8 +20,13 @@ export const DATES = {
   cohortName: "Winter Fellowship",
 } as const;
 
-/** The Atlas Discord, linked from the application confirmation. */
-export const DISCORD_URL = "https://discord.gg/MzCHHTqzKs";
+/**
+ * The Atlas Discord invite. Every Discord link on the site uses this: the
+ * homepage hero and community band, the footer icon, and the application
+ * form and confirmation. The invite code is also read by
+ * src/components/home/CommunityBand.tsx for the live member count.
+ */
+export const DISCORD_URL = "https://discord.gg/Km9zmYmc8S";
 
 /**
  * The contact address, everywhere. There is no second address — do not

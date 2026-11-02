@@ -2,16 +2,19 @@ import { Link } from "react-router-dom";
 import { APPLY_PATH, DATES } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
-import { NameList, ResearcherList } from "@/components/site/Researchers";
+import { NameList, ResearchersWithPhoto } from "@/components/site/Researchers";
 import { Quote } from "@/components/site/Quote";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { VideoTestimonial } from "@/components/home/VideoTestimonial";
+import { CommunityBand } from "@/components/home/CommunityBand";
+import { DiscordButton } from "@/components/DiscordButton";
 
 /**
  * The homepage, built from notes/redesign/home.html.
  *
  *   hero · partner logos · facts · one stat · lessons · fellowship weeks
- *   fellow video · written testimonials · where your paper goes · navy apply
+ *   fellow video · written testimonials · community (Discord)
+ *   where your paper goes · navy apply
  *
  * Copy is the reference text word for word, except the hero headline and the
  * first sentence of its lead, which were rewritten to say plainly what Atlas
@@ -79,31 +82,29 @@ export function Landing() {
       {/* Hero */}
       <section
         id="fellowship"
-        className="mx-auto max-w-[1200px] px-6 pt-16 pb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-x-16 gap-y-12 items-center"
+        className="mx-auto max-w-[1200px] px-6 pt-6 md:pt-16 pb-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-x-16 gap-y-12 items-center"
       >
         <div>
-          <h1 className="m-0 mb-6 text-[length:clamp(40px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
+          <h1 className="m-0 mb-4 md:mb-6 text-[length:clamp(34px,5.2vw,62px)] leading-[1.08] tracking-[-0.01em]">
             We bring research to students who have never been taught it.
           </h1>
-          <p className="m-0 mb-8 text-[21px] text-body-muted max-w-[30em]">
+          <p className="m-0 mb-6 md:mb-8 text-[18px] md:text-[21px] text-body-muted max-w-[30em]">
             It is free, wherever you live. In six weeks, you pick a question
             about education access in your own community, learn how to find
             and test evidence, and finish your first research paper.
           </p>
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               to={APPLY_PATH}
-              className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
+              className="inline-block w-full rounded bg-crimson px-7 py-[15px] text-center text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors sm:w-auto"
             >
               Apply by {DATES.applicationsCloseLabel}
             </Link>
-            <a
-              href="#fellows"
-              className="py-3 text-[18px] text-crimson underline underline-offset-4 hover:text-crimson-hover"
-            >
-              Hear from past fellows
-            </a>
+            <DiscordButton className="w-full sm:w-auto" />
           </div>
+          <p className="m-0 mt-3 text-[15px] leading-[1.5] text-muted">
+            The Discord is free and open to everyone, even before you apply.
+          </p>
         </div>
         {/* The Fuller slide stands in until a real photo of fellows replaces it (src/components/site/HeroImage.tsx). */}
         <figure className="m-0">
@@ -140,21 +141,21 @@ export function Landing() {
 
       {/* Lessons */}
       <section id="lessons" className="mx-auto max-w-[1200px] px-6 py-[104px]">
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-8 items-start">
-          <div>
-            <SectionHeading className="m-0 mb-4">
-              Fellows learn from working researchers
-            </SectionHeading>
-            <p className="m-0 max-w-[32em]">
-              Live lessons on how research is done: forming a question,
-              choosing a method, reading evidence. To name a few of the
-              researchers who teach them:
-            </p>
-          </div>
-          <div>
-            <ResearcherList noteClassName="mt-6 mb-0" />
-          </div>
-        </div>
+        <ResearchersWithPhoto
+          noteClassName="mt-6 mb-0"
+          intro={
+            <>
+              <SectionHeading className="m-0 mb-4">
+                Fellows learn from working researchers
+              </SectionHeading>
+              <p className="m-0 mb-8 max-w-[32em]">
+                Live lessons on how research is done: forming a question,
+                choosing a method, reading evidence. To name a few of the
+                researchers who teach them:
+              </p>
+            </>
+          }
+        />
       </section>
 
       {/* Fellowship weeks */}
@@ -186,6 +187,8 @@ export function Landing() {
           ))}
         </div>
       </section>
+
+      <CommunityBand />
 
       {/* Where your paper goes */}
       <section
