@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { APPLY_PATH, DATES } from "@/lib/dates";
 import { Container, SectionHeading } from "@/components/site/Container";
 import { FactStrip } from "@/components/site/FactStrip";
-import { NameList, ResearchersWithPhoto } from "@/components/site/Researchers";
+import { NameList, ResearcherList } from "@/components/site/Researchers";
 import { Quote } from "@/components/site/Quote";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { VideoTestimonial } from "@/components/home/VideoTestimonial";
@@ -141,21 +141,25 @@ export function Landing() {
 
       {/* Lessons */}
       <section id="lessons" className="mx-auto max-w-[1200px] px-6 py-[104px]">
-        <ResearchersWithPhoto
-          noteClassName="mt-6 mb-0"
-          intro={
-            <>
-              <SectionHeading className="m-0 mb-4">
-                Fellows learn from working researchers
-              </SectionHeading>
-              <p className="m-0 mb-8 max-w-[32em]">
-                Live lessons on how research is done: forming a question,
-                choosing a method, reading evidence. To name a few of the
-                researchers who teach them:
-              </p>
-            </>
-          }
-        />
+        {/*
+          No photo here: the hero above already shows the Fuller lesson.
+          /about uses ResearchersWithPhoto.
+        */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-x-[72px] gap-y-8 items-start">
+          <div>
+            <SectionHeading className="m-0 mb-4">
+              Fellows learn from working researchers
+            </SectionHeading>
+            <p className="m-0 max-w-[32em]">
+              Live lessons on how research is done: forming a question,
+              choosing a method, reading evidence. To name a few of the
+              researchers who teach them:
+            </p>
+          </div>
+          <div>
+            <ResearcherList noteClassName="mt-6 mb-0" />
+          </div>
+        </div>
       </section>
 
       {/* Fellowship weeks */}

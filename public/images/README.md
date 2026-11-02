@@ -51,6 +51,14 @@ Keep each file under **300 KB**. Resize before committing rather than relying on
 the browser to scale a large original — these are loaded lazily but still
 downloaded in full.
 
+## Credits
+
+Every image that Atlas did not make itself, with its source and license.
+
+| File | Source | License | Link |
+| --- | --- | --- | --- |
+| `about-hero.webp` | Unsplash | Unsplash License | https://unsplash.com/photos/two-men-sitting-at-a-table-with-a-pen-and-paper-Q_t6C74K_kI |
+
 ## Suggested layout
 
 ```

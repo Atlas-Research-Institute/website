@@ -56,8 +56,9 @@ export function NameList({
 /**
  * The researchers block with a lesson photo: intro and list on the left, the
  * Fuller lesson in a bordered frame on the right. The image drops below the
- * list on narrow screens. Used on the homepage and on /about, so the two
- * cannot drift apart. ResearcherList still carries the non-affiliation line.
+ * list on narrow screens. Used on /about. The homepage uses the plain
+ * ResearcherList, because its hero already shows the same photo.
+ * ResearcherList still carries the non-affiliation line.
  */
 export function ResearchersWithPhoto({
   intro,

@@ -103,23 +103,34 @@ export function About() {
   return (
     <div className="bg-paper text-ink text-[19px] leading-[1.65]">
       {/* Hero */}
-      <Container className="pt-16 pb-[88px]">
-        <h1 className="m-0 mb-6 max-w-[22ch] text-[length:clamp(38px,5vw,58px)] leading-[1.1] tracking-[-0.01em]">
-          Partner with us to bring research training to students who have
-          never had it.
-        </h1>
-        <p className="m-0 mb-8 max-w-[36em] text-[21px] text-body-muted">
-          Curiosity is everywhere, yet research training is not. Atlas runs a
-          free, six-week online fellowship where high school and university
-          students pick a question about education access in their own
-          community and write their first research paper.
-        </p>
-        <a
-          href="#contact"
-          className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
-        >
-          Contact us
-        </a>
+      <Container className="pt-16 pb-[88px] grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] items-center gap-x-16 gap-y-12">
+        <div>
+          <h1 className="m-0 mb-6 max-w-[22ch] text-[length:clamp(38px,5vw,58px)] leading-[1.1] tracking-[-0.01em]">
+            Partner with us to bring research training to students who have
+            never had it.
+          </h1>
+          <p className="m-0 mb-8 max-w-[36em] text-[21px] text-body-muted">
+            Curiosity is everywhere, yet research training is not. Atlas runs a
+            free, six-week online fellowship where high school and university
+            students pick a question about education access in their own
+            community and write their first research paper.
+          </p>
+          <a
+            href="#contact"
+            className="inline-block rounded bg-crimson px-7 py-[15px] text-[18px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
+          >
+            Contact us
+          </a>
+        </div>
+        <img
+          src="/images/about-hero.webp"
+          alt="Two students writing at a desk"
+          width={1600}
+          height={1066}
+          // React 18 only knows the lowercase attribute; camelCase arrives in React 19.
+          {...{ fetchpriority: "high" }}
+          className="block aspect-[3/2] h-auto w-full rounded border border-rule object-cover"
+        />
       </Container>
 
       {/* Impact. Moved from the homepage; every figure is as it was there. */}
