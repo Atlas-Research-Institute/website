@@ -14,16 +14,18 @@
  * backgrounds disappear into the strip.
  *
  * VISUAL WEIGHT. Every logo sits in the same 44px (mobile) / 56px (desktop)
- * row. The wordmarks (Lumiere, IJHSR, AAA) fill its height. Curieux is drawn
- * larger with its white margin clipped. Teaching Anthropology is a solid blue
- * square, so it is drawn smaller than the row or it would outweigh the rest.
+ * row. The wordmarks (Lumiere, IJHSR, AAA) and the Teaching Anthropology
+ * square fill its height. Curieux is drawn larger with its white margin
+ * clipped.
  *
  * HOW THE LOOP STAYS SEAMLESS. The track holds two identical halves and
  * animates from 0 to -50% (index.css, .marquee-track), so the frame where it
  * restarts looks exactly like the frame before. Each half repeats the list
  * REPEATS times so that one half is always wider than the strip. With five
- * logos one copy already is (1,122px on desktop against a strip of at most
- * 941px; 849px on mobile against 312px), so REPEATS is 1. Spacing is padding
+ * logos one copy already is (1,138px on desktop against a strip of at most
+ * 941px; 861px on mobile against 312px), so REPEATS is 1. The desktop margin
+ * is narrow: if a logo is removed, set REPEATS to 2 or the loop will show a
+ * gap at the right edge on wide screens. Spacing is padding
  * on each item, not `gap`, so both halves have exactly the same width. Each
  * logo has an explicit whole-pixel width (its aspect ratio at that height,
  * rounded), so the halves are a whole number of pixels wide and the restart
@@ -74,13 +76,13 @@ const LOGOS = [
     imgCls: "h-[84px] w-[84px] md:h-[106px] md:w-[106px]",
   },
   {
-    /* A solid blue square: smaller than the row so it does not dominate. */
+    /* A square mark, at the full row height like the AAA spiral beside it. */
     name: "Teaching Anthropology",
     src: "/partners/teaching-anthropology.webp",
     href: "https://www.teachinganthropology.org",
-    w: 160,
-    h: 160,
-    imgCls: "h-8 w-8 md:h-10 md:w-10",
+    w: 224,
+    h: 224,
+    imgCls: "h-11 w-11 md:h-14 md:w-14",
   },
   {
     name: "American Anthropological Association",
