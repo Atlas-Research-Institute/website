@@ -110,7 +110,7 @@ export function VideoTestimonial() {
 
         <div>
           <SectionHeading className="m-0 mb-4">
-            One fellow, in her own words
+            Fellowship testimonial
           </SectionHeading>
           {VIDEO.pullQuote && (
             <blockquote className="m-0 mb-5 max-w-[26em] text-[21px] italic leading-[1.55]">
