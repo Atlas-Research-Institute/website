@@ -275,19 +275,39 @@ export function About() {
       </section>
 
       {/* Recognition. The logos for AAA and Teaching Anthropology are in the homepage strip; the context is here. */}
-      <Container className="py-24">
-        <SectionHeading className="m-0 mb-8">Recognition</SectionHeading>
-        <NameList items={RECOGNITION} gap="gap-5" />
+      <Container className="py-24 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] items-center gap-x-16 gap-y-12">
+        <div>
+          <SectionHeading className="m-0 mb-8">Recognition</SectionHeading>
+          <NameList items={RECOGNITION} gap="gap-5" />
+        </div>
+        <img
+          src="/images/about-recognition.webp"
+          alt="A young man speaking into a microphone in a lecture hall full of students"
+          width={1600}
+          height={1066}
+          loading="lazy"
+          className="block aspect-[3/2] h-auto w-full rounded border border-rule object-cover"
+        />
       </Container>
 
       {/* Partners and journals */}
       <section className="border-t border-rule">
-        <Container className="py-24">
-          <SectionHeading className="m-0 mb-4">Partners and journals</SectionHeading>
-          <p className="m-0 mb-8 max-w-[36em]">
-            Where fellows' work goes, and who supports them.
-          </p>
-          <NameList items={PARTNERS} gap="gap-5" />
+        <Container className="py-24 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] items-center gap-x-16 gap-y-12">
+          <div>
+            <SectionHeading className="m-0 mb-4">Partners and journals</SectionHeading>
+            <p className="m-0 mb-8 max-w-[36em]">
+              Where fellows' work goes, and who supports them.
+            </p>
+            <NameList items={PARTNERS} gap="gap-5" />
+          </div>
+          <img
+            src="/images/about-partners.webp"
+            alt="Two students in school blazers reading at a library table"
+            width={1600}
+            height={1066}
+            loading="lazy"
+            className="block aspect-[3/2] h-auto w-full rounded border border-rule object-cover"
+          />
         </Container>
       </section>
 
