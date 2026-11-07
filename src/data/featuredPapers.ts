@@ -21,6 +21,8 @@ export type FeaturedPaper = {
   abstract: string;
   keywords: string[];
   pdf: string;
+  /** First page of the PDF, 900x1164, in public/papers/covers/. */
+  cover: string;
 };
 
 export const FEATURED_PAPERS: FeaturedPaper[] = [
@@ -50,6 +52,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "Greenville County",
     ],
     pdf: "/papers/greenville-teacher-retention.pdf",
+    cover: "/papers/covers/greenville-teacher-retention.webp",
   },
   {
     slug: "digital-access-stem-spain",
@@ -69,6 +72,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "Spain",
     ],
     pdf: "/papers/digital-access-stem-spain.pdf",
+    cover: "/papers/covers/digital-access-stem-spain.webp",
   },
   {
     slug: "loneliness-after-spousal-loss",
@@ -87,5 +91,6 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "coping strategies",
     ],
     pdf: "/papers/loneliness-after-spousal-loss.pdf",
+    cover: "/papers/covers/loneliness-after-spousal-loss.webp",
   },
 ];
