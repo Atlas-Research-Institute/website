@@ -7,6 +7,7 @@ import { Quote } from "@/components/site/Quote";
 import { TrustedBy } from "@/components/home/TrustedBy";
 import { VideoTestimonial } from "@/components/home/VideoTestimonial";
 import { CommunityBand } from "@/components/home/CommunityBand";
+import { FeaturedPapers } from "@/components/home/FeaturedPapers";
 import { DiscordButton } from "@/components/DiscordButton";
 
 /**
@@ -14,7 +15,7 @@ import { DiscordButton } from "@/components/DiscordButton";
  *
  *   hero · partner logos · facts · one stat · lessons · fellowship weeks
  *   fellow video · written testimonials · community (Discord)
- *   where your paper goes · navy apply
+ *   where your paper goes · research by Atlas students · navy apply
  *
  * Copy is the reference text word for word, except the hero headline and the
  * first sentence of its lead, which were rewritten to say plainly what Atlas
@@ -214,6 +215,8 @@ export function Landing() {
           <NameList items={PARTNERS} gap="gap-5" />
         </div>
       </section>
+
+      <FeaturedPapers />
 
       {/* Apply */}
       <section
