@@ -3,7 +3,7 @@ import { APPLY_PATH } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 /**
- * Sitewide header: an 8px navy bar, the wordmark, three links and the Apply
+ * Sitewide header: an 8px navy bar, the wordmark, four links and the Apply
  * button.
  *
  * Every link is a page. Homepage anchors were removed: mixing jump links
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
  */
 const LINKS = [
   { to: "/journal", label: "Journal" },
+  { to: "/resources", label: "Resources" },
   { to: "/about", label: "About" },
   { to: "/get-involved", label: "Get Involved" },
 ];

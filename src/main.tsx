@@ -2,19 +2,41 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { Analytics } from "@vercel/analytics/react";
+import { loadCloudflareWebAnalytics } from "./lib/analytics";
 import "./index.css";
 
 /**
- * Vercel Web Analytics is the ONLY analytics on this site.
+ * Two analytics tools, both cookieless: Vercel Web Analytics (below) and
+ * Cloudflare Web Analytics (src/lib/analytics.ts, inactive until its token is
+ * pasted in).
  *
- * It is cookieless: no cookie is set, no persistent identifier is stored, and
- * there is no cross-site tracking. The privacy policy at /privacy describes it
- * in exactly those terms — if this component is ever removed or another
- * analytics provider added, update src/pages/Privacy.tsx in the same change.
+ * Neither sets a cookie, stores a persistent identifier, or tracks across
+ * sites. The privacy policy at /privacy describes them in exactly those terms —
+ * if either is removed or another analytics provider added, update
+ * src/pages/Privacy.tsx in the same change.
  */
-ReactDOM.createRoot(document.getElementById("root")!).render(
+loadCloudflareWebAnalytics();
+
+const app = (
   <React.StrictMode>
     <App />
     <Analytics />
   </React.StrictMode>
 );
+
+/**
+ * /resources and every Resources post arrive with their HTML already in #root
+ * (prerendered by vite.config.ts), marked with the path it was rendered for.
+ * Hydrate that rather than rebuild it. If the URL is not exactly that path,
+ * say /resources?category=guide, the markup is for a different view, so start
+ * clean instead of hydrating a mismatch.
+ */
+const root = document.getElementById("root")!;
+const prerendered = root.dataset.prerendered;
+const here = window.location.pathname.replace(/\/$/, "") || "/";
+if (prerendered && prerendered === here && !window.location.search) {
+  ReactDOM.hydrateRoot(root, app);
+} else {
+  root.replaceChildren();
+  ReactDOM.createRoot(root).render(app);
+}

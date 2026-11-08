@@ -1,8 +1,8 @@
 # Atlas Research Institute — website
 
 Vite + React 18 + TypeScript + Tailwind CSS 3. No animation library. Runtime
-dependencies are React Router, react-icons (footer brand icons) and two class
-utilities.
+dependencies are React Router, react-icons (footer brand icons), marked
+(Markdown for Resources posts) and two class utilities.
 
 The site leads with **the Atlas Fellowship**: a free, six-week online research
 fellowship. Applications for the Winter Fellowship are open.
@@ -151,6 +151,113 @@ put placeholder numbers or "coming soon" in a stat slot.
 fallback rather than an empty box. See `public/images/README.md` for dimensions
 and rules before adding any.
 
+## Resources (the blog)
+
+`/resources` lists every post, newest first, as cards with a cover image, with
+a filter per category. A category's filter appears only once it has a post
+(Fellow stories has none yet). Each post has its own page at
+`/resources/<slug>`.
+
+### Add a post
+
+Add one file, `src/content/resources/<slug>.md`. The file name is the URL, so
+use lowercase words joined by hyphens. Nothing else changes: the list, the
+post page, its search tags (title, description, Open Graph, Article JSON-LD)
+and its sitemap entry all come from this file. Its cover is made for you (see
+Covers below).
+
+```markdown
+---
+title: How to pick a research question
+description: One or two sentences. Used on the list page, in search results and in link previews.
+category: guide
+date: 2026-12-01
+illustration: checklist
+coverAlt: A clipboard with a ticked checklist.
+---
+
+The post, in Markdown. Use ## for section headings, **bold**, lists and
+[links](https://example.org). Links to other sites open in a new tab.
+```
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `title` | yes | Wrap in double quotes if it contains a colon. |
+| `description` | yes | About 120 to 160 characters. |
+| `category` | yes | `lecture`, `guide` or `fellow-story`. |
+| `date` | yes | `YYYY-MM-DD`. Sets the order and goes into the structured data and sitemap. Never shown on the page. |
+| `updated` | no | `YYYY-MM-DD` of the last real edit. |
+| `youtubeId` | no | The id from the video URL, after `v=`. Shows the video above the post. |
+| `videoTitle` | with `youtubeId` | The video's title, read out by screen readers. |
+| `illustration` | without `youtubeId` | The drawing on the cover: `three-passes`, `journal-stack`, `magnifier` or `checklist`. |
+| `coverAlt` | yes | Alt text for the cover: what the image shows. |
+| `coverTitle` | no | A shorter title for the cover only, if the real one does not fit. |
+
+Run `npm run build` before you push. A post with a missing or wrong field fails
+the build and names the file and the field.
+
+Every post ends with the same two calls to action
+(`src/components/resources/ResourceCtas.tsx`): the Atlas Discord
+(`DISCORD_URLS.resources`), then the fellowship application. The closing date
+there comes from `DATES.applicationsClose` in `src/lib/dates.ts`.
+
+A long section that most readers will skip, such as a lecture transcript, goes
+in a collapsed section at the end of the body. It stays in the page's HTML, so
+search engines still read it:
+
+```markdown
+<details>
+<summary>Show full transcript</summary>
+
+The transcript, in Markdown. Keep the blank lines around it.
+
+</details>
+```
+
+### Covers and diagrams
+
+`npm run covers` (`scripts/resource-covers.mjs`) writes each post's cover to
+`public/images/resources/<slug>.jpg`, 1280×720 and under 150 KB. It runs on its
+own before `npm run dev` and `npm run build`. Commit the files it writes.
+
+- A video post's cover is the video's YouTube thumbnail at the highest
+  resolution YouTube has. It is downloaded once. After changing the thumbnail
+  on YouTube, run `npm run covers -- --refresh`.
+- Every other post gets a drawn cover: cream ground, the title in navy Source
+  Serif 4, a thin crimson rule, "Atlas" in the corner and the drawing named by
+  `illustration`. It is redrawn on every run, so a changed title updates it.
+
+The cover is shown on the post's card, at the top of the post (as the video's
+poster on a video post) and in link previews (`og:image`).
+
+Diagrams inside posts are drawn by the same script, in the same style, from
+`DIAGRAMS` in `scripts/resource-covers.mjs`, and used with
+`![alt text](/images/resources/diagrams/<name>.webp)`. Add one only where it
+explains something better than text. The alt text must say everything the
+diagram says. The `journal-fees` diagram repeats the fees in
+`where-to-publish-your-first-research-paper.md`, so change both together.
+
+The fonts are in `scripts/resource-covers/fonts` (SIL Open Font License).
+
+### How the post pages reach search engines and link previews
+
+The build writes `dist/resources/index.html` and
+`dist/resources/<slug>/index.html` with that page's head tags filled in
+(title, description, Open Graph including the cover as `og:image`, Article
+JSON-LD) and the page itself rendered to HTML inside `#root`
+(`src/entry-server.tsx`), so the full post is readable without JavaScript. The
+app then hydrates it. The build also appends each post to `dist/sitemap.xml`
+(`resourcePages` in `vite.config.ts`). Do not add posts to
+`public/sitemap.xml` by hand.
+
+## Analytics
+
+Two cookieless tools: Vercel Web Analytics (`src/main.tsx`) and Cloudflare Web
+Analytics (`src/lib/analytics.ts`). Cloudflare stays off until its token is
+pasted into `CLOUDFLARE_WEB_ANALYTICS_TOKEN` in that file, and only runs on
+atlas-research.org. Both are described on `/privacy`; change that page if you
+add or remove one.
+
 ## Current state — read before editing copy
 
 - **Applications for the Winter Fellowship are open.** They close
@@ -195,7 +302,7 @@ and rules before adding any.
 ## Routes
 
 In the nav, footer or sitemap: `/` · `/fellowship` · `/about` · `/journal` ·
-`/journal/:slug` · `/privacy`
+`/journal/:slug` · `/resources` · `/resources/:slug` · `/privacy`
 
 Still routed but linked from no page: `/research-groups`,
 `/research-groups/:slug`, `/events`, `/events/:slug`, `/get-involved`

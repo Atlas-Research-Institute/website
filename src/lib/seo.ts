@@ -1,4 +1,4 @@
-import { DATES } from "@/lib/dates";
+import { DATES } from "./dates";
 
 /**
  * Per-route title, description and canonical URL.
@@ -50,6 +50,12 @@ export type RouteSeo = {
    * child paths through the longest-prefix match below.
    */
   noindex?: boolean;
+  /** og:type. Defaults to "website"; Resources posts are "article". */
+  ogType?: "website" | "article";
+  /** og:image and twitter:image, as a site path. Defaults to /og-image.png. */
+  image?: string;
+  /** schema.org JSON-LD for this route, written as <script id="route-jsonld">. */
+  jsonLd?: Record<string, unknown>;
 };
 
 /**
@@ -93,6 +99,11 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     title: "About",
     description:
       "Partner with Atlas to bring free research training to students who lack access. For funders, nonprofits and grant organizations.",
+  },
+  "/resources": {
+    title: "Resources",
+    description:
+      "Lectures and guides from Atlas Research Institute. Members get every session live, plus recordings, guides and feedback.",
   },
   "/privacy": {
     title: "Privacy",

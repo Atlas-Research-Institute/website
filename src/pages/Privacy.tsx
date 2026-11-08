@@ -8,7 +8,7 @@ import { CONTACT_EMAIL, PRIVACY_UPDATED } from "@/lib/dates";
  * Two things to keep true if the code changes:
  *
  *   1. The cookie section says this site sets no cookies. That is currently
- *      accurate — Vercel Web Analytics is cookieless. The one thing stored
+ *      accurate — Vercel and Cloudflare Web Analytics are both cookieless. The one thing stored
  *      client-side is the application draft in localStorage, which the
  *      section describes. If any cookie, other storage, or third-party script
  *      is added, this section must change in the same commit.
@@ -106,10 +106,11 @@ export function Privacy() {
             kind.
           </p>
           <p>
-            We use Vercel Web Analytics to count page views. It is cookieless:
-            it does not set a cookie, does not store a persistent identifier for
-            you, and does not follow you to other websites. It tells us which
-            pages are read, not who read them.
+            We use Vercel Web Analytics and Cloudflare Web Analytics to count
+            page views. Both are cookieless: they do not set a cookie, do not
+            store a persistent identifier for you, and do not follow you to
+            other websites. They tell us which pages are read, not who read
+            them.
           </p>
           <p>
             The site loads fonts from Google Fonts, which means your browser

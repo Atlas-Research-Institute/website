@@ -4,7 +4,9 @@ import {
   canonicalUrl,
   documentTitle,
   seoForPath,
+  SITE_ORIGIN,
 } from "@/lib/seo";
+import { resourceSeo } from "@/lib/resources";
 
 /**
  * Writes the per-route title, description and canonical URL.
@@ -53,11 +55,33 @@ function setRobots(noindex: boolean) {
   document.head.appendChild(meta);
 }
 
+/**
+ * Writes the route's JSON-LD into <script id="route-jsonld">, or removes it.
+ *
+ * Resources posts ship with this script already in their prerendered HTML
+ * (vite.config.ts), so the id is shared: the app replaces that script rather
+ * than adding a second copy, and removes it when you navigate to a page
+ * without structured data. The site-wide organization JSON-LD in index.html
+ * has no id and is never touched.
+ */
+function setJsonLd(data: Record<string, unknown> | undefined) {
+  const existing = document.getElementById("route-jsonld");
+  if (!data) {
+    existing?.remove();
+    return;
+  }
+  const script = existing ?? document.createElement("script");
+  script.id = "route-jsonld";
+  script.setAttribute("type", "application/ld+json");
+  script.textContent = JSON.stringify(data);
+  if (!existing) document.head.appendChild(script);
+}
+
 export function Seo() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const seo = seoForPath(pathname);
+    const seo = resourceSeo(pathname) ?? seoForPath(pathname);
     const title = documentTitle(seo);
     const canonical = canonicalUrl(pathname);
 
@@ -66,10 +90,15 @@ export function Seo() {
     setMeta('meta[property="og:title"]', "content", title);
     setMeta('meta[property="og:description"]', "content", seo.description);
     setMeta('meta[property="og:url"]', "content", canonical);
+    setMeta('meta[property="og:type"]', "content", seo.ogType ?? "website");
     setMeta('meta[name="twitter:title"]', "content", title);
     setMeta('meta[name="twitter:description"]', "content", seo.description);
+    const image = `${SITE_ORIGIN}${seo.image ?? "/og-image.png"}`;
+    setMeta('meta[property="og:image"]', "content", image);
+    setMeta('meta[name="twitter:image"]', "content", image);
     setMeta('link[rel="canonical"]', "href", canonical);
     setRobots(Boolean(seo.noindex));
+    setJsonLd(seo.jsonLd);
   }, [pathname]);
 
   return null;

@@ -21,6 +21,8 @@ import { EventDetail } from "./pages/EventDetail";
 import { Privacy } from "./pages/Privacy";
 import { GetInvolved } from "./pages/GetInvolved";
 import { About } from "./pages/About";
+import { Resources } from "./pages/Resources";
+import { ResourcePost } from "./pages/ResourcePost";
 
 /** Scroll to top on route change; honor #hash targets within a page. */
 function ScrollManager() {
@@ -52,6 +54,18 @@ function LegacyChapterRedirect() {
 export default function App() {
   return (
     <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
+  );
+}
+
+/**
+ * Everything inside the router. Split from App so the build can render the
+ * same tree inside a StaticRouter (src/entry-server.tsx) to prerender pages.
+ */
+export function AppShell() {
+  return (
+    <>
       <ScrollManager />
       <Seo />
       <div className="min-h-screen flex flex-col">
@@ -70,6 +84,8 @@ export default function App() {
             <Route path="/events/:slug" element={<EventDetail />} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/journal/:slug" element={<JournalArticle />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/resources/:slug" element={<ResourcePost />} />
             <Route path="/fellowship" element={<Fellowship />} />
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/privacy" element={<Privacy />} />
@@ -96,7 +112,7 @@ export default function App() {
         </main>
         <Footer />
       </div>
-    </BrowserRouter>
+    </>
   );
 }
 

@@ -21,6 +21,10 @@
 
   If per-item URLs are ever wanted here, generate this file rather than hand
   editing it — the group and event slugs live in Google Sheets, not in the repo.
+
+  RESOURCES POSTS ARE ADDED AT BUILD TIME. /resources/<slug> pages live in the
+  repo (src/content/resources/*.md), so the build appends one <url> per post
+  to dist/sitemap.xml (resourcePages in vite.config.ts). Do not list them here.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -36,6 +40,11 @@
     <loc>https://atlas-research.org/journal</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/resources</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://atlas-research.org/fellowship</loc>

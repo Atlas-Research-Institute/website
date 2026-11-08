@@ -29,12 +29,18 @@ export const DATES = {
  *   home          homepage hero button and community band button
  *   apply         the "Open the Atlas Discord" button inside the application
  *   confirmation  the thank-you screen after submitting an application
+ *   resources     the "Join the Atlas community" button at the end of every
+ *                 Resources post
  *   general       footer icon and any other Discord link
+ *
+ * `resources` is currently the same invite as `general`. To count joins from
+ * Resources separately, create a new invite in Discord and paste it there.
  */
 export const DISCORD_URLS = {
   home: "https://discord.gg/qzcNaqWeSx",
   apply: "https://discord.gg/c3kKPfvcaa",
   confirmation: "https://discord.gg/MzCHHTqzKs",
+  resources: "https://discord.gg/Km9zmYmc8S",
   general: "https://discord.gg/Km9zmYmc8S",
 } as const;
 
@@ -81,7 +87,7 @@ export const PARTNERS_EMAIL = "admin@atlas-research.org";
  * Pulled from here so the date cannot go stale silently while the text is
  * edited. Update it in the same commit as any change to the policy content.
  */
-export const PRIVACY_UPDATED = "7 November 2026";
+export const PRIVACY_UPDATED = "8 November 2026";
 
 
 /**
