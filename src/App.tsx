@@ -16,6 +16,8 @@ import { ResearchGroups } from "./pages/ResearchGroups";
 import { ResearchGroupBrief } from "./pages/ResearchGroupBrief";
 import { Journal } from "./pages/Journal";
 import { JournalArticle } from "./pages/JournalArticle";
+import { JournalStandards } from "./pages/JournalStandards";
+import { JournalPaper } from "./pages/JournalPaper";
 import { Events } from "./pages/Events";
 import { EventDetail } from "./pages/EventDetail";
 import { Privacy } from "./pages/Privacy";
@@ -83,6 +85,8 @@ export function AppShell() {
             <Route path="/events" element={<Events />} />
             <Route path="/events/:slug" element={<EventDetail />} />
             <Route path="/journal" element={<Journal />} />
+            <Route path="/journal/standards" element={<JournalStandards />} />
+            <Route path="/journal/papers/:slug" element={<JournalPaper />} />
             <Route path="/journal/:slug" element={<JournalArticle />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/resources/:slug" element={<ResourcePost />} />

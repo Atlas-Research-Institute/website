@@ -7,6 +7,7 @@ import {
   SITE_ORIGIN,
 } from "@/lib/seo";
 import { resourceSeo } from "@/lib/resources";
+import { paperSeo } from "@/lib/papers";
 
 /**
  * Writes the per-route title, description and canonical URL.
@@ -81,7 +82,7 @@ export function Seo() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const seo = resourceSeo(pathname) ?? seoForPath(pathname);
+    const seo = resourceSeo(pathname) ?? paperSeo(pathname) ?? seoForPath(pathname);
     const title = documentTitle(seo);
     const canonical = canonicalUrl(pathname);
 

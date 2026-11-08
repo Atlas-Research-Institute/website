@@ -15,9 +15,13 @@
     /apply, /chapters, /chapters/:slug   legacy redirects, not destinations
     /apply.html, /privacy.html           noindex signposts kept for old links
     /research-groups/:slug               Sheet-driven; slugs change without a
-    /journal/:slug                       deploy, so a static sitemap would go
+    /journal/:slug (old, unused)         deploy, so a static sitemap would go
     /events/:slug                        stale. They are reachable by internal
                                          links and are not orphaned.
+
+  JOURNAL PAPER PAGES ARE LISTED BY HAND. /journal/papers/<slug> pages come
+  from src/data/featuredPapers.ts, so every new paper gets a <url> below. See
+  "Publishing a journal paper" in CLAUDE.md.
 
   If per-item URLs are ever wanted here, generate this file rather than hand
   editing it — the group and event slugs live in Google Sheets, not in the repo.
@@ -40,6 +44,31 @@
     <loc>https://atlas-research.org/journal</loc>
     <lastmod>2026-08-18</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/journal/standards</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/journal/papers/greenville-teacher-retention</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/journal/papers/digital-access-stem-spain</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/journal/papers/loneliness-after-spousal-loss</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://atlas-research.org/journal/papers/political-disinformation-polarization</loc>
+    <lastmod>2026-11-08</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://atlas-research.org/resources</loc>

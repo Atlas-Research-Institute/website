@@ -1,12 +1,15 @@
 /**
- * Papers shown in the "Research by Atlas students" section on the homepage.
+ * Atlas papers: the "Research by Atlas students" section on the homepage AND
+ * the paper list on /journal both render from this list. /journal shows every
+ * paper; the homepage shows only those with featured: true.
  *
- * This is the one place to add, remove or edit a featured paper. PDFs live
- * in public/papers/. Abstracts and author lists are copied word for word
- * from the papers themselves; do not paraphrase them.
+ * This is the one place to add, remove or edit a paper. PDFs live in
+ * public/papers/. Titles, abstracts, author lists, dates and keywords are
+ * copied word for word from the papers themselves; do not paraphrase them.
+ * Newest first. See "Publishing a journal paper" in CLAUDE.md.
  *
- * Separate from the Atlas Journal (src/data/publications.ts), which is
- * untouched by this list.
+ * Separate from the old Sheet-driven journal system (src/data/publications.ts
+ * and the /journal/:slug route), which is unused and untouched by this list.
  */
 
 export type FeaturedPaper = {
@@ -23,6 +26,8 @@ export type FeaturedPaper = {
   pdf: string;
   /** First page of the PDF, 900x1164, in public/papers/covers/. */
   cover: string;
+  /** Shown in the homepage carousel. /journal shows every paper regardless. */
+  featured: boolean;
 };
 
 export const FEATURED_PAPERS: FeaturedPaper[] = [
@@ -36,7 +41,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "Aigerim Amandykova",
       "Mahajabin Chowdhury",
       "Franciszek Grzyb",
-      "Anaya Penmetsa",
+      "Anya Penmetsa",
       "Aidana Seitova",
     ],
     authorsShort: "Siddiqa Wassan and 6 co-authors",
@@ -53,6 +58,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
     ],
     pdf: "/papers/greenville-teacher-retention.pdf",
     cover: "/papers/covers/greenville-teacher-retention.webp",
+    featured: true,
   },
   {
     slug: "digital-access-stem-spain",
@@ -73,6 +79,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
     ],
     pdf: "/papers/digital-access-stem-spain.pdf",
     cover: "/papers/covers/digital-access-stem-spain.webp",
+    featured: true,
   },
   {
     slug: "loneliness-after-spousal-loss",
@@ -92,5 +99,27 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
     ],
     pdf: "/papers/loneliness-after-spousal-loss.pdf",
     cover: "/papers/covers/loneliness-after-spousal-loss.webp",
+    featured: true,
+  },
+  {
+    slug: "political-disinformation-polarization",
+    title:
+      "The Political Disinformation Epidemic: How Algorithms and Cable News Drive U.S. Polarization",
+    authors: ["Hamaad Mahmood"],
+    authorsShort: "Hamaad Mahmood",
+    context: "Atlas Research Institute",
+    date: "April 2026",
+    abstract:
+      "This paper asks how disinformation across different forms of media affects political polarization in the United States. It reviews twelve sources, including four peer-reviewed studies, one systematic review, and survey work from Pew Research Center and Brookings. Two mechanisms carry most of the effect. Social media algorithms rank content by engagement rather than accuracy, which is one reason false claims spread roughly six times faster than true ones on X, and which sorts users into filter bubbles that reinforce the claims they already hold. Cable news reaches the same end deliberately, through identity journalism that ties party to self-image; 64 percent of Americans now say democracy is in crisis, and the news sources the two parties trust barely overlap. The common thread is antidemocratic attitudes and partisan animosity, or AAPA: cross-partisan exposure backfires when the content carries high AAPA and reduces hostility when it does not. The paper recommends prebunking and K-12 digital literacy on the consumption side, and funding transparency for cable news plus algorithmic down-ranking of high-AAPA and bot-amplified content on the spread side. The evidence is correlational and drawn entirely from existing literature, so none of it establishes cause.",
+    keywords: [
+      "disinformation",
+      "political polarization",
+      "social media algorithms",
+      "identity journalism",
+      "digital literacy",
+    ],
+    pdf: "/papers/political-disinformation-polarization.pdf",
+    cover: "/papers/covers/political-disinformation-polarization.webp",
+    featured: false,
   },
 ];

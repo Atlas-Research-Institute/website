@@ -83,7 +83,12 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   "/journal": {
     title: "The Atlas Journal",
     description:
-      "An open archive of the research papers Atlas fellows write. Each issue collects the papers from one fellowship.",
+      "Research papers by students in the Atlas community, published on a rolling basis.",
+  },
+  "/journal/standards": {
+    title: "Atlas Journal Standards",
+    description:
+      "Who can submit to the Atlas Journal, what every paper must have, and how review, publication and corrections work.",
   },
   "/fellowship": {
     title: "Apply to the Fellowship",

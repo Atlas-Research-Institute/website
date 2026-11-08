@@ -154,5 +154,8 @@ export const FORM_ENDPOINT: string | null =
  */
 export const APPLY_PATH = "/fellowship";
 
+/** The journal's paper submission form. The "Submit a paper" button on /journal points here. */
+export const SUBMIT_FORM_URL = "https://forms.gle/Cw7Yje47kHabZLPJ8";
+
 /** The Get involved page's volunteer form. Every "Fill out the form" button points here. */
 export const GET_INVOLVED_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSercnF_jbDTA6nDOr-2fFd8tJ0w_1eP8M382YbsROGxeRvrtQ/viewform";

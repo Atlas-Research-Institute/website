@@ -7,8 +7,9 @@ import { FEATURED_PAPERS, type FeaturedPaper } from "@/data/featuredPapers";
  * "Research by Atlas students": the first page of each paper as a sheet on a
  * desk, each opening a pop-up with the abstract and a link to the PDF.
  *
- * Reads only from FEATURED_PAPERS. To change what shows here, edit
- * src/data/featuredPapers.ts, not this file.
+ * Reads only from FEATURED_PAPERS, and shows only the papers marked
+ * featured: true. To change what shows here, edit src/data/featuredPapers.ts,
+ * not this file.
  *
  * Desktop shows the three sheets in a row. Below md the row becomes a
  * horizontal scroll-snap carousel, one sheet at a time with the next peeking
@@ -27,6 +28,8 @@ import { FEATURED_PAPERS, type FeaturedPaper } from "@/data/featuredPapers";
  */
 const SHEET =
   "overflow-hidden border border-rule bg-white shadow-[0_1px_2px_rgba(19,41,75,0.08),0_14px_30px_-10px_rgba(19,41,75,0.30)]";
+
+const PAPERS = FEATURED_PAPERS.filter((p) => p.featured);
 
 export function FeaturedPapers() {
   const [open, setOpen] = useState<FeaturedPaper | null>(null);
@@ -84,7 +87,7 @@ export function FeaturedPapers() {
           onScroll={handleScroll}
           className="relative m-0 -mx-6 flex list-none snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:py-0"
         >
-          {FEATURED_PAPERS.map((p) => (
+          {PAPERS.map((p) => (
             <li
               key={p.slug}
               className="group relative flex w-[78%] shrink-0 snap-start snap-always flex-col md:w-auto"
@@ -131,12 +134,12 @@ export function FeaturedPapers() {
           ))}
         </ul>
         <div className="mt-4 flex justify-center gap-1 md:hidden">
-          {FEATURED_PAPERS.map((p, i) => (
+          {PAPERS.map((p, i) => (
             <button
               key={p.slug}
               type="button"
               onClick={() => scrollToSheet(i)}
-              aria-label={`Show paper ${i + 1} of ${FEATURED_PAPERS.length}`}
+              aria-label={`Show paper ${i + 1} of ${PAPERS.length}`}
               aria-current={i === active ? "true" : undefined}
               className="flex h-6 w-6 items-center justify-center"
             >
