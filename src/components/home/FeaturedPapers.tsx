@@ -73,10 +73,7 @@ export function FeaturedPapers() {
   return (
     <section id="papers" className="bg-mist">
       <Container className="pt-24 pb-[88px]">
-        <SectionHeading className="m-0 mb-3">Research by Atlas students</SectionHeading>
-        <p className="m-0 mb-10 max-w-[32em] text-body-muted">
-          Papers written by fellows and the Atlas team.
-        </p>
+        <SectionHeading className="m-0 mb-10">Research by Atlas students</SectionHeading>
         {/*
           Below md: a scroll-snap track that bleeds to the screen edges (-mx-6,
           px-6) and scrolls inside itself only. The vertical padding leaves room
