@@ -27,7 +27,7 @@
  * change.
  */
 const PLACEHOLDER = "PASTE_CLOUDFLARE_TOKEN_HERE";
-const CLOUDFLARE_WEB_ANALYTICS_TOKEN: string = "PASTE_CLOUDFLARE_TOKEN_HERE";
+const CLOUDFLARE_WEB_ANALYTICS_TOKEN: string = "69b5b0225845418aaa7f8b781389aecd";
 
 const PRODUCTION_HOSTS = ["atlas-research.org", "www.atlas-research.org"];
 
