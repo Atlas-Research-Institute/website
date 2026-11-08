@@ -54,6 +54,14 @@ export function GetInvolved() {
           students who never had it, in their own school, in their country, or
           online.
         </p>
+        <a
+          href={GET_INVOLVED_FORM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-9 inline-block rounded bg-crimson px-[30px] py-4 text-[19px] font-semibold text-white no-underline hover:bg-crimson-hover transition-colors"
+        >
+          Fill out the form
+        </a>
       </Container>
 
       {/* Where you could help */}
