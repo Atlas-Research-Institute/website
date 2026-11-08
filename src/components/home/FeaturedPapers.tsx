@@ -20,13 +20,6 @@ import { FEATURED_PAPERS, type FeaturedPaper } from "@/data/featuredPapers";
  * focus to the sheet that opened it. The PDF is linked, never embedded.
  */
 
-/** Desk tilt per sheet, in order. Only applied when motion is allowed. */
-const TILTS = [
-  "motion-safe:-rotate-2",
-  "motion-safe:rotate-[1.5deg]",
-  "motion-safe:-rotate-1",
-];
-
 /*
  * THE ONE SHADOW ON THE SITE. The design system has no shadows; paper covers
  * are a deliberate exception, so the white page lifts off the mist background
@@ -87,14 +80,14 @@ export function FeaturedPapers() {
         {/*
           Below md: a scroll-snap track that bleeds to the screen edges (-mx-6,
           px-6) and scrolls inside itself only. The vertical padding leaves room
-          for the tilt and the shadow, which overflow-x would otherwise clip.
+          for the hover lift and the shadow, which overflow-x would otherwise clip.
         */}
         <ul
           ref={trackRef}
           onScroll={handleScroll}
           className="relative m-0 -mx-6 flex list-none snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:py-0"
         >
-          {FEATURED_PAPERS.map((p, i) => (
+          {FEATURED_PAPERS.map((p) => (
             <li
               key={p.slug}
               className="group relative flex w-[78%] shrink-0 snap-start snap-always flex-col md:w-auto"
@@ -102,8 +95,7 @@ export function FeaturedPapers() {
               <div
                 className={cn(
                   SHEET,
-                  "rounded-[2px] motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:group-hover:-translate-y-1.5 motion-safe:group-hover:rotate-0 motion-safe:group-focus-within:-translate-y-1.5 motion-safe:group-focus-within:rotate-0",
-                  TILTS[i % TILTS.length]
+                  "rounded-[2px] motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:group-hover:-translate-y-1.5 motion-safe:group-focus-within:-translate-y-1.5"
                 )}
               >
                 {/* The top of the page, about four fifths: title, authors and abstract. */}
