@@ -89,7 +89,7 @@ const TRACKS = [
   {
     who: "For admitted fellows",
     title: "The Atlas Fellowship",
-    body: "One theme and a fixed start and end date. Each fellow finishes a first research paper with weekly lessons and feedback.",
+    body: "Six weeks of guided research on an issue the fellow cares about, with a fixed start and end date. Each fellow finishes a first research paper with weekly lessons and feedback.",
   },
   {
     who: "For fellows who finish",
@@ -132,8 +132,8 @@ export function About() {
           <p className="m-0 mb-8 max-w-[36em] text-[21px] text-body-muted">
             Curiosity is everywhere, yet research training is not. Atlas runs a
             free, six-week online fellowship where high school and university
-            students pick a question about education access in their own
-            community and write their first research paper.
+            students with no research experience pick a question about an
+            issue they care about and write their first research paper.
           </p>
           <a
             href="#contact"

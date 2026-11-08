@@ -37,7 +37,7 @@ export const SITE_NAME = "Atlas Research Institute";
  * step with the description tags in index.html.
  */
 export const SITE_DESCRIPTION =
-  `A free, six-week online fellowship where students run their first research project on education access where they live. Applications close ${DATES.applicationsCloseLabel}.`;
+  `A free, six-week online fellowship of guided research. Students pick an issue they care about and write their first research paper. No experience needed. Applications close ${DATES.applicationsCloseLabel}.`;
 
 export type RouteSeo = {
   /** Rendered as "<title> | Atlas Research Institute". Omit for the home page. */

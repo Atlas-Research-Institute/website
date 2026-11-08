@@ -1,6 +1,6 @@
 # Atlas Research Institute
 
-> The Atlas Fellowship is a free, six-week online fellowship where secondary and university students run their first research project on education access where they live. Applications for the Winter Fellowship close December 21, 2026. Apply at https://atlas-research.org/fellowship
+> The Atlas Fellowship is a free, six-week online fellowship of guided research for secondary and university students. Each fellow picks an issue they care about and writes their first research paper. No research experience is needed. Applications for the Winter Fellowship close December 21, 2026. Apply at https://atlas-research.org/fellowship
 
 Atlas introduces research to students who have never had a way in. Students in
 well-resourced schools meet research early, through programs, mentors and
@@ -19,14 +19,17 @@ their own project, for free, and to learn how research works by doing it.
 - No prior research experience is required
 - Apply: https://atlas-research.org/fellowship
 
-Each fellow picks a question about education access where they live, learns how
-to find and test evidence, and finishes a first research paper, with weekly
-lessons and feedback.
+Each fellow picks a question about an issue they care about, learns how to find
+and test evidence, and finishes a first research paper, with weekly lessons and
+feedback. Fellows can choose from areas including education, public health,
+economics and inequality, politics and public policy, sociology, anthropology
+and culture, psychology and human behavior, environment and society, and
+science, technology and society.
 
 ### What the weeks look like
 
-1. Week 1, your question: pick an education access problem where you live and
-   turn it into a question you can actually answer.
+1. Week 1, your question: pick an issue you care about and turn it into a
+   question you can actually answer.
 2. Week 2, sources: find published research on it and learn to tell reliable
    sources from weak ones.
 3. Weeks 3 to 4, evidence: work with real data and connect it back to your
@@ -38,8 +41,9 @@ lessons and feedback.
 
 The application asks for name, email, school, the school's city, country,
 grade or year, and time zone; whether the applicant has done research before;
-three written answers (one specific education access problem they have noticed,
-40 to 350 words; how they would find out whether it is really happening and how
+which area interests them the most; three written answers (one problem where
+they live that they want to understand better and why it matters to them, 40
+to 350 words; how they would find out whether it is really happening and how
 big it is; something they started on their own and finished, 20 to 300 words);
 and how they heard about Atlas.
 
@@ -76,8 +80,8 @@ Atlas is not affiliated with or endorsed by these universities.
 
 - The Atlas community, open to everyone who applies: recorded lessons, research
   guides and other opportunities students can apply to.
-- The Atlas Fellowship, for admitted fellows: one theme and a fixed start and end
-  date.
+- The Atlas Fellowship, for admitted fellows: six weeks of guided research on an
+  issue the fellow cares about, with a fixed start and end date.
 - Research groups, for fellows who finish: small groups, each run by a student
   lead, that take the work further and write papers for submission. Students
   lead 18 research groups in 9 countries.

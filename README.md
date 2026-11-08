@@ -159,10 +159,11 @@ and rules before adding any.
   (`DATES`). Every Apply button points at `APPLY_PATH` (`/fellowship`).
 - The application form on `/fellowship` posts to `WAITLIST_ENDPOINT` in
   `src/lib/dates.ts`, the live Apps Script the summer 2026 cohort applied
-  through. The payload is 16 keys; `discord` is last and new keys only ever go
-  at the end. Do not rename, reorder or remove a key. The script must append
-  `d.discord` before that column is actually stored (see the comment on
-  `WAITLIST_ENDPOINT`).
+  through. The payload is 18 keys; `discord`, `topic_interest` and
+  `topic_other` are the last three, and new keys only ever go at the end. Do
+  not rename, reorder or remove a key. The script must append `d.discord`,
+  `d.topic_interest` and `d.topic_other` before those columns are actually
+  stored (see the comment on `WAITLIST_ENDPOINT`).
 - `public/apply.html` redirects to `/fellowship`. It is kept because old emails
   link to it.
 - The research groups, events, get-involved and partners pages still exist but
@@ -171,7 +172,9 @@ and rules before adding any.
 
 ## Copy rules
 
-- **Education access framing is allowed** and is the fellowship's theme.
+- **The fellowship is open-topic.** Fellows do guided research on an issue they
+  care about; the application lists the areas. Do not describe it as limited to
+  education access.
 - **Testimonials use first name and country only.** Never a surname, school or
   photo without permission.
 - **Named researchers always appear with the non-affiliation line**: "Atlas is

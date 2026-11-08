@@ -29,7 +29,7 @@ const WEEKS = [
   {
     when: "Week 1",
     title: "Your question",
-    body: "Pick an education access problem where you live and turn it into a question you can actually answer.",
+    body: "Pick an issue you care about and turn it into a question you can actually answer.",
   },
   {
     when: "Week 2",
@@ -90,9 +90,9 @@ export function Landing() {
             We bring research to students who have never been taught it.
           </h1>
           <p className="m-0 mb-6 md:mb-8 text-[18px] md:text-[21px] text-body-muted max-w-[30em]">
-            It is free, wherever you live. In six weeks, you pick a question
-            about education access in your own community, learn how to find
-            and test evidence, and finish your first research paper.
+            It is free, wherever you live, and no experience is needed. In six
+            weeks, you pick a question about an issue you care about, learn
+            how to find and test evidence, and write your first research paper.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link

@@ -103,6 +103,11 @@ export const PRIVACY_UPDATED = "12 October 2026";
  * the script is redeployed (Deploy > Manage deployments > edit > New version;
  * the URL stays the same).
  *
+ * The same applies to `topic_interest` and `topic_other`, sent as the
+ * seventeenth and eighteenth keys (added November 2026). Until the script's
+ * appendRow gets `d.topic_interest, d.topic_other` after `d.discord`, and
+ * matching column headers are added, the topic answer is sent but not stored.
+ *
  * Deleting, renaming, or pointing this elsewhere silently drops applications
  * on the floor with no error surface. The name is historical: the endpoint was
  * called the waitlist backend while applications were closed.

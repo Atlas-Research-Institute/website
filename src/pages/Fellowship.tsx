@@ -19,14 +19,19 @@ import { logPayload } from "@/lib/payloadLog";
  *
  *   new Date(), name, email, school, city, country, grade, timezone, prompt,
  *   datasource, completion, research, research_desc, consent, referral,
- *   referral_other, discord
+ *   referral_other, discord, topic_interest, topic_other
  *
  * The first fifteen are the summer 2026 application's questions, and the
  * columns of the sheet the summer cohort applied into. `discord` was added for
- * the November 2026 cohort and goes LAST so no existing column moves. The
- * script supplies the timestamp, so the client sends the sixteen field keys
- * only, every one as a string: `undefined` does not survive JSON.stringify and
- * would shift the columns.
+ * the November 2026 cohort and goes LAST so no existing column moves.
+ * `topic_interest` and `topic_other` were added in November 2026, when the
+ * fellowship stopped being limited to education access, and go after
+ * `discord` for the same reason. The script supplies the timestamp, so the
+ * client sends the eighteen field keys only, every one as a string:
+ * `undefined` does not survive JSON.stringify and would shift the columns.
+ *
+ * `topic_other` is the "Other" text, sent only when `topic_interest` is
+ * "Other" and blank otherwise.
  *
  * `discord` is the username with one leading "@" removed, or "Blocked where I
  * live" when the applicant checks "Discord is blocked where I live". That box
@@ -54,6 +59,8 @@ export type ApplicationPayload = {
   referral: string;
   referral_other: string;
   discord: string;
+  topic_interest: string;
+  topic_other: string;
 };
 
 type FieldName =
@@ -65,6 +72,8 @@ type FieldName =
   | "grade"
   | "timezone"
   | "research"
+  | "topic_interest"
+  | "topic_other"
   | "prompt"
   | "datasource"
   | "completion"
@@ -84,6 +93,8 @@ const FIELD_ORDER: FieldName[] = [
   "grade",
   "timezone",
   "research",
+  "topic_interest",
+  "topic_other",
   "prompt",
   "datasource",
   "completion",
@@ -102,6 +113,7 @@ const REQUIRED: Partial<Record<FieldName, string>> = {
   grade: "Select your grade or year.",
   timezone: "Enter your time zone.",
   research: "Choose yes or no.",
+  topic_interest: "Choose the area that interests you the most.",
   referral: "Tell us how you heard about Atlas.",
 };
 
@@ -172,6 +184,10 @@ export function validateApplication(fd: FormData): ApplicationErrors {
     found.referral_other = "Tell us where you heard about Atlas.";
   }
 
+  if (text("topic_interest") === "Other" && !text("topic_other")) {
+    found.topic_other = "Tell us which area interests you.";
+  }
+
   if (!isDiscordBlocked(fd) && discordUsername(text("discord")).length < 2) {
     found.discord =
       "Enter your Discord username, or check the box if Discord is blocked where you live.";
@@ -187,6 +203,7 @@ export function validateApplication(fd: FormData): ApplicationErrors {
 export function buildApplicationPayload(fd: FormData): ApplicationPayload {
   const text = (k: string) => String(fd.get(k) ?? "").trim();
   const referral = text("referral");
+  const topic = text("topic_interest");
   return {
     name: text("name"),
     email: text("email"),
@@ -204,6 +221,8 @@ export function buildApplicationPayload(fd: FormData): ApplicationPayload {
     referral,
     referral_other: referral === "Other" ? text("referral_other") : "",
     discord: isDiscordBlocked(fd) ? DISCORD_BLOCKED : discordUsername(text("discord")),
+    topic_interest: topic,
+    topic_other: topic === "Other" ? text("topic_other") : "",
   };
 }
 
@@ -214,9 +233,22 @@ const GRADES = ["9th / Year 10", "10th / Year 11", "11th / Year 12", "12th / Yea
 const REFERRALS = [
   "Google search",
   "ChatGPT or another AI assistant",
-  "Instagram or TikTok",
+  "Social media (TikTok, Instagram, YouTube, LinkedIn, etc.)",
   "A friend or classmate",
   "A teacher or school",
+  "Other",
+];
+/* The fellowship is open-topic. Fellows can change topic during the fellowship. */
+const TOPICS = [
+  "Education",
+  "Public health",
+  "Economics and inequality",
+  "Politics and public policy",
+  "Sociology",
+  "Anthropology and culture",
+  "Psychology and human behavior",
+  "Environment and society",
+  "Science, technology and society",
   "Other",
 ];
 
@@ -224,8 +256,8 @@ const REFERRALS = [
 const DRAFT_KEY = "atlas_application_draft_v2";
 const DRAFT_FIELDS = [
   "name", "email", "school", "city", "country", "grade", "timezone", "research",
-  "research_desc", "prompt", "datasource", "completion", "referral", "referral_other",
-  "discord",
+  "research_desc", "topic_interest", "topic_other", "prompt", "datasource",
+  "completion", "referral", "referral_other", "discord",
 ];
 
 const inputCls =
@@ -246,6 +278,7 @@ export function Fellowship() {
   const [errors, setErrors] = useState<ApplicationErrors>({});
   const [counts, setCounts] = useState({ prompt: 0, completion: 0 });
   const [referral, setReferral] = useState("");
+  const [topic, setTopic] = useState("");
   // The selected country decides whether the "Discord is blocked" box exists.
   const [country, setCountry] = useState("");
   // The box is controlled so a draft can be restored before it is rendered,
@@ -285,6 +318,7 @@ export function Fellowship() {
         completion: wordCount(String(d.completion ?? "")),
       });
       setReferral(String(d.referral ?? ""));
+      setTopic(String(d.topic_interest ?? ""));
     } catch {
       /* storage blocked or draft malformed: start empty */
     }
@@ -301,6 +335,7 @@ export function Fellowship() {
     d.discord_blocked = isDiscordBlocked(fd);
     setCounts({ prompt: wordCount(String(d.prompt)), completion: wordCount(String(d.completion)) });
     setReferral(String(d.referral));
+    setTopic(String(d.topic_interest));
     setCountry(String(d.country));
     // Changing to a country not in the list unchecks and hides the box.
     if (!isDiscordBlockedCountry(String(d.country))) setDiscordBlocked(false);
@@ -388,8 +423,8 @@ export function Fellowship() {
         <div className="max-w-[36em] text-[21px] text-body-muted">
           <p className="m-0 mb-4">
             The Atlas Fellowship is six weeks of guided research. You pick a
-            question about education access where you live, learn how to find
-            and test evidence, and finish your first research paper.
+            question about an issue you care about, learn how to find and test
+            evidence, and write your first research paper.
           </p>
           <p className="m-0">
             No prior research experience is required. We care about how you
@@ -514,14 +549,25 @@ export function Fellowship() {
                 <Q id="research_desc" label="If yes, one line on what it was">
                   <input id="research_desc" name="research_desc" className={inputCls} placeholder="Topic or project, one line" />
                 </Q>
+                <Q id="topic_interest" label="Which area interests you the most?" required hint="You can change your topic during the fellowship." error={errors.topic_interest}>
+                  <select id="topic_interest" name="topic_interest" required defaultValue="" aria-invalid={!!errors.topic_interest} aria-describedby="topic_interest-hint topic_interest-error" className={inputCls}>
+                    <option value="">Select one</option>
+                    {TOPICS.map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </Q>
+                <div hidden={topic !== "Other"}>
+                  <Q id="topic_other" label="Tell us which area" required error={errors.topic_other}>
+                    <input id="topic_other" name="topic_other" aria-invalid={!!errors.topic_other} aria-describedby="topic_other-error" className={inputCls} placeholder="The area that interests you" />
+                  </Q>
+                </div>
               </Group>
 
               <Group title="Written responses">
                 <Q
                   id="prompt"
-                  label="Where you live, who gets a good education and who gets left behind? Describe one specific problem like this that you have noticed."
+                  label="Describe one problem where you live that you want to understand better. Why does it matter to you?"
                   required
-                  hint="This could be about who can afford school, who lives too far from a good one, who has to work instead, who speaks the wrong language in class, or anything else you have seen. Write in your own voice. There is no right answer and no expected vocabulary. We want to see how you notice a problem and how you think about it."
+                  hint="It could be about health, money, schools, politics, the environment, technology, culture or how people behave. Write in your own voice. There is no right answer and no expected vocabulary. We want to see how you notice a problem and how you think about it."
                   error={errors.prompt}
                 >
                   <textarea id="prompt" name="prompt" rows={9} required aria-invalid={!!errors.prompt} aria-describedby="prompt-hint prompt-count prompt-error" className={inputCls + " resize-y"} placeholder="Start here..." />
@@ -529,9 +575,9 @@ export function Fellowship() {
                 </Q>
                 <Q
                   id="datasource"
-                  label="How would you try to find out if this is really happening, and how big it is?"
+                  label="How would you find out if this problem is really happening, and how big it is?"
                   required
-                  hint="You might look for numbers someone has already collected, like government or school data or a UN report. Or you might describe how you would gather your own, like a survey or interviews."
+                  hint="You might look for what researchers have already written, numbers from a government or an organization like the UN, or news reports. Or you might describe how you would gather your own information, like a survey or interviews."
                   error={errors.datasource}
                 >
                   <textarea id="datasource" name="datasource" rows={5} required aria-invalid={!!errors.datasource} aria-describedby="datasource-hint datasource-error" className={inputCls + " resize-y"} placeholder="What you would look at, and why you think it would help." />
