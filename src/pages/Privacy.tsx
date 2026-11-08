@@ -57,6 +57,7 @@ export function Privacy() {
               Whether you have done research before, and optionally one line on
               what it was
             </li>
+            <li>Which area of research interests you most</li>
             <li>Your three written responses</li>
             <li>Optionally, how you heard about Atlas</li>
             <li>

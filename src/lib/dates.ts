@@ -81,7 +81,7 @@ export const PARTNERS_EMAIL = "admin@atlas-research.org";
  * Pulled from here so the date cannot go stale silently while the text is
  * edited. Update it in the same commit as any change to the policy content.
  */
-export const PRIVACY_UPDATED = "12 October 2026";
+export const PRIVACY_UPDATED = "7 November 2026";
 
 
 /**
