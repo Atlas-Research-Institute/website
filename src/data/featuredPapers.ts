@@ -32,6 +32,27 @@ export type FeaturedPaper = {
 
 export const FEATURED_PAPERS: FeaturedPaper[] = [
   {
+    slug: "samarkand-private-tutoring",
+    title:
+      "Why Students in Samarkand Rely on Extra Classes: School Gaps, Tests, and Money Issues",
+    authors: ["Sevinch Jaloliddinova"],
+    authorsShort: "Sevinch Jaloliddinova",
+    context: "Atlas Research Institute",
+    date: "November 2026",
+    abstract:
+      "This paper investigates why high school students across the Samarkand region rely heavily on private tutoring (repetitor). While students spend 12 expected years in public school, the World Bank’s Human Capital Index identifies a harmonized test score of 474 out of 625, meaning students reach roughly 76 percent of an advanced international benchmark, translating to 9.1 Learning-Adjusted Years of Schooling (LAYS). An analysis of Khaydarov’s (2020) study of 109 graduating students and 24 face-to-face interviews with teachers, principals, and students across two selective academic lyceums in Samarkand shows that 95 percent take private tutoring because regular classrooms do not teach the rapid test-taking techniques and problem banks required by Bilim va Malakalarni Baholash Agentligi (BMBA) university entrance examinations, though this selective sample reflects high-track competition rather than a verified region-wide average. To measure this pressure, the study examines the official BMBA examination format: 90 multiple-choice questions spread across five subjects (three mandatory foundational subjects and two major specialization subjects) to be completed in 180 minutes (three full hours). Based on regional market tuition rates of 1,500,000 UZS per month for three exam subjects (500,000 UZS per subject), private prep acts as a regressive economic burden: it consumes roughly 6.3 percent of an upper-quintile urban household budget (23.95 million UZS), 14.7 percent of an average Samarkand regional household budget (10.20 million UZS), and 29.0 percent of a bottom-quintile rural farming household budget (5.17 million UZS), directly verified against official 2025 income quintiles and regional per capita accounts from the Statistics Agency of Uzbekistan. Drawing on an original directory census of commercial providers, the paper documents an infrastructure-adjusted geographic density gap of roughly 6-to-1 in centers per public secondary school, with 9.9 commercial tutoring centers per 10 schools in Samarkand city (102 centers across 103 public schools) compared to just 1.5 to 1.8 centers per 10 schools in Bulungur district (11 to 13 centers across 71 public schools), with zero commercial centers located in outer villages. Evaluating comparative international evidence from South Korea and Singapore, the paper cautions that private tutoring bans fail and that state-sponsored free broadcast lectures did not eliminate private tutoring expenditures in East Asia. The paper recommends immediate short-term relief through subsidized rural school-based prep clubs funded in partnership with non-profit foundations, drawing on South Korea’s after-school programs and Singapore’s low-fee self-help tutoring, and a national online platform paired with school study spaces, sequenced ahead of long-term structural alignment between BMBA exams and secondary school curricula.",
+    keywords: [
+      "private tutoring",
+      "BMBA examinations",
+      "Samarkand",
+      "shadow education",
+      "educational equity",
+    ],
+    pdf: "/papers/samarkand-private-tutoring.pdf",
+    cover: "/papers/covers/samarkand-private-tutoring.webp",
+    featured: false,
+  },
+  {
     slug: "greenville-teacher-retention",
     title:
       "Teacher Retention and End-of-Course Examination Outcomes: Evidence from Eight Greenville County, South Carolina, High Schools, 2022–23 to 2023–24",
