@@ -50,7 +50,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
     ],
     pdf: "/papers/samarkand-private-tutoring.pdf",
     cover: "/papers/covers/samarkand-private-tutoring.webp",
-    featured: false,
+    featured: true,
   },
   {
     slug: "greenville-teacher-retention",
@@ -120,7 +120,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
     ],
     pdf: "/papers/loneliness-after-spousal-loss.pdf",
     cover: "/papers/covers/loneliness-after-spousal-loss.webp",
-    featured: true,
+    featured: false,
   },
   {
     slug: "political-disinformation-polarization",
