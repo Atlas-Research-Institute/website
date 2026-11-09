@@ -66,7 +66,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "Aidana Seitova",
     ],
     authorsShort: "Siddiqa Wassan and 6 co-authors",
-    context: "Summer 2026 Fellowship · Group paper",
+    context: "Atlas Research Institute",
     date: "November 2026",
     abstract:
       "This study asks how teacher-return rates and End-of-Course Examination Program (EOCEP) outcomes changed at eight Greenville County, South Carolina, high schools from 2022–23 to 2023–24. It uses school-level English II and Algebra I results from the South Carolina School Report Cards, measured as the percentage of students earning a C or higher, and compares each school’s change with the district and state. Title I status is treated as context rather than a direct measure of poverty. Results varied across schools and subjects. Berea and Southside improved relative to district change in both subjects. Carolina gained 9.8 points in English II but declined 0.3 points in Algebra I. Wade Hampton’s English II rate fell 1.9 points, while its Algebra I rate rose 0.8 points, 8.6 points behind the district’s 9.4-point gain. Teacher-return rates also varied, and the eight-school pattern does not support a simple one-to-one explanation of exam outcomes by retention. Across the eight schools, 2023–24 poverty percentages correlated with pass rates at r = −0.9647 for English II and r = −0.9556 for Algebra I, but because the schools fall into two distinct socioeconomic groups, these figures largely reflect the gap between those groups rather than a stable relationship across schools. The findings are descriptive, not causal. The clearest follow-up priority is a focused, supportive review of Wade Hampton’s Algebra I result, and district leaders should track retention alongside subject-level results rather than use retention as a stand-alone indicator.",
@@ -87,7 +87,7 @@ export const FEATURED_PAPERS: FeaturedPaper[] = [
       "Digital Technology Access and STEM Learning in Spanish Secondary Education",
     authors: ["Nada Zagmouti"],
     authorsShort: "Nada Zagmouti",
-    context: "Summer 2026 Fellowship · Individual paper",
+    context: "Atlas Research Institute",
     date: "October 2026",
     abstract:
       "This paper examines how access to digital technology relates to STEM learning and education among secondary-school students in Spain. It combines official household ICT statistics from the Spanish National Statistics Institute (INE), findings from ICILS 2023, and four peer-reviewed studies using Spanish student and school data. In 2025, 97.4% of households with at least one member aged 16–74 had broadband access and 83.8% had some type of computer; these household figures do not guarantee that each student has reliable, individual access for schoolwork. In ICILS 2023, Spain scored 495 points in computer and information literacy, above the international participant average of 476 and the EU average of 493. However, 44.4% of Spanish students did not reach Level 2, and the socioeconomic performance gap was 69 points (below the EU gap of 79 points reported by INEE). Spanish studies also show that relationships between ICT use and outcomes vary by subject, with a positive association reported for science but not statistically significant effects for mathematics or reading in one PISA-based analysis. The evidence suggests that policy should combine equitable access with digital-skills development, meaningful educational use and attention to socioeconomic and regional differences.",
